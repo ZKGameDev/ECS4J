@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface UpdateInGroup {
-    public Class<? extends EcsSystemGroup> groupType();
+    public Class<? extends EcsSystemGroup> value();
 }

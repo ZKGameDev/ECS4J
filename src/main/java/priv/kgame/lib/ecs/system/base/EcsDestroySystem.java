@@ -26,8 +26,8 @@ public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsSystem
 
     @Override
     protected void onInit() {
-        group = getOrAddEntityGroup(ComponentType.create(genericClass),
-                ComponentType.create(DespawningComponent.class));
+        group = getOrAddEntityGroup(ComponentType.additive(getWorld(), genericClass),
+                ComponentType.additive(getWorld(), DespawningComponent.class));
         super.setAlwaysUpdateSystem(true);
     }
 
@@ -35,7 +35,7 @@ public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsSystem
     protected void onUpdate() {
         List<Entity> entities = group.getEntityList();
         for (Entity entity : entities) {
-            ComponentType<T> componentType = ComponentType.create(genericClass);
+            ComponentType<T> componentType = ComponentType.additive(getWorld(), genericClass);
             entity.assertContainComponent(componentType);
             onEnd(entity, entity.getComponent(componentType));
         }

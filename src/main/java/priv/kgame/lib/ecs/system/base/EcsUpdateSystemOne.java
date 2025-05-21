@@ -30,12 +30,12 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsSyst
     @Override
     protected void onInit() {
         List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(ComponentType.create(entityClass));
+        typeList.add(ComponentType.additive(getWorld(), entityClass));
         if (!extraRequirementComponent.isEmpty()) {
             typeList.addAll(extraRequirementComponent);
         }
-        typeList.add(ComponentType.subtractive(DespawningComponent.class));
-        typeList.add(ComponentType.create(InitializedComponent.class));
+        typeList.add(ComponentType.subtractive(getWorld(), DespawningComponent.class));
+        typeList.add(ComponentType.additive(getWorld(), InitializedComponent.class));
         entityGroup = getOrAddEntityGroup(typeList);
     }
 
@@ -44,7 +44,7 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsSyst
     protected void onUpdate() {
         List<Entity> entities = entityGroup.getEntityList();
         for (Entity entity : entities) {
-            ComponentType<T> componentType = ComponentType.create(entityClass);
+            ComponentType<T> componentType = ComponentType.additive(getWorld(), entityClass);
             entity.assertContainComponent(componentType);
             update(entity, entity.getComponent(componentType));
         }

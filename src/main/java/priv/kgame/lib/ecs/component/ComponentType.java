@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.component;
 
-import priv.kgame.lib.ecs.tools.TypeUtility;
+import priv.kgame.lib.ecs.EcsWorld;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
@@ -11,10 +11,24 @@ public class ComponentType<T extends EcsComponent> implements Comparable<Compone
     private Class<T> type;
 
     public ComponentType() {
-        this.accessModeType = ComponentAccessMode.READ_WRITE;
+        this(ComponentAccessMode.READ_WRITE);
     }
     public ComponentType(ComponentAccessMode accessMode) {
         this.accessModeType = accessMode;
+    }
+
+    public static <T extends EcsComponent> ComponentType<T> additive(EcsWorld ecsWorld, Class<T> type) {
+        ComponentType<T> componentType = new ComponentType<>();
+        componentType.typeIndex = ecsWorld.getComponentTypeIndex(type);
+        componentType.type = type;
+        return componentType;
+    }
+
+    public static <T extends EcsComponent> ComponentType<T> subtractive(EcsWorld ecsWorld, Class<T> type) {
+        ComponentType<T> componentType = new ComponentType<>(ComponentAccessMode.SUBTRACTIVE);
+        componentType.typeIndex = ecsWorld.getComponentTypeIndex(type);
+        componentType.type = type;
+        return componentType;
     }
 
     @Override
@@ -33,24 +47,6 @@ public class ComponentType<T extends EcsComponent> implements Comparable<Compone
     @Override
     public int hashCode() {
         return Objects.hash(typeIndex);
-    }
-
-    Class<?> getOriginClass() {
-        return TypeUtility.getInstance().getType(typeIndex);
-    }
-
-    public static <T extends EcsComponent> ComponentType<T> create(Class<T> type) {
-        ComponentType<T> componentType = new ComponentType<>();
-        componentType.typeIndex = TypeUtility.getInstance().getTypeIndex(type);
-        componentType.type = type;
-        return componentType;
-    }
-
-    public static <T extends EcsComponent> ComponentType<T> subtractive(Class<T> type) {
-        ComponentType<T> componentType = new ComponentType<>(ComponentAccessMode.SUBTRACTIVE);
-        componentType.typeIndex = TypeUtility.getInstance().getTypeIndex(type);
-        componentType.type = type;
-        return componentType;
     }
 
     public Class<? extends EcsComponent> getType() {

@@ -1,6 +1,7 @@
 package priv.kgame.lib.ecs.entity;
 
 import priv.kgame.lib.ecs.Disposable;
+import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.RecycleComponent;
@@ -10,12 +11,14 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Entity implements Disposable {
+    private final EcsWorld world;
     private final int index;
     private final int type;
     private final Map<ComponentType<? extends EcsComponent>, EcsComponent> data = new HashMap<>();
     private EntityArchetype archetype;
 
-    public Entity(int index, int type, EntityArchetype archetype) {
+    public Entity(EcsWorld ecsWorld, int index, int type, EntityArchetype archetype) {
+        this.world = ecsWorld;
         this.index = index;
         this.type = type;
         this.archetype = archetype;
@@ -35,7 +38,7 @@ public class Entity implements Disposable {
     }
 
     public <T extends EcsComponent> T getComponent(Class<T> componentClass) {
-        ComponentType<T> componentType = ComponentType.create(componentClass);
+        ComponentType<T> componentType = ComponentType.additive(world, componentClass);
         return getComponent(componentType);
     }
 
@@ -98,12 +101,16 @@ public class Entity implements Disposable {
     }
 
     public boolean hasComponent(Class<? extends EcsComponent> klass) {
-        return hasComponent(ComponentType.create(klass));
+        return hasComponent(ComponentType.additive(world, klass));
     }
     public boolean hasComponent(ComponentType<?> componentType) {
         return data.containsKey(componentType);
     }
 
+    /**
+     * 添加组件到实体中，并验证组件类型是否匹配。
+     * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
+     */
     public void addComponent(ComponentType<?> componentType, EcsComponent component) {
         if (!componentType.getType().equals(component.getClass())) {
             throw new RuntimeException(String.format("EcsEndSystem addComponent failed! component %s not match ComponentType %S. please check code",
@@ -115,20 +122,32 @@ public class Entity implements Disposable {
         data.put(componentType, component);
     }
 
+    /**
+     * 使用组件类型的默认构造函数创建并添加组件。
+     * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
+     */
     public void addComponent(ComponentType<?> componentType) {
         addComponent(componentType, componentType.generateComponentByDefaultConstructor());
     }
 
+    /**
+     * 添加组件到实体中。
+     * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
+     */
+    public void addComponent(EcsComponent component) {
+        addComponent(ComponentType.additive(world, component.getClass()), component);
+    }
+
+    /**
+     * 从实体中移除指定类型的组件。
+     * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
+     */
     public void removeComponent(ComponentType<?> componentType) {
         data.remove(componentType);
     }
 
     public boolean removeFromArchetype() {
         return getArchetype().removeEntity(this);
-    }
-
-    public void addComponent(EcsComponent component) {
-        addComponent(ComponentType.create(component.getClass()), component);
     }
 
     public int getType() {

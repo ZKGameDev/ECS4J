@@ -26,19 +26,18 @@ public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends Ecs
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         componentClass1 = (Class<T1>) parameterizedTypes[0];
         componentClass2 = (Class<T2>) parameterizedTypes[1];
-//        init(ecsWorld);
     }
 
     @Override
     protected void onInit() {
         List<ComponentType<?>> componentTypes = new ArrayList<>();
-        componentTypes.add(ComponentType.create(componentClass1));
-        componentTypes.add(ComponentType.create(componentClass2));
+        componentTypes.add(ComponentType.additive(getWorld(), componentClass1));
+        componentTypes.add(ComponentType.additive(getWorld(), componentClass2));
         if (!extraRequirementComponent.isEmpty()) {
             componentTypes.addAll(extraRequirementComponent);
         }
-        componentTypes.add(ComponentType.subtractive(DespawningComponent.class));
-        componentTypes.add(ComponentType.create(InitializedComponent.class));
+        componentTypes.add(ComponentType.subtractive(getWorld(), DespawningComponent.class));
+        componentTypes.add(ComponentType.additive(getWorld(), InitializedComponent.class));
         entityGroup = getOrAddEntityGroup(componentTypes);
     }
 
@@ -46,8 +45,8 @@ public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends Ecs
     @Override
     protected void onUpdate() {
         for (Entity entity : entityGroup.getEntityList()) {
-            ComponentType<T1> componentType1 = ComponentType.create(componentClass1);
-            ComponentType<T2> componentType2 = ComponentType.create(componentClass2);
+            ComponentType<T1> componentType1 = ComponentType.additive(getWorld(), componentClass1);
+            ComponentType<T2> componentType2 = ComponentType.additive(getWorld(), componentClass2);
             entity.assertContainComponent(componentType1);
             entity.assertContainComponent(componentType2);
             update(entity, entity.getComponent(componentType1), entity.getComponent(componentType2));

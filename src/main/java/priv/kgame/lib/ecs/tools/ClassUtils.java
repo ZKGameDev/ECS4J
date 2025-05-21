@@ -56,6 +56,13 @@ public class ClassUtils {
                     classes.addAll(getClassesFromJar(resourcePath, packageName));
                 } else {
                     classes.addAll(getClassesFromDirectory(resourcePath, packageName));
+
+                    // 添加对测试目录的扫描
+                    String testPath = resourcePath.replace("main/java", "test/java");
+                    File testDir = new File(testPath);
+                    if (testDir.exists()) {
+                        classes.addAll(getClassesFromDirectory(testPath, packageName));
+                    }
                 }
             } catch (URISyntaxException e) {
                 logger.warn("URL {} to URI failed!", resource, e);

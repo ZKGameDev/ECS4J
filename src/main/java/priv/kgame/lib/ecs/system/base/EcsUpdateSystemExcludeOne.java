@@ -27,11 +27,11 @@ public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends 
     @Override
     protected void onInit() {
         List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(ComponentType.subtractive(entityClass));
+        typeList.add(ComponentType.subtractive(getWorld(), entityClass));
         if (!extraRequirementComponent.isEmpty()) {
             typeList.addAll(extraRequirementComponent);
         }
-        typeList.add(ComponentType.subtractive(DespawningComponent.class));
+        typeList.add(ComponentType.subtractive(getWorld(), DespawningComponent.class));
         entityGroup = getOrAddEntityGroup(typeList);
     }
 

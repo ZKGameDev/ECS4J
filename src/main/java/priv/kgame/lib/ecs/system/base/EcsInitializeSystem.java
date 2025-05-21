@@ -12,8 +12,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+//todo 存在的意义
 public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSystem {
-    private static class SystemState implements EcsComponent {}
+    public static class SystemState implements EcsComponent {}
     final private Class<T> entityClass;
     EntityGroup group;
     private final List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
@@ -28,11 +29,11 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSys
     @Override
     protected void onInit() {
         List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(ComponentType.create(entityClass));
+        typeList.add(ComponentType.additive(getWorld(), entityClass));
         if (!extraRequirementComponent.isEmpty()) {
             typeList.addAll(extraRequirementComponent);
         }
-        typeList.add(ComponentType.subtractive(SystemState.class));
+        typeList.add(ComponentType.subtractive(getWorld(), SystemState.class));
         group = getOrAddEntityGroup(typeList);
         setAlwaysUpdateSystem(true);
     }
@@ -42,7 +43,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSys
     protected void onUpdate() {
         List<Entity> entityList = group.getEntityList();
         for (Entity entity : entityList) {
-            ComponentType<T> componentType = ComponentType.create(entityClass);
+            ComponentType<T> componentType = ComponentType.additive(getWorld(), entityClass);
             entity.assertContainComponent(componentType);
             if (onInitialize(entity, (T)(entity.getData().get(componentType)))) {
                 getWorld().addComponent(entity, new SystemState());
@@ -51,7 +52,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSys
     }
 
     protected void addExtraRequireComponent(Class<? extends EcsComponent> klass) {
-        extraRequirementComponent.add(ComponentType.create(klass));
+        extraRequirementComponent.add(ComponentType.additive(getWorld(), klass));
     }
 
     public abstract boolean onInitialize(Entity entity, T data);

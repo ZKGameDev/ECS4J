@@ -1,0 +1,23 @@
+package priv.kgame.lib.ecs.test.a.system;
+
+import priv.kgame.lib.ecs.EcsWorld;
+import priv.kgame.lib.ecs.test.a.group.SysGroupSpawn;
+import priv.kgame.lib.ecs.component.base.InitializedComponent;
+import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
+import priv.kgame.lib.ecs.system.base.EcsInitializeSystem;
+import priv.kgame.lib.ecs.test.a.component.ComponentA1;
+
+@UpdateInGroup(SysGroupSpawn.class)
+public class SystemSpawnA1 extends EcsInitializeSystem<ComponentA1> {
+    public SystemSpawnA1(EcsWorld ecsWorld) {
+        super(ecsWorld);
+    }
+
+    @Override
+    public boolean onInitialize(Entity entity, ComponentA1 data) {
+        System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
+        getWorld().addComponent(entity, InitializedComponent.generate());
+        return true;
+    }
+}

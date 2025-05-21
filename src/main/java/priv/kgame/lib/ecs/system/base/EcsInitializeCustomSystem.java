@@ -30,11 +30,11 @@ public abstract class EcsInitializeCustomSystem<T extends EcsComponent, C extend
     @Override
     protected void onInit() {
         List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(ComponentType.create(entityClass));
+        typeList.add(ComponentType.additive(getWorld(), entityClass));
         if (!extraRequirementComponent.isEmpty()) {
             typeList.addAll(extraRequirementComponent);
         }
-        typeList.add(ComponentType.subtractive(systemState));
+        typeList.add(ComponentType.subtractive(getWorld(), systemState));
         group = getOrAddEntityGroup(typeList);
         setAlwaysUpdateSystem(true);
     }
@@ -44,7 +44,7 @@ public abstract class EcsInitializeCustomSystem<T extends EcsComponent, C extend
     protected void onUpdate() {
         List<Entity> entityList = group.getEntityList();
         for (Entity entity : entityList) {
-            ComponentType<T> componentType = ComponentType.create(entityClass);
+            ComponentType<T> componentType = ComponentType.additive(getWorld(), entityClass);
             entity.assertContainComponent(componentType);
             if (onInitialize(entity, (T)(entity.getData().get(componentType)))) {
                 try {
@@ -58,7 +58,7 @@ public abstract class EcsInitializeCustomSystem<T extends EcsComponent, C extend
     }
 
     protected void addExtraRequireComponent(Class<? extends EcsComponent> klass) {
-        extraRequirementComponent.add(ComponentType.create(klass));
+        extraRequirementComponent.add(ComponentType.additive(getWorld(), klass));
     }
 
     public abstract boolean onInitialize(Entity entity, T data);
