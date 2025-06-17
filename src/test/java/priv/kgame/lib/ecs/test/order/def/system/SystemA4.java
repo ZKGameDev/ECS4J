@@ -1,15 +1,13 @@
-package priv.kgame.lib.ecs.test.a.system;
+package priv.kgame.lib.ecs.test.order.def.system;
 
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.test.a.group.SysGroupA;
+import priv.kgame.lib.ecs.test.order.def.group.SysGroupA;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
-import priv.kgame.lib.ecs.system.annotation.UpdateIntervalTime;
 import priv.kgame.lib.ecs.system.base.EcsUpdateSystemOne;
-import priv.kgame.lib.ecs.test.a.component.ComponentA4;
+import priv.kgame.lib.ecs.test.order.def.component.ComponentA4;
 
 @UpdateInGroup(SysGroupA.class)
-@UpdateIntervalTime(interval=0.5f)
 public class SystemA4 extends EcsUpdateSystemOne<ComponentA4> {
     public SystemA4(EcsWorld ecsWorld) {
         super(ecsWorld);

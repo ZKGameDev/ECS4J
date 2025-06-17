@@ -1,10 +1,10 @@
-package priv.kgame.lib.ecs.test.a.entity;
+package priv.kgame.lib.ecs.test.order.def.entity;
 
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityFactory;
 import priv.kgame.lib.ecs.entity.EntityFactoryAttribute;
-import priv.kgame.lib.ecs.test.a.component.*;
+import priv.kgame.lib.ecs.test.order.def.component.*;
 
 @EntityFactoryAttribute
 public class EntityAFactory implements EntityFactory {

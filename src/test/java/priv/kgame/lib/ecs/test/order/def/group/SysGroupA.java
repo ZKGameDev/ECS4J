@@ -1,4 +1,4 @@
-package priv.kgame.lib.ecs.test.a.group;
+package priv.kgame.lib.ecs.test.order.def.group;
 
 import priv.kgame.lib.ecs.system.EcsSystemGroup;
 

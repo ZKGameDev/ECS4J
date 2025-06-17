@@ -1,20 +1,23 @@
-package priv.kgame.lib.ecs.test;
+package priv.kgame.lib.ecs.test.order.def;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.test.a.group.SysGroupA;
-import priv.kgame.lib.ecs.test.a.group.SysGroupSpawn;
+import priv.kgame.lib.ecs.test.order.def.group.SysGroupA;
+import priv.kgame.lib.ecs.test.order.def.group.SysGroupSpawn;
 
-class EcsATest {
+/**
+ * System默认执行顺序测试用例
+ */
+class EcsDefaultOrderTest {
     private EcsWorld ecsWorld;
+    public static String data = "";
 
     @BeforeEach
     void setUp() {
-        // 在每个测试方法执行前都会执行这个方法
-        System.out.println("Setting up test...");
-        ecsWorld = new EcsWorld("priv.kgame.lib.ecs.test.a");
+        String packageName = EcsDefaultOrderTest.class.getPackage().getName();
+        ecsWorld = new EcsWorld(packageName);
         ecsWorld.registerSystemGroup(SysGroupSpawn.class);
         ecsWorld.registerSystemGroup(SysGroupA.class);
     }
@@ -26,15 +29,21 @@ class EcsATest {
         // 记录开始时间
         long startTime = System.currentTimeMillis();
         // 设置结束时间（1分钟后）
-        long endTime = startTime + 60000; // 60000ms = 1分钟
+        long endTime = startTime + 3300;
+        boolean destroy = false;
 
-        // 循环更新，直到达到1分钟
         while (System.currentTimeMillis() < endTime) {
+            System.out.println("=====Updating world in " + System.currentTimeMillis() + "=====");
             // 更新ECS世界
             ecsWorld.tryUpdate(System.currentTimeMillis());
-            
             // 等待33ms
             Thread.sleep(33);
+
+            if (System.currentTimeMillis() >= endTime - 330 && !destroy) {
+                destroy = true;
+                ecsWorld.requestDestroyEntity(entity);
+                System.out.println("destroy entity");
+            }
         }
 
         // 清理资源

@@ -9,7 +9,7 @@ import priv.kgame.lib.ecs.system.base.EcsUpdateSystemOne;
 import priv.kgame.lib.ecs.test.b.component.ComponentB2;
 
 @UpdateInGroup(SysGroupB.class)
-@UpdateIntervalTime(interval=0.2f)
+@UpdateIntervalTime(interval=0.33f)
 public class SystemB2 extends EcsUpdateSystemOne<ComponentB2> {
     public SystemB2(EcsWorld ecsWorld) {
         super(ecsWorld);

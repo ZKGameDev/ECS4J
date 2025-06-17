@@ -1,12 +1,12 @@
-package priv.kgame.lib.ecs.test.a.system;
+package priv.kgame.lib.ecs.test.order.def.system;
 
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.test.a.group.SysGroupSpawn;
+import priv.kgame.lib.ecs.test.order.def.group.SysGroupSpawn;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.system.base.EcsInitializeSystem;
-import priv.kgame.lib.ecs.test.a.component.ComponentA1;
+import priv.kgame.lib.ecs.test.order.def.component.ComponentA1;
 
 @UpdateInGroup(SysGroupSpawn.class)
 public class SystemSpawnA1 extends EcsInitializeSystem<ComponentA1> {
