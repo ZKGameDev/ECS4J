@@ -6,6 +6,7 @@ import priv.kgame.lib.ecs.component.ComponentAccessMode;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.component.EcsComponent;
+import priv.kgame.lib.ecs.component.base.DespawningComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityArchetype;
 import priv.kgame.lib.ecs.entity.EntityFactory;
@@ -36,6 +37,8 @@ public class EcsWorld implements Disposable {
 
     private final EcsClassScanner ecsClassScanner;
     private final EntityFactoryIndex entityFactoryIndex = new EntityFactoryIndex();
+    private final List<Entity> waitDestroyEntity = new ArrayList<>();
+    private Class<? extends EcsSystemGroup> currentSystemGroupClass;
 
     private static class EntityFactoryIndex {
         private final Map<Integer, EntityFactory> entityFactoryTypeIdIndex = new HashMap<>();
@@ -127,7 +130,19 @@ public class EcsWorld implements Disposable {
         return entity;
     }
 
-    public void destroyEntity(Entity entity) {
+    public void requestDestroyEntity(int entityIndex) {
+        Entity entity = getEntityByIndex(entityIndex);
+        if (entity != null) {
+            requestDestroyEntity(entity);
+        }
+    }
+
+    public void requestDestroyEntity(Entity entity) {
+        entity.addComponent(DespawningComponent.generate());
+        this.waitDestroyEntity.add(entity);
+    }
+
+    private void destroyEntity(Entity entity) {
         if (notExistEntity(entity)) {
             logger.warn("destroy entity failed! reason: entity not exist. index:{}", entity.getIndex());
             return;
@@ -157,8 +172,13 @@ public class EcsWorld implements Disposable {
     public void tryUpdate(long now) {
         setCurrentTime(now);
         for (EcsSystemGroup systemGroup : this.systemGroups) {
+            this.currentSystemGroupClass = systemGroup.getClass();
             systemGroup.tryUpdate();
         }
+        for (Entity waitDestroyEntity : this.waitDestroyEntity) {
+            destroyEntity(waitDestroyEntity);
+        }
+        this.waitDestroyEntity.clear();
     }
 
     public <T extends EcsComponent> T getComponent(int index, Class<T> compClass) {
@@ -417,5 +437,13 @@ public class EcsWorld implements Disposable {
             systemClassIndex.remove(klass);
             klass = klass.getSuperclass();
         }
+    }
+
+    /**
+     * 获取当前正在执行的SystemGroup
+     * @return 正在质学的SystemGroup的class
+     */
+    public Class<? extends EcsSystemGroup> getCurrentSystemGroupClass() {
+        return currentSystemGroupClass;
     }
 }

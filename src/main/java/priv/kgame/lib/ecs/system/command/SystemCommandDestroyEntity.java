@@ -18,6 +18,6 @@ public class SystemCommandDestroyEntity implements SystemCommand{
 
     @Override
     public void execute() {
-        ecsWorld.destroyEntity(entity);
+        ecsWorld.requestDestroyEntity(entity);
     }
 }
