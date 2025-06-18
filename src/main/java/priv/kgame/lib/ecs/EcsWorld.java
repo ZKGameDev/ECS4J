@@ -169,7 +169,15 @@ public class EcsWorld implements Disposable {
         this.systemGroups.add(systemGroup);
     }
 
+    /**
+     * 更新EcsWorld
+     * @param now 当前时间对应的时间戳，可以是逻辑时间也可以是真实时间。 该时间不能小于之前传入的时间
+     */
     public void tryUpdate(long now) {
+        if (currentTime >= now) {
+            logger.error("EcsWorld try update failed! reason:currentTime >= nowTime. currentTime:{} now:{}", currentTime, now);
+            return;
+        }
         setCurrentTime(now);
         for (EcsSystemGroup systemGroup : this.systemGroups) {
             this.currentSystemGroupClass = systemGroup.getClass();
