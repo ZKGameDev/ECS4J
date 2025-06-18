@@ -1,22 +1,22 @@
-package priv.kgame.lib.ecs.test.b.system;
+package priv.kgame.lib.ecs.test.interval.system;
 
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.test.b.group.SysGroupB;
+import priv.kgame.lib.ecs.test.interval.group.SysGroupInterval;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.system.annotation.UpdateIntervalTime;
 import priv.kgame.lib.ecs.system.base.EcsUpdateSystemOne;
-import priv.kgame.lib.ecs.test.b.component.ComponentB3;
+import priv.kgame.lib.ecs.test.interval.component.ComponentInterval3;
 
-@UpdateInGroup(SysGroupB.class)
+@UpdateInGroup(SysGroupInterval.class)
 @UpdateIntervalTime(interval=0.66f)
-public class SystemB3 extends EcsUpdateSystemOne<ComponentB3> {
-    public SystemB3(EcsWorld ecsWorld) {
+public class SystemInterval3 extends EcsUpdateSystemOne<ComponentInterval3> {
+    public SystemInterval3(EcsWorld ecsWorld) {
         super(ecsWorld);
     }
 
     @Override
-    protected void update(Entity entity, ComponentB3 component) {
+    protected void update(Entity entity, ComponentInterval3 component) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
     }
 } 

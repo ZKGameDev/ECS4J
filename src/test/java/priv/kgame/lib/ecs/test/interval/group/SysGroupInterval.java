@@ -1,8 +1,8 @@
-package priv.kgame.lib.ecs.test.b.group;
+package priv.kgame.lib.ecs.test.interval.group;
 
 import priv.kgame.lib.ecs.system.EcsSystemGroup;
 
-public class SysGroupSpawnB extends EcsSystemGroup {
+public class SysGroupInterval extends EcsSystemGroup {
     @Override
     protected void onStart() {
     }
