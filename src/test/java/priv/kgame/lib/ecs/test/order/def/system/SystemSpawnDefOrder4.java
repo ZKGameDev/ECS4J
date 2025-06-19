@@ -4,12 +4,15 @@ import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
-import priv.kgame.lib.ecs.system.base.EcsInitializeCustomSystem;
+import priv.kgame.lib.ecs.system.base.EcsInitializeSystem;
 import priv.kgame.lib.ecs.test.order.def.component.ComponentA1;
 import priv.kgame.lib.ecs.test.order.def.group.SysGroupSpawn;
 
+import java.util.Collection;
+import java.util.List;
+
 @UpdateInGroup(SysGroupSpawn.class)
-public class SystemSpawnDefOrder4 extends EcsInitializeCustomSystem<ComponentA1, SystemSpawnDefOrder4.Initialized> {
+public class SystemSpawnDefOrder4 extends EcsInitializeSystem<ComponentA1> {
     public static class Initialized implements EcsComponent {}
 
     public SystemSpawnDefOrder4(EcsWorld ecsWorld) {
@@ -21,5 +24,20 @@ public class SystemSpawnDefOrder4 extends EcsInitializeCustomSystem<ComponentA1,
         System.out.println(this.getClass().getSimpleName() + " update at: " + System.currentTimeMillis());
         data.data += "o4";
         return true;
+    }
+
+    @Override
+    public Collection<Class<? extends EcsComponent>> getExtraRequirementComponent() {
+        return List.of();
+    }
+
+    @Override
+    public Collection<Class<? extends EcsComponent>> getExtraExcludeComponent() {
+        return List.of();
+    }
+
+    @Override
+    public SystemInitFinishSingle getInitFinishSingle() {
+        return new SystemInitFinishSingle() {};
     }
 }

@@ -44,7 +44,7 @@ class EcsDefaultOrderTest {
                     inited = true;
                     ComponentA2 a2 = entity.getComponent(ComponentA2.class);
                     System.out.println("update result: " + a2.data);
-                    assert a2.data.equals("o1o2o4a1a2a3a4");
+                    assert a2.data.equals("o1o2o3o4a1a2a3a4");
                 } else {
                     ComponentA2 a2 = entity.getComponent(ComponentA2.class);
                     System.out.println("update result: " + a2.data);
