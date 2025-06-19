@@ -13,9 +13,6 @@ public class EntityAFactory implements EntityFactory {
         Entity entity = ecsWorld.createEntity(typeId());
         ecsWorld.addComponent(entity, new ComponentA1());
         ecsWorld.addComponent(entity, new ComponentA2());
-        ecsWorld.addComponent(entity, new ComponentA3());
-        ecsWorld.addComponent(entity, new ComponentA4());
-        ecsWorld.addComponent(entity, new ComponentA5());
         return entity;
     }
 

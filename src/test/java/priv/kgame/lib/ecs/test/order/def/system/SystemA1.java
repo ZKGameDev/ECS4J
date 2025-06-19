@@ -16,5 +16,6 @@ public class SystemA1 extends EcsUpdateSystemOne<ComponentA1> {
     @Override
     protected void update(Entity entity, ComponentA1 component) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
+        component.data += "a1";
     }
 }

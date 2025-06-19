@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.test.order.def.component.ComponentA1;
+import priv.kgame.lib.ecs.test.order.def.component.ComponentA2;
 import priv.kgame.lib.ecs.test.order.def.group.SysGroupA;
 import priv.kgame.lib.ecs.test.order.def.group.SysGroupSpawn;
 
@@ -30,12 +32,27 @@ class EcsDefaultOrderTest {
         long startTime = System.currentTimeMillis();
         // 设置结束时间（1分钟后）
         long endTime = startTime + 3300;
+        boolean inited = false;;
         boolean destroy = false;
 
         while (System.currentTimeMillis() < endTime) {
             System.out.println("=====Updating world in " + System.currentTimeMillis() + "=====");
             // 更新ECS世界
             ecsWorld.tryUpdate(System.currentTimeMillis());
+            if (!destroy) {
+                if (!inited) {
+                    inited = true;
+                    ComponentA2 a2 = entity.getComponent(ComponentA2.class);
+                    System.out.println("update result: " + a2.data);
+                    assert a2.data.equals("o1o2o4a1a2a3a4");
+                } else {
+                    ComponentA2 a2 = entity.getComponent(ComponentA2.class);
+                    System.out.println("update result: " + a2.data);
+                    assert a2.data.equals("a1a2a3a4");
+                }
+                ComponentA1 a1 = entity.getComponent(ComponentA1.class);
+                a1.data = "";
+            }
             // 等待33ms
             Thread.sleep(33);
 

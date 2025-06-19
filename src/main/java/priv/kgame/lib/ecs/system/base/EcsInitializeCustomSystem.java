@@ -61,5 +61,19 @@ public abstract class EcsInitializeCustomSystem<T extends EcsComponent, C extend
         extraRequirementComponent.add(ComponentType.additive(getWorld(), klass));
     }
 
+    @Override
+    protected void onStart() {
+
+    }
+
+    @Override
+    protected void onStop() {
+
+    }
+
+    @Override
+    protected void onDestroy() {
+
+    }
     public abstract boolean onInitialize(Entity entity, T data);
 }
