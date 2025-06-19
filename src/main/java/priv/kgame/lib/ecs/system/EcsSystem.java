@@ -21,6 +21,10 @@ public abstract class EcsSystem implements Disposable {
     private long updateInterval = 0;
     private long nextUpdateTime = -1000;
 
+    public EcsSystem(EcsWorld ecsWorld) {
+        this.ecsWorld = ecsWorld;
+    }
+
     public long getUpdateInterval() {
         return updateInterval;
     }
@@ -82,11 +86,10 @@ public abstract class EcsSystem implements Disposable {
         entityGroups.clear();
     }
 
-    public void init(EcsWorld ecsWorld) {
-        init(ecsWorld, 0);
+    public void init() {
+        init(0);
     }
-
-    public void init(EcsWorld ecsWorld, int createdOrder) {
+    public void init(int createdOrder) {
         this.ecsWorld = ecsWorld;
         this.systemCreateOrder = createdOrder;
         this.waitUpdateCommand = new SystemCommandBuffer(ecsWorld);

@@ -21,10 +21,9 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsSyst
 
     @SuppressWarnings("unchecked")
     public EcsUpdateSystemOne(EcsWorld ecsWorld) {
-        super();
+        super(ecsWorld);
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         entityClass = (Class<T>) parameterizedTypes[0];
-//        init(ecsWorld);
     }
 
     @Override

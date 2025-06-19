@@ -22,7 +22,7 @@ public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends Ecs
 
     @SuppressWarnings("unchecked")
     public EcsUpdateSystemTwo(EcsWorld ecsWorld) {
-        super();
+        super(ecsWorld);
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         componentClass1 = (Class<T1>) parameterizedTypes[0];
         componentClass2 = (Class<T2>) parameterizedTypes[1];

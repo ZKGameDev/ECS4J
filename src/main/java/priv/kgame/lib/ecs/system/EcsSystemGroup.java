@@ -11,7 +11,6 @@ import priv.kgame.lib.ecs.system.struct.SystemDependency;
 
 import java.util.*;
 
-//todo 是否要取消默认构造函数，全部改为带EcsWorld参数的构造函数
 public abstract class EcsSystemGroup extends EcsSystem{
     private static final Logger logger = LogManager.getLogger(EcsSystemGroup.class);
     private boolean needSortSystem = false;
@@ -19,8 +18,8 @@ public abstract class EcsSystemGroup extends EcsSystem{
     protected final List<EcsSystem> systemsToRemove = new ArrayList<>();
     private final Map<Class<?>, Integer> lookupMap = new HashMap<>();
 
-    public EcsSystemGroup() {
-        super();
+    public EcsSystemGroup(EcsWorld world) {
+        super(world);
     }
 
     @Override

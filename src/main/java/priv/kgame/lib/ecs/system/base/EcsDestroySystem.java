@@ -18,10 +18,9 @@ public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsSystem
 
     @SuppressWarnings("unchecked")
     public EcsDestroySystem(EcsWorld ecsWorld){
-        super();
+        super(ecsWorld);
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         genericClass = (Class<T>) parameterizedTypes[0];
-//        init(ecsWorld);
     }
 
     @Override

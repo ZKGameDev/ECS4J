@@ -1,8 +1,13 @@
 package priv.kgame.lib.ecs.system.base;
 
+import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.system.EcsSystem;
 
 public abstract class EcsUpdateSystemSingle extends EcsSystem {
+    public EcsUpdateSystemSingle(EcsWorld ecsWorld) {
+        super(ecsWorld);
+    }
+
     @Override
     protected void onInit() {
         super.setAlwaysUpdateSystem(true);

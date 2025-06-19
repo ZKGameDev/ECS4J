@@ -20,11 +20,10 @@ public abstract class EcsInitializeCustomSystem<T extends EcsComponent, C extend
     private final List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
     @SuppressWarnings("unchecked")
     public EcsInitializeCustomSystem(EcsWorld ecsWorld) {
-        super();
+        super(ecsWorld);
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         entityClass = (Class<T>) parameterizedTypes[0];
         systemState = (Class<C>) parameterizedTypes[1];
-//        init(ecsWorld);
     }
 
     @Override

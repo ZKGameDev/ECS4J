@@ -26,12 +26,11 @@ public abstract class EcsUpdateSystemThree <T1 extends EcsComponent,
 
     @SuppressWarnings("unchecked")
     public EcsUpdateSystemThree(EcsWorld ecsWorld) {
-        super();
+        super(ecsWorld);
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         componentClass1 = (Class<T1>) parameterizedTypes[0];
         componentClass2 = (Class<T2>) parameterizedTypes[1];
         componentClass3 = (Class<T3>) parameterizedTypes[2];
-//        init(ecsWorld);
     }
 
     @Override

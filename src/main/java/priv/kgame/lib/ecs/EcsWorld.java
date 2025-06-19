@@ -61,6 +61,7 @@ public class EcsWorld implements Disposable {
         private EntityFactory get(int typeId) {
             return entityFactoryTypeIdIndex.get(typeId);
         }
+
         private EntityFactory get(Class<? extends EntityFactory> clazz) {
             return entityFactoryClassIndex.get(clazz);
         }
@@ -171,6 +172,7 @@ public class EcsWorld implements Disposable {
 
     /**
      * 更新EcsWorld
+     *
      * @param now 当前时间对应的时间戳，可以是逻辑时间也可以是真实时间。 该时间不能小于之前传入的时间
      */
     public void tryUpdate(long now) {
@@ -270,11 +272,7 @@ public class EcsWorld implements Disposable {
             return (T) system;
         }
         try {
-            if (EcsSystemGroup.class.isAssignableFrom(systemClass)) {
-                system = systemClass.getConstructor().newInstance();
-            } else {
-                system = systemClass.getConstructor(this.getClass()).newInstance(this);
-            }
+            system = systemClass.getConstructor(this.getClass()).newInstance(this);
             system.setSystemCreateOrder(systemNextIndex++);
             UpdateIntervalTime timeIntervalAnno = systemClass.getAnnotation(UpdateIntervalTime.class);
             if (null != timeIntervalAnno) {
@@ -289,7 +287,7 @@ public class EcsWorld implements Disposable {
                     klass = (Class<? extends EcsSystem>) klass.getSuperclass();
                 }
             }
-            system.init(this, systemNextIndex++);
+            system.init(systemNextIndex++);
             systems.add(system);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
@@ -449,6 +447,7 @@ public class EcsWorld implements Disposable {
 
     /**
      * 获取当前正在执行的SystemGroup
+     *
      * @return 正在质学的SystemGroup的class
      */
     public Class<? extends EcsSystemGroup> getCurrentSystemGroupClass() {

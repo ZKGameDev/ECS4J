@@ -1,5 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
+import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DespawningComponent;
@@ -18,8 +19,8 @@ public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends 
     protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    public EcsUpdateSystemExcludeOne() {
-        super();
+    public EcsUpdateSystemExcludeOne(EcsWorld world) {
+        super(world);
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         entityClass = (Class<T>) parameterizedTypes[0];
     }
