@@ -23,21 +23,19 @@ public class EcsWorld implements Disposable {
     private static final Logger logger = LogManager.getLogger(EcsWorld.class);
 
     private long currentTime;
-    private final EntityArchetype emptyArchetype = new EntityArchetype();
+    private final EcsClassScanner ecsClassScanner;
+
     private final List<EntityArchetype> entityArchetypes = new ArrayList<>();
     private final List<EntityGroup> systemNeedEntityGroups = new ArrayList<>();
-
     private int entitiesNextIndex = 1;
     private final Map<Integer, Entity> entityIndex = new HashMap<>();
+    private final EntityFactoryIndex entityFactoryIndex = new EntityFactoryIndex();
+    private final List<Entity> waitDestroyEntity = new ArrayList<>();
 
     private int systemNextIndex = 1;
     private final Map<Class<?>, EcsSystem> systemClassIndex = new HashMap<>();
     private final Set<EcsSystem> systems = new TreeSet<>(Comparator.comparingInt(EcsSystem::getSystemCreateOrder));
     private final List<EcsSystemGroup> systemGroups = new ArrayList<>();
-
-    private final EcsClassScanner ecsClassScanner;
-    private final EntityFactoryIndex entityFactoryIndex = new EntityFactoryIndex();
-    private final List<Entity> waitDestroyEntity = new ArrayList<>();
     private Class<? extends EcsSystemGroup> currentSystemGroupClass;
 
     private static class EntityFactoryIndex {
@@ -143,20 +141,6 @@ public class EcsWorld implements Disposable {
         this.waitDestroyEntity.add(entity);
     }
 
-    private void destroyEntity(Entity entity) {
-        if (notExistEntity(entity)) {
-            logger.warn("destroy entity failed! reason: entity not exist. index:{}", entity.getIndex());
-            return;
-        }
-        boolean success = entity.removeFromArchetype();
-        if (entityIndex.remove(entity.getIndex()) != null) {
-            success = true;
-        }
-        if (success) {
-            entity.dispose();
-        }
-    }
-
     public Entity getEntityByIndex(int index) {
         return entityIndex.get(index);
     }
@@ -171,14 +155,34 @@ public class EcsWorld implements Disposable {
     }
 
     /**
-     * 更新EcsWorld
+     * 执行ECS世界的更新循环,每次更新等于一次逻辑调用
+     * <p>
+     * 该方法是ECS系统的核心更新方法，负责执行以下操作：
+     * 1. 验证时间戳的有效性（必须递增）
+     * 2. 更新当前时间
+     * 3. 按顺序执行所有SystemGroup的更新
+     * 4. 处理待销毁的实体
+     * <p>
+     * 执行流程：
+     * - 首先检查时间戳是否有效（now > currentTime）
+     * - 更新内部时间戳
+     * - 遍历所有SystemGroup，设置当前SystemGroup并执行更新
+     * - 销毁所有标记为待销毁的实体
+     * - 清空待销毁实体列表
+     * <p>
+     * 注意事项：
+     * - 时间戳必须严格递增，否则将会抛出异常
+     * - SystemGroup的执行顺序由注册顺序决定
+     * - 实体销毁操作在所有SystemGroup更新完成后执行
      *
-     * @param now 当前时间对应的时间戳，可以是逻辑时间也可以是真实时间。 该时间不能小于之前传入的时间
+     * @param now 当前时间戳（毫秒），可以是逻辑时间或真实时间，必须大于上次传入的时间
+     * @throws IllegalArgumentException 当时间戳无效时（now <= currentTime）抛出异常
      */
     public void tryUpdate(long now) {
         if (currentTime >= now) {
-            logger.error("EcsWorld try update failed! reason:currentTime >= nowTime. currentTime:{} now:{}", currentTime, now);
-            return;
+            throw new IllegalArgumentException(String.format(
+                "EcsWorld try update failed! reason: currentTime >= nowTime. currentTime: %d, now: %d", 
+                currentTime, now));
         }
         setCurrentTime(now);
         for (EcsSystemGroup systemGroup : this.systemGroups) {
@@ -306,7 +310,38 @@ public class EcsWorld implements Disposable {
 
     public void destroySystem(EcsSystem system) {
         if (systemClassIndex.containsKey(system.getClass())) {
-            removeSystem(system);
+            if (!systems.remove(system)) {
+                return;
+            }
+            Class<?> klass = system.getClass();
+            while (!klass.equals(EcsSystem.class)) {
+                EcsSystem ecsSystem = systemClassIndex.remove(klass);
+                klass = klass.getSuperclass();
+                ecsSystem.destroy();
+            }
+        }
+    }
+
+    /**
+     * 获取当前正在执行的SystemGroup
+     *
+     * @return 正在质学的SystemGroup的class
+     */
+    public Class<? extends EcsSystemGroup> getCurrentSystemGroupClass() {
+        return currentSystemGroupClass;
+    }
+
+    private void destroyEntity(Entity entity) {
+        if (notExistEntity(entity)) {
+            logger.warn("destroy entity failed! reason: entity not exist. index:{}", entity.getIndex());
+            return;
+        }
+        boolean success = entity.removeFromArchetype();
+        if (entityIndex.remove(entity.getIndex()) != null) {
+            success = true;
+        }
+        if (success) {
+            entity.dispose();
         }
     }
 
@@ -342,16 +377,14 @@ public class EcsWorld implements Disposable {
     }
 
     private EntityArchetype getExistingArchetype(Collection<ComponentType<?>> types) {
-        if (null == types || types.isEmpty()) {
-            return emptyArchetype;
-        } else {
+        if (null != types && !types.isEmpty()) {
             for (EntityArchetype entityArchetype : entityArchetypes) {
                 if (entityArchetype.isSame(types)) {
                     return entityArchetype;
                 }
             }
-            return null;
         }
+        return null;
     }
 
     private EntityArchetype createArchetype(Collection<ComponentType<?>> types) {
@@ -432,25 +465,5 @@ public class EcsWorld implements Disposable {
         newArchetype.addEntity(entity);
         oldArchetype.removeEntity(entity);
         entity.setArchetype(newArchetype);
-    }
-
-    private void removeSystem(EcsSystem system) {
-        if (!systems.remove(system)) {
-            return;
-        }
-        Class<?> klass = system.getClass();
-        while (!klass.equals(EcsSystem.class)) {
-            systemClassIndex.remove(klass);
-            klass = klass.getSuperclass();
-        }
-    }
-
-    /**
-     * 获取当前正在执行的SystemGroup
-     *
-     * @return 正在质学的SystemGroup的class
-     */
-    public Class<? extends EcsSystemGroup> getCurrentSystemGroupClass() {
-        return currentSystemGroupClass;
     }
 }
