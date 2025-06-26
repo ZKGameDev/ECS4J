@@ -18,10 +18,6 @@ public abstract class EcsSystemGroup extends EcsSystem{
     protected final List<EcsSystem> systemsToRemove = new ArrayList<>();
     private final Map<Class<?>, Integer> lookupMap = new HashMap<>();
 
-    public EcsSystemGroup(EcsWorld world) {
-        super(world);
-    }
-
     @Override
     public void onInit() {
         autoAddSystemToUpdateList();

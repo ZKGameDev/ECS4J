@@ -1,9 +1,8 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.component.base.DespawningComponent;
+import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityGroup;
@@ -14,6 +13,27 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 五组件更新系统基类
+ * <p>
+ * 该类继承自EcsSystem，用于处理同时包含5个指定组件的实体的更新逻辑。
+ * 特点：
+ * 1. 系统会自动处理同时包含5个泛型参数指定组件的实体
+ * 2. 系统会自动排除包含DestroyingComponent的实体
+ * 3. 系统只处理包含InitializedComponent的实体
+ * 4. 可以通过extraRequirementComponent添加额外的组件要求
+ * <p>
+ * 工作流程：
+ * 1. 系统会查找同时包含5个指定组件、InitializedComponent，且不包含DestroyingComponent的实体
+ * 2. 对每个实体调用update方法，传入实体和5个组件实例
+ * 3. 在update方法中实现具体的更新逻辑
+ * <p>
+ * @param <T1> 第一个必需的组件类型
+ * @param <T2> 第二个必需的组件类型
+ * @param <T3> 第三个必需的组件类型
+ * @param <T4> 第四个必需的组件类型
+ * @param <T5> 第五个必需的组件类型
+ */
 public abstract class EcsUpdateSystemFive<T1 extends EcsComponent,
         T2 extends EcsComponent, T3 extends EcsComponent, T4 extends EcsComponent, T5 extends EcsComponent> extends EcsSystem {
 
@@ -27,8 +47,7 @@ public abstract class EcsUpdateSystemFive<T1 extends EcsComponent,
     private EntityGroup entityGroup;
 
     @SuppressWarnings("unchecked")
-    public EcsUpdateSystemFive(EcsWorld ecsWorld) {
-        super(ecsWorld);
+    public EcsUpdateSystemFive() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         componentClass1 = (Class<T1>) parameterizedTypes[0];
         componentClass2 = (Class<T2>) parameterizedTypes[1];
@@ -48,7 +67,7 @@ public abstract class EcsUpdateSystemFive<T1 extends EcsComponent,
         if (!extraRequirementComponent.isEmpty()) {
             componentTypes.addAll(extraRequirementComponent);
         }
-        componentTypes.add(ComponentType.subtractive(getWorld(), DespawningComponent.class));
+        componentTypes.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
         componentTypes.add(ComponentType.additive(getWorld(), InitializedComponent.class));
         entityGroup = getOrAddEntityGroup(componentTypes);
     }

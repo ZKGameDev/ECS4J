@@ -6,7 +6,7 @@ import priv.kgame.lib.ecs.component.ComponentAccessMode;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.component.base.DespawningComponent;
+import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityArchetype;
 import priv.kgame.lib.ecs.entity.EntityFactory;
@@ -139,7 +139,7 @@ public class EcsWorld implements Disposable {
     }
 
     public void requestDestroyEntity(Entity entity) {
-        entity.addComponent(DespawningComponent.generate());
+        entity.addComponent(DestroyingComponent.generate());
         this.waitDestroyEntity.add(entity);
     }
 
@@ -272,7 +272,7 @@ public class EcsWorld implements Disposable {
             return (T) system;
         }
         try {
-            system = systemClass.getConstructor(this.getClass()).newInstance(this);
+            system = systemClass.getConstructor().newInstance();
             system.setSystemCreateOrder(systemNextIndex++);
             UpdateIntervalTime timeIntervalAnno = systemClass.getAnnotation(UpdateIntervalTime.class);
             if (null != timeIntervalAnno) {
@@ -287,7 +287,7 @@ public class EcsWorld implements Disposable {
                     klass = (Class<? extends EcsSystem>) klass.getSuperclass();
                 }
             }
-            system.init(systemNextIndex++);
+            system.init(this, systemNextIndex++);
             systems.add(system);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {

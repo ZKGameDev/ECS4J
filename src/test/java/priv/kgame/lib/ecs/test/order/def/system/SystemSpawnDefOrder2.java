@@ -1,6 +1,5 @@
 package priv.kgame.lib.ecs.test.order.def.system;
 
-import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
@@ -13,10 +12,6 @@ import java.util.List;
 
 @UpdateInGroup(SysGroupSpawn.class)
 public class SystemSpawnDefOrder2 extends EcsInitializeSystem<ComponentA1> {
-
-    public SystemSpawnDefOrder2(EcsWorld ecsWorld) {
-        super(ecsWorld);
-    }
 
     @Override
     public boolean onInitialize(Entity entity, ComponentA1 data) {

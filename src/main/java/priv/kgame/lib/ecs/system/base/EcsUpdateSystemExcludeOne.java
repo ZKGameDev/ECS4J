@@ -1,9 +1,8 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.component.base.DespawningComponent;
+import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityGroup;
 import priv.kgame.lib.ecs.system.EcsSystem;
@@ -13,14 +12,25 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 排除单个组件的更新系统基类
+ * <p>
+ * 该类继承自EcsSystem，用于实现排除特定组件的实体更新系统。
+ * 特点：
+ * 1. 系统会自动排除泛型参数指定的组件类型
+ * 2. 系统会自动排除DespawningComponent组件
+ * 3. 可以通过extraRequirementComponent添加额外的组件要求
+ * 4. 每次更新时会遍历所有符合条件的实体，并对每个实体执行update方法
+ * <p>
+ * @param <T> 要排除的组件类型
+ */
 public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends EcsSystem {
     private final Class<T> entityClass;
     private EntityGroup entityGroup;
     protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    public EcsUpdateSystemExcludeOne(EcsWorld world) {
-        super(world);
+    public EcsUpdateSystemExcludeOne() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
         entityClass = (Class<T>) parameterizedTypes[0];
     }
@@ -32,7 +42,7 @@ public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends 
         if (!extraRequirementComponent.isEmpty()) {
             typeList.addAll(extraRequirementComponent);
         }
-        typeList.add(ComponentType.subtractive(getWorld(), DespawningComponent.class));
+        typeList.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
         entityGroup = getOrAddEntityGroup(typeList);
     }
 
