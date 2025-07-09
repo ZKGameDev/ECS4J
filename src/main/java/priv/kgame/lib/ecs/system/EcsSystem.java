@@ -38,7 +38,7 @@ public abstract class EcsSystem implements Disposable {
     }
 
     public void tryUpdate() {
-        if (ecsWorld.getCurrentTime() > nextUpdateTime) {
+        if (ecsWorld.getCurrentTime() >= nextUpdateTime) {
             if (shouldRunSystem()) {
                 if (!started) {
                     started = true;

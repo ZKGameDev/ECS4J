@@ -22,7 +22,7 @@ import java.util.*;
 public class EcsWorld implements Disposable {
     private static final Logger logger = LogManager.getLogger(EcsWorld.class);
 
-    private long currentTime;
+    private long currentTime = -1;
     private final EcsClassScanner ecsClassScanner;
 
     private final List<EntityArchetype> entityArchetypes = new ArrayList<>();
