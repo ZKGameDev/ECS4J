@@ -14,7 +14,7 @@ public class Entity implements Disposable {
     private final EcsWorld world;
     private final int index;
     private final int type;
-    private final Map<ComponentType<? extends EcsComponent>, EcsComponent> data = new HashMap<>();
+    private final Map<Class<? extends EcsComponent>, EcsComponent> data = new HashMap<>();
     private EntityArchetype archetype;
 
     public Entity(EcsWorld ecsWorld, int index, int type, EntityArchetype archetype) {
@@ -24,22 +24,17 @@ public class Entity implements Disposable {
         this.archetype = archetype;
     }
 
-    public Map<ComponentType<?>, EcsComponent> getData() {
-        return data;
+    public <T extends EcsComponent> T getComponent(ComponentType<T> componentType) {
+        return getComponent(componentType.getType());
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T extends EcsComponent> T getComponent(ComponentType<T> componentType) {
-        EcsComponent ecsComponent = data.get(componentType);
+    public <T extends EcsComponent> T getComponent(Class<T> componentClass) {
+        EcsComponent ecsComponent = data.get(componentClass);
         if (null == ecsComponent) {
             return null;
         }
         return (T)ecsComponent;
-    }
-
-    public <T extends EcsComponent> T getComponent(Class<T> componentClass) {
-        ComponentType<T> componentType = ComponentType.additive(world, componentClass);
-        return getComponent(componentType);
     }
 
     @Override
@@ -91,7 +86,7 @@ public class Entity implements Disposable {
     }
 
     public void assertContainComponent(ComponentType<?> componentType) {
-        if (!getData().containsKey(componentType)) {
+        if (getComponent(componentType) == null) {
             throw new RuntimeException(String.format("EcsEndSystem update failed! %s not exist in entity. please check code", componentType.getType()));
         }
     }
@@ -101,25 +96,21 @@ public class Entity implements Disposable {
     }
 
     public boolean hasComponent(Class<? extends EcsComponent> klass) {
-        return hasComponent(ComponentType.additive(world, klass));
+        return data.containsKey(klass);
     }
     public boolean hasComponent(ComponentType<?> componentType) {
-        return data.containsKey(componentType);
+        return hasComponent(componentType.getType());
     }
 
     /**
      * 添加组件到实体中，并验证组件类型是否匹配。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void addComponent(ComponentType<?> componentType, EcsComponent component) {
-        if (!componentType.getType().equals(component.getClass())) {
-            throw new RuntimeException(String.format("EcsEndSystem addComponent failed! component %s not match ComponentType %S. please check code",
-                    component.getClass().getName(), componentType.getType().getName()));
-        }
-        if (data.containsKey(componentType)) {
+    public void addComponent(EcsComponent component) {
+        if (data.containsKey(component.getClass())) {
             return;
         }
-        data.put(componentType, component);
+        data.put(component.getClass(), component);
     }
 
     /**
@@ -127,15 +118,7 @@ public class Entity implements Disposable {
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
     public void addComponent(ComponentType<?> componentType) {
-        addComponent(componentType, componentType.generateComponentByDefaultConstructor());
-    }
-
-    /**
-     * 添加组件到实体中。
-     * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
-     */
-    public void addComponent(EcsComponent component) {
-        addComponent(ComponentType.additive(world, component.getClass()), component);
+        addComponent(componentType.generateComponentByDefaultConstructor());
     }
 
     /**
@@ -143,7 +126,7 @@ public class Entity implements Disposable {
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
     public void removeComponent(ComponentType<?> componentType) {
-        data.remove(componentType);
+        data.remove(componentType.getType());
     }
 
     public boolean removeFromArchetype() {
@@ -152,5 +135,9 @@ public class Entity implements Disposable {
 
     public int getType() {
         return type;
+    }
+
+    public EcsWorld getWorld() {
+        return world;
     }
 }

@@ -49,7 +49,7 @@ public class ComponentType<T extends EcsComponent> implements Comparable<Compone
         return Objects.hash(typeIndex);
     }
 
-    public Class<? extends EcsComponent> getType() {
+    public Class<T> getType() {
         return type;
     }
 

@@ -221,7 +221,7 @@ public class EcsWorld implements Disposable {
         Set<ComponentType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
         newTypes.add(componentType);
         updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
-        entity.addComponent(componentType, component);
+        entity.addComponent(component);
     }
 
     public void removeComponent(Entity entity, EcsComponent component) {
