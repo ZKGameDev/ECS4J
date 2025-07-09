@@ -6,9 +6,9 @@ import java.util.Objects;
 import java.util.TreeSet;
 
 public class ComponentTypeQuery implements Disposable {
-    private final TreeSet<ComponentType<?>> any = new TreeSet<>(ComponentType::compareTo);
-    private final TreeSet<ComponentType<?>> none = new TreeSet<>(ComponentType::compareTo);
-    private final TreeSet<ComponentType<?>> all = new TreeSet<>(ComponentType::compareTo);
+    private final TreeSet<ComponentMatchType<?>> any = new TreeSet<>(ComponentMatchType::compareTo);
+    private final TreeSet<ComponentMatchType<?>> none = new TreeSet<>(ComponentMatchType::compareTo);
+    private final TreeSet<ComponentMatchType<?>> all = new TreeSet<>(ComponentMatchType::compareTo);
 
     @Override
     public void dispose() {
@@ -30,23 +30,23 @@ public class ComponentTypeQuery implements Disposable {
         return Objects.hash(any, none, all);
     }
 
-    public TreeSet<ComponentType<?>> getAny() {
+    public TreeSet<ComponentMatchType<?>> getAny() {
         return any;
     }
 
-    public TreeSet<ComponentType<?>> getNone() {
+    public TreeSet<ComponentMatchType<?>> getNone() {
         return none;
     }
 
-    public TreeSet<ComponentType<?>> getAll() {
+    public TreeSet<ComponentMatchType<?>> getAll() {
         return all;
     }
 
-    public void addNone(ComponentType<?> type) {
+    public void addNone(ComponentMatchType<?> type) {
         none.add(type);
     }
 
-    public void addAll(ComponentType<?> type) {
+    public void addAll(ComponentMatchType<?> type) {
         all.add(type);
     }
 }

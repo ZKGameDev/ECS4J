@@ -1,10 +1,8 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityGroup;
-import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
@@ -34,7 +32,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
     public static abstract class SystemInitFinishSingle implements EcsComponent {
     }
 
-    private ComponentType<T> matchComponentType;
+    private ComponentMatchType<T> matchComponentMatchType;
     private final SystemInitFinishSingle systemInitFinishSingle;
 
 
@@ -46,7 +44,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
     protected void onUpdate() {
         Collection<Entity> entityList = super.getAllMatchEntity();
         for (Entity entity : entityList) {
-            if (onInitialize(entity, entity.getComponent(matchComponentType))) {
+            if (onInitialize(entity, entity.getComponent(matchComponentMatchType))) {
                 getWorld().addComponent(entity, systemInitFinishSingle);
             }
         }
@@ -54,13 +52,13 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchType<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        matchComponentType = ComponentType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+        matchComponentMatchType = ComponentMatchType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
 
-        List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(matchComponentType);
-        typeList.add(ComponentType.subtractive(getWorld(), systemInitFinishSingle.getClass()));
+        List<ComponentMatchType<?>> typeList = new ArrayList<>();
+        typeList.add(matchComponentMatchType);
+        typeList.add(ComponentMatchType.subtractive(getWorld(), systemInitFinishSingle.getClass()));
         return typeList;
     }
 

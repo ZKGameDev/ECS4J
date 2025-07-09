@@ -1,16 +1,16 @@
 package priv.kgame.lib.ecs.entity;
 
 import priv.kgame.lib.ecs.Disposable;
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 
 import java.util.*;
 
 public class EntityArchetype implements Disposable {
-    private final Set<ComponentType<?>> componentTypes = new HashSet<>();
+    private final Set<ComponentMatchType<?>> componentMatchTypes = new HashSet<>();
     private final List<Entity> entityList = new ArrayList<>();
 
-    public Set<ComponentType<?>> getComponentTypes() {
-        return componentTypes;
+    public Set<ComponentMatchType<?>> getComponentTypes() {
+        return componentMatchTypes;
     }
 
     public List<Entity> getEntityList() {
@@ -22,17 +22,17 @@ public class EntityArchetype implements Disposable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EntityArchetype that = (EntityArchetype) o;
-        return componentTypes.equals(that.componentTypes);
+        return componentMatchTypes.equals(that.componentMatchTypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(componentTypes);
+        return Objects.hash(componentMatchTypes);
     }
 
     @Override
     public void dispose() {
-        componentTypes.clear();
+        componentMatchTypes.clear();
         entityList.clear();
     }
 
@@ -40,12 +40,12 @@ public class EntityArchetype implements Disposable {
         return entityList.size();
     }
 
-    public void addComponentType(ComponentType<?> componentType) {
-        componentTypes.add(componentType);
+    public void addComponentType(ComponentMatchType<?> componentMatchType) {
+        componentMatchTypes.add(componentMatchType);
     }
 
-    public boolean isSame(Collection<ComponentType<?>> types) {
-        return types.size() == componentTypes.size() && componentTypes.containsAll(types);
+    public boolean isSame(Collection<ComponentMatchType<?>> types) {
+        return types.size() == componentMatchTypes.size() && componentMatchTypes.containsAll(types);
     }
 
     public void addEntity(Entity entity) {

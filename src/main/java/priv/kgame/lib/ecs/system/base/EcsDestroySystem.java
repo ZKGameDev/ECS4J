@@ -1,11 +1,9 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityGroup;
-import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
@@ -31,17 +29,17 @@ import java.util.List;
  * @param <T> 实体销毁处理所需的组件类型
  */
 public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsLogicSystem {
-    private ComponentType<T> matchComponentType;
+    private ComponentMatchType<T> matchComponentMatchType;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchType<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        matchComponentType = ComponentType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+        matchComponentMatchType = ComponentMatchType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
 
-        List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(matchComponentType);
-        typeList.add(ComponentType.additive(getWorld(), DestroyingComponent.class));
+        List<ComponentMatchType<?>> typeList = new ArrayList<>();
+        typeList.add(matchComponentMatchType);
+        typeList.add(ComponentMatchType.additive(getWorld(), DestroyingComponent.class));
         return typeList;
     }
 
@@ -49,7 +47,7 @@ public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsLogicS
     protected void onUpdate() {
         Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
-            onEntityDestroy(entity, entity.getComponent(matchComponentType));
+            onEntityDestroy(entity, entity.getComponent(matchComponentMatchType));
         }
     }
 

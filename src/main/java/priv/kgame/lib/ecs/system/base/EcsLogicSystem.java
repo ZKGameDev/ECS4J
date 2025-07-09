@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.system.EcsSystem;
 
@@ -9,18 +9,18 @@ import java.util.Collection;
 import java.util.List;
 
 abstract class EcsLogicSystem extends EcsSystem {
-    private final List<ComponentType<?>> extraMatchComponent = new ArrayList<>();
+    private final List<ComponentMatchType<?>> extraMatchComponent = new ArrayList<>();
 
     @Override
     protected void onInit() {
         processExtraComponent();
-        List<ComponentType<?>> matchComponentTypes = new ArrayList<>();
-        matchComponentTypes.addAll(getMatchComponent());
-        matchComponentTypes.addAll(extraMatchComponent);
-        configEntityFilter(matchComponentTypes);
+        List<ComponentMatchType<?>> matchComponentMatchTypes = new ArrayList<>();
+        matchComponentMatchTypes.addAll(getMatchComponent());
+        matchComponentMatchTypes.addAll(extraMatchComponent);
+        configEntityFilter(matchComponentMatchTypes);
     }
 
-    public List<ComponentType<?>> getExtraMatchComponent() {
+    public List<ComponentMatchType<?>> getExtraMatchComponent() {
         return extraMatchComponent;
     }
 
@@ -28,18 +28,18 @@ abstract class EcsLogicSystem extends EcsSystem {
         Collection<Class<? extends EcsComponent>> requireComponent = getExtraRequirementComponent();
         if (requireComponent != null && !requireComponent.isEmpty()) {
             for (Class<? extends EcsComponent> clazz : requireComponent) {
-                extraMatchComponent.add(ComponentType.additive(getWorld(), clazz));
+                extraMatchComponent.add(ComponentMatchType.additive(getWorld(), clazz));
             }
         }
         Collection<Class<? extends EcsComponent>> excludeComponent = getExtraExcludeComponent();
         if (excludeComponent != null && !excludeComponent.isEmpty()) {
             for (Class<? extends EcsComponent> clazz : excludeComponent) {
-                extraMatchComponent.add(ComponentType.subtractive(getWorld(), clazz));
+                extraMatchComponent.add(ComponentMatchType.subtractive(getWorld(), clazz));
             }
         }
     }
 
-    protected abstract Collection<ComponentType<?>> getMatchComponent();
+    protected abstract Collection<ComponentMatchType<?>> getMatchComponent();
 
     /**
      * 额外需要关注的Component类

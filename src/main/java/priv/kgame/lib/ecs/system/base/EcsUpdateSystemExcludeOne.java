@@ -1,11 +1,9 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityGroup;
-import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
@@ -29,13 +27,13 @@ import java.util.List;
 public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends EcsLogicSystem {
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchType<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        ComponentType<T> matchComponentType = ComponentType.subtractive(getWorld(), (Class<T>) parameterizedTypes[0]);
+        ComponentMatchType<T> matchComponentMatchType = ComponentMatchType.subtractive(getWorld(), (Class<T>) parameterizedTypes[0]);
 
-        List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(matchComponentType);
-        typeList.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
+        List<ComponentMatchType<?>> typeList = new ArrayList<>();
+        typeList.add(matchComponentMatchType);
+        typeList.add(ComponentMatchType.subtractive(getWorld(), DestroyingComponent.class));
         return typeList;
     }
 

@@ -1,12 +1,10 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityGroup;
-import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
@@ -34,28 +32,28 @@ import java.util.List;
  * @param <T2> 第二个必需的组件类型
  */
 public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends EcsComponent> extends EcsLogicSystem {
-    private ComponentType<T1> componentType1;
-    private ComponentType<T2> componentType2;
+    private ComponentMatchType<T1> componentMatchType1;
+    private ComponentMatchType<T2> componentMatchType2;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchType<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        componentType1 = ComponentType.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
-        componentType2 = ComponentType.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
+        componentMatchType1 = ComponentMatchType.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
+        componentMatchType2 = ComponentMatchType.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
 
-        List<ComponentType<?>> componentTypes = new ArrayList<>();
-        componentTypes.add(componentType1);
-        componentTypes.add(componentType2);
-        componentTypes.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
-        componentTypes.add(ComponentType.additive(getWorld(), InitializedComponent.class));
-        return componentTypes;
+        List<ComponentMatchType<?>> componentMatchTypes = new ArrayList<>();
+        componentMatchTypes.add(componentMatchType1);
+        componentMatchTypes.add(componentMatchType2);
+        componentMatchTypes.add(ComponentMatchType.subtractive(getWorld(), DestroyingComponent.class));
+        componentMatchTypes.add(ComponentMatchType.additive(getWorld(), InitializedComponent.class));
+        return componentMatchTypes;
     }
 
     @Override
     protected void onUpdate() {
         for (Entity entity : super.getAllMatchEntity()) {
-            update(entity, entity.getComponent(componentType1), entity.getComponent(componentType2));
+            update(entity, entity.getComponent(componentMatchType1), entity.getComponent(componentMatchType2));
         }
     }
 

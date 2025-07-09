@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import priv.kgame.lib.ecs.Disposable;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.component.EcsComponent;
 
@@ -51,14 +51,14 @@ public class EntityGroup implements Disposable {
 
     public <T extends EcsComponent> List<T> getComponentDataList(Class<T> tClass) {
         List<T> result = new ArrayList<>();
-        ComponentType<T> componentType = ComponentType.additive(world, tClass);
+        ComponentMatchType<T> componentMatchType = ComponentMatchType.additive(world, tClass);
         for (EntityArchetype matchEntityArchetype : matchingTypes) {
-            if (!matchEntityArchetype.getComponentTypes().contains(componentType)) {
+            if (!matchEntityArchetype.getComponentTypes().contains(componentMatchType)) {
                 logger.error("{} not exist in EntityGroup matchingTypes {}!", tClass.getSimpleName(), this);
                 continue;
             }
             for(Entity entity : matchEntityArchetype.getEntityList()) {
-                EcsComponent component = entity.getComponent(componentType);
+                EcsComponent component = entity.getComponent(componentMatchType);
                 if (null == component) {
                     logger.error("{} not exist in Entity {}!", tClass.getSimpleName(), entity);
                     continue;

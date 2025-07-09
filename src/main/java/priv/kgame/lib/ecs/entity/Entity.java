@@ -2,7 +2,7 @@ package priv.kgame.lib.ecs.entity;
 
 import priv.kgame.lib.ecs.Disposable;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.RecycleComponent;
 
@@ -24,8 +24,8 @@ public class Entity implements Disposable {
         this.archetype = archetype;
     }
 
-    public <T extends EcsComponent> T getComponent(ComponentType<T> componentType) {
-        return getComponent(componentType.getType());
+    public <T extends EcsComponent> T getComponent(ComponentMatchType<T> componentMatchType) {
+        return getComponent(componentMatchType.getType());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -85,9 +85,9 @@ public class Entity implements Disposable {
         this.archetype = archetype;
     }
 
-    public void assertContainComponent(ComponentType<?> componentType) {
-        if (getComponent(componentType) == null) {
-            throw new RuntimeException(String.format("EcsEndSystem update failed! %s not exist in entity. please check code", componentType.getType()));
+    public void assertContainComponent(ComponentMatchType<?> componentMatchType) {
+        if (getComponent(componentMatchType) == null) {
+            throw new RuntimeException(String.format("EcsEndSystem update failed! %s not exist in entity. please check code", componentMatchType.getType()));
         }
     }
 
@@ -98,8 +98,8 @@ public class Entity implements Disposable {
     public boolean hasComponent(Class<? extends EcsComponent> klass) {
         return data.containsKey(klass);
     }
-    public boolean hasComponent(ComponentType<?> componentType) {
-        return hasComponent(componentType.getType());
+    public boolean hasComponent(ComponentMatchType<?> componentMatchType) {
+        return hasComponent(componentMatchType.getType());
     }
 
     /**
@@ -117,16 +117,16 @@ public class Entity implements Disposable {
      * 使用组件类型的默认构造函数创建并添加组件。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void addComponent(ComponentType<?> componentType) {
-        addComponent(componentType.generateComponentByDefaultConstructor());
+    public void addComponent(ComponentMatchType<?> componentMatchType) {
+        addComponent(componentMatchType.generateComponentByDefaultConstructor());
     }
 
     /**
      * 从实体中移除指定类型的组件。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void removeComponent(ComponentType<?> componentType) {
-        data.remove(componentType.getType());
+    public void removeComponent(ComponentMatchType<?> componentMatchType) {
+        data.remove(componentMatchType.getType());
     }
 
     public boolean removeFromArchetype() {

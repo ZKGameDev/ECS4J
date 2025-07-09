@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
@@ -32,18 +32,18 @@ import java.util.List;
  * @param <T> 实体更新处理所需的组件类型
  */
 public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsLogicSystem {
-    private ComponentType<T> matchComponentType;
+    private ComponentMatchType<T> matchComponentMatchType;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchType<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        matchComponentType = ComponentType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+        matchComponentMatchType = ComponentMatchType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
 
-        List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(matchComponentType);
-        typeList.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
-        typeList.add(ComponentType.additive(getWorld(), InitializedComponent.class));
+        List<ComponentMatchType<?>> typeList = new ArrayList<>();
+        typeList.add(matchComponentMatchType);
+        typeList.add(ComponentMatchType.subtractive(getWorld(), DestroyingComponent.class));
+        typeList.add(ComponentMatchType.additive(getWorld(), InitializedComponent.class));
         return typeList;
     }
 
@@ -51,7 +51,7 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsLogi
     protected void onUpdate() {
         Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
-            update(entity, entity.getComponent(matchComponentType));
+            update(entity, entity.getComponent(matchComponentMatchType));
         }
     }
 

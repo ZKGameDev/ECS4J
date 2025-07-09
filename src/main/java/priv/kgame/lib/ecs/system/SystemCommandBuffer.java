@@ -1,7 +1,7 @@
 package priv.kgame.lib.ecs.system;
 
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.command.*;
@@ -15,7 +15,7 @@ public class SystemCommandBuffer {
         this.ecsWorld = ecsWorld;
     }
 
-    public void createEntity(int typeId, ComponentType<?> ... types) {
+    public void createEntity(int typeId, ComponentMatchType<?>... types) {
         systemCommands.offer(new SystemCommandCreateEntity(ecsWorld, typeId, types));
     }
 

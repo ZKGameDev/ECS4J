@@ -3,7 +3,7 @@ package priv.kgame.lib.ecs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import priv.kgame.lib.ecs.component.ComponentAccessMode;
-import priv.kgame.lib.ecs.component.ComponentType;
+import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
@@ -113,14 +113,14 @@ public class EcsWorld implements Disposable {
         return createEntity(typeId, Collections.emptyList());
     }
 
-    public Entity createEntity(int typeId, Collection<ComponentType<?>> types) {
+    public Entity createEntity(int typeId, Collection<ComponentMatchType<?>> types) {
         return createEntity(typeId, getOrCreateArchetype(types));
     }
 
     public Entity createEntity(int typeId, EntityArchetype entityArchetype) {
         Entity entity = new Entity(this, entitiesNextIndex++, typeId, entityArchetype);
-        for (ComponentType<?> componentType : entityArchetype.getComponentTypes()) {
-            entity.addComponent(componentType);
+        for (ComponentMatchType<?> componentMatchType : entityArchetype.getComponentTypes()) {
+            entity.addComponent(componentMatchType);
         }
         entityArchetype.addEntity(entity);
         entityIndex.put(entity.getIndex(), entity);
@@ -210,27 +210,27 @@ public class EcsWorld implements Disposable {
             logger.warn("add component failed! reason: entity not exist. index:{}", entity.getIndex());
             return;
         }
-        ComponentType<?> componentType = ComponentType.additive(this, component.getClass());
-        if (entity.hasComponent(componentType)) {
+        ComponentMatchType<?> componentMatchType = ComponentMatchType.additive(this, component.getClass());
+        if (entity.hasComponent(componentMatchType)) {
             logger.warn("add component failed! reason: component already exists of entity:{} componentType:{}",
-                    entity.getIndex(), componentType.getType().getSimpleName());
+                    entity.getIndex(), componentMatchType.getType().getSimpleName());
             return;
         }
 
         EntityArchetype oldArchetype = entity.getArchetype();
-        Set<ComponentType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
-        newTypes.add(componentType);
+        Set<ComponentMatchType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
+        newTypes.add(componentMatchType);
         updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
         entity.addComponent(component);
     }
 
     public void removeComponent(Entity entity, EcsComponent component) {
-        ComponentType<?> componentType = ComponentType.additive(this, component.getClass());
+        ComponentMatchType<?> componentMatchType = ComponentMatchType.additive(this, component.getClass());
         EntityArchetype oldArchetype = entity.getArchetype();
-        Set<ComponentType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
-        newTypes.remove(componentType);
+        Set<ComponentMatchType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
+        newTypes.remove(componentMatchType);
         updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
-        entity.removeComponent(componentType);
+        entity.removeComponent(componentMatchType);
     }
 
     public EntityGroup getOrCreateEntityGroup(ComponentTypeQuery[] componentTypeQuery) {
@@ -251,9 +251,9 @@ public class EcsWorld implements Disposable {
         }
     }
 
-    public ComponentTypeQuery createQuery(ComponentType<?>[] componentTypes) {
+    public ComponentTypeQuery createQuery(ComponentMatchType<?>[] componentMatchTypes) {
         ComponentTypeQuery result = new ComponentTypeQuery();
-        for (ComponentType<?> type : componentTypes) {
+        for (ComponentMatchType<?> type : componentMatchTypes) {
             if (type.getAccessModeType() == ComponentAccessMode.SUBTRACTIVE) {
                 result.addNone(type);
             } else {
@@ -366,7 +366,7 @@ public class EcsWorld implements Disposable {
         systemClassIndex.clear();
     }
 
-    private EntityArchetype getOrCreateArchetype(Collection<ComponentType<?>> types) {
+    private EntityArchetype getOrCreateArchetype(Collection<ComponentMatchType<?>> types) {
         EntityArchetype existArchetype = getExistingArchetype(types);
         if (existArchetype != null) {
             return existArchetype;
@@ -374,7 +374,7 @@ public class EcsWorld implements Disposable {
         return createArchetype(types);
     }
 
-    private EntityArchetype getExistingArchetype(Collection<ComponentType<?>> types) {
+    private EntityArchetype getExistingArchetype(Collection<ComponentMatchType<?>> types) {
         if (null != types && !types.isEmpty()) {
             for (EntityArchetype entityArchetype : entityArchetypes) {
                 if (entityArchetype.isSame(types)) {
@@ -385,11 +385,11 @@ public class EcsWorld implements Disposable {
         return null;
     }
 
-    private EntityArchetype createArchetype(Collection<ComponentType<?>> types) {
+    private EntityArchetype createArchetype(Collection<ComponentMatchType<?>> types) {
         EntityArchetype entityArchetype = new EntityArchetype();
-        for (ComponentType<?> componentType : types) {
-            if (componentType.getAccessModeType() != ComponentAccessMode.SUBTRACTIVE) {
-                entityArchetype.addComponentType(componentType);
+        for (ComponentMatchType<?> componentMatchType : types) {
+            if (componentMatchType.getAccessModeType() != ComponentAccessMode.SUBTRACTIVE) {
+                entityArchetype.addComponentType(componentMatchType);
             }
         }
         entityArchetypes.add(entityArchetype);
@@ -422,30 +422,30 @@ public class EcsWorld implements Disposable {
         return checkMatchingArchetypeAny(entityArchetype, query.getAny());
     }
 
-    private boolean checkMatchingArchetypeAll(EntityArchetype entityArchetype, TreeSet<ComponentType<?>> all) {
-        for (ComponentType<?> componentType : all) {
-            if (!entityArchetype.getComponentTypes().contains(componentType)) {
+    private boolean checkMatchingArchetypeAll(EntityArchetype entityArchetype, TreeSet<ComponentMatchType<?>> all) {
+        for (ComponentMatchType<?> componentMatchType : all) {
+            if (!entityArchetype.getComponentTypes().contains(componentMatchType)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean checkMatchingArchetypeNone(EntityArchetype entityArchetype, TreeSet<ComponentType<?>> none) {
-        for (ComponentType<?> componentType : entityArchetype.getComponentTypes()) {
-            if (none.contains(componentType)) {
+    private boolean checkMatchingArchetypeNone(EntityArchetype entityArchetype, TreeSet<ComponentMatchType<?>> none) {
+        for (ComponentMatchType<?> componentMatchType : entityArchetype.getComponentTypes()) {
+            if (none.contains(componentMatchType)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean checkMatchingArchetypeAny(EntityArchetype entityArchetype, TreeSet<ComponentType<?>> any) {
+    private boolean checkMatchingArchetypeAny(EntityArchetype entityArchetype, TreeSet<ComponentMatchType<?>> any) {
         if (any.isEmpty()) {
             return true;
         }
-        for (ComponentType<?> componentType : entityArchetype.getComponentTypes()) {
-            if (any.contains(componentType)) {
+        for (ComponentMatchType<?> componentMatchType : entityArchetype.getComponentTypes()) {
+            if (any.contains(componentMatchType)) {
                 return true;
             }
         }
