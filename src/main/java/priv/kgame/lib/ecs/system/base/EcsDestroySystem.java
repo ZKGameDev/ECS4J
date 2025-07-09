@@ -9,6 +9,7 @@ import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -26,32 +27,29 @@ import java.util.List;
  * 2. 对每个实体调用onEntityDestroy方法，传入实体和T类型组件
  * 3. 在onEntityDestroy方法中实现具体的销毁逻辑
  * <p>
-
+ *
  * @param <T> 实体销毁处理所需的组件类型
  */
-public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsSystem {
-    final private Class<T> genericClass;
+public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsLogicSystem {
+    private ComponentType<T> matchComponentType;
 
     @SuppressWarnings("unchecked")
-    public EcsDestroySystem(){
-        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        genericClass = (Class<T>) parameterizedTypes[0];
-    }
-
     @Override
-    protected void onInit() {
-        configEntityFilter(ComponentType.additive(getWorld(), genericClass),
-                ComponentType.additive(getWorld(), DestroyingComponent.class));
-        super.setAlwaysUpdateSystem(true);
+    protected Collection<ComponentType<?>> getMatchComponent() {
+        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
+        matchComponentType = ComponentType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+
+        List<ComponentType<?>> typeList = new ArrayList<>();
+        typeList.add(matchComponentType);
+        typeList.add(ComponentType.additive(getWorld(), DestroyingComponent.class));
+        return typeList;
     }
 
     @Override
     protected void onUpdate() {
         Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
-            ComponentType<T> componentType = ComponentType.additive(getWorld(), genericClass);
-            entity.assertContainComponent(componentType);
-            onEntityDestroy(entity, entity.getComponent(componentType));
+            onEntityDestroy(entity, entity.getComponent(matchComponentType));
         }
     }
 

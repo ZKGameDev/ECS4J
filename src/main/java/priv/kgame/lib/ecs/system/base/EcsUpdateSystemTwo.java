@@ -11,6 +11,8 @@ import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -31,43 +33,43 @@ import java.util.List;
  * @param <T1> 第一个必需的组件类型
  * @param <T2> 第二个必需的组件类型
  */
-public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends EcsComponent> extends EcsSystem {
-    private final Class<T1> componentClass1;
-    private final Class<T2> componentClass2;
-    protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
+public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends EcsComponent> extends EcsLogicSystem {
+    private ComponentType<T1> componentType1;
+    private ComponentType<T2> componentType2;
 
     @SuppressWarnings("unchecked")
-    public EcsUpdateSystemTwo() {
-        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        componentClass1 = (Class<T1>) parameterizedTypes[0];
-        componentClass2 = (Class<T2>) parameterizedTypes[1];
-    }
-
     @Override
-    protected void onInit() {
+    protected Collection<ComponentType<?>> getMatchComponent() {
+        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
+        componentType1 = ComponentType.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
+        componentType2 = ComponentType.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
+
         List<ComponentType<?>> componentTypes = new ArrayList<>();
-        componentTypes.add(ComponentType.additive(getWorld(), componentClass1));
-        componentTypes.add(ComponentType.additive(getWorld(), componentClass2));
-        if (!extraRequirementComponent.isEmpty()) {
-            componentTypes.addAll(extraRequirementComponent);
-        }
+        componentTypes.add(componentType1);
+        componentTypes.add(componentType2);
         componentTypes.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
         componentTypes.add(ComponentType.additive(getWorld(), InitializedComponent.class));
-        configEntityFilter(componentTypes);
+        return componentTypes;
     }
 
     @Override
     protected void onUpdate() {
         for (Entity entity : super.getAllMatchEntity()) {
-            ComponentType<T1> componentType1 = ComponentType.additive(getWorld(), componentClass1);
-            ComponentType<T2> componentType2 = ComponentType.additive(getWorld(), componentClass2);
-            entity.assertContainComponent(componentType1);
-            entity.assertContainComponent(componentType2);
             update(entity, entity.getComponent(componentType1), entity.getComponent(componentType2));
         }
     }
 
     protected abstract void update(Entity entity, T1 component, T2 component1);
+
+    @Override
+    public Collection<Class<? extends EcsComponent>> getExtraRequirementComponent() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<Class<? extends EcsComponent>> getExtraExcludeComponent() {
+        return Collections.emptyList();
+    }
 
     @Override
     protected void onStart() {

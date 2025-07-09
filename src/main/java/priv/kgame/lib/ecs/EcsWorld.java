@@ -220,7 +220,7 @@ public class EcsWorld implements Disposable {
         EntityArchetype oldArchetype = entity.getArchetype();
         Set<ComponentType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
         newTypes.add(componentType);
-        setArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
+        updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
         entity.addComponent(componentType, component);
     }
 
@@ -229,11 +229,11 @@ public class EcsWorld implements Disposable {
         EntityArchetype oldArchetype = entity.getArchetype();
         Set<ComponentType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
         newTypes.remove(componentType);
-        setArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
+        updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
         entity.removeComponent(componentType);
     }
 
-    public EntityGroup createEntityGroup(ComponentTypeQuery[] componentTypeQuery) {
+    public EntityGroup getOrCreateEntityGroup(ComponentTypeQuery[] componentTypeQuery) {
         EntityGroup entityGroup = null;
         for (EntityGroup item : systemNeedEntityGroups) {
             if (item.compareQuery(componentTypeQuery)) {
@@ -459,7 +459,7 @@ public class EcsWorld implements Disposable {
         return !entityIndex.containsKey(entity.getIndex());
     }
 
-    private void setArchetype(EntityArchetype newArchetype, EntityArchetype oldArchetype, Entity entity) {
+    private void updateArchetype(EntityArchetype newArchetype, EntityArchetype oldArchetype, Entity entity) {
         newArchetype.addEntity(entity);
         oldArchetype.removeEntity(entity);
         entity.setArchetype(newArchetype);

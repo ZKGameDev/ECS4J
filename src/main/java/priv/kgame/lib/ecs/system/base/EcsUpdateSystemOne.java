@@ -5,13 +5,12 @@ import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityGroup;
-import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,41 +28,44 @@ import java.util.List;
  * 2. 对每个实体调用update方法，传入实体和T类型组件实例
  * 3. 在update方法中实现具体的更新逻辑
  * <p>
+ *
  * @param <T> 实体更新处理所需的组件类型
  */
-public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsSystem {
-    private final Class<T> entityClass;
-    protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
+public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsLogicSystem {
+    private ComponentType<T> matchComponentType;
 
     @SuppressWarnings("unchecked")
-    public EcsUpdateSystemOne() {
-        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        entityClass = (Class<T>) parameterizedTypes[0];
-    }
-
     @Override
-    protected void onInit() {
+    protected Collection<ComponentType<?>> getMatchComponent() {
+        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
+        matchComponentType = ComponentType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+
         List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(ComponentType.additive(getWorld(), entityClass));
-        if (!extraRequirementComponent.isEmpty()) {
-            typeList.addAll(extraRequirementComponent);
-        }
+        typeList.add(matchComponentType);
         typeList.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
         typeList.add(ComponentType.additive(getWorld(), InitializedComponent.class));
-        configEntityFilter(typeList);
+        return typeList;
     }
 
     @Override
     protected void onUpdate() {
         Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
-            ComponentType<T> componentType = ComponentType.additive(getWorld(), entityClass);
-            entity.assertContainComponent(componentType);
-            update(entity, entity.getComponent(componentType));
+            update(entity, entity.getComponent(matchComponentType));
         }
     }
 
     protected abstract void update(Entity entity, T component);
+
+    @Override
+    public Collection<Class<? extends EcsComponent>> getExtraRequirementComponent() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Collection<Class<? extends EcsComponent>> getExtraExcludeComponent() {
+        return Collections.emptyList();
+    }
 
     @Override
     protected void onStart() {

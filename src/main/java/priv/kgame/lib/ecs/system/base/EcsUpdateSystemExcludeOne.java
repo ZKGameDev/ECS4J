@@ -23,27 +23,20 @@ import java.util.List;
  * 3. 可以通过extraRequirementComponent添加额外的组件要求
  * 4. 每次更新时会遍历所有符合条件的实体，并对每个实体执行update方法
  * <p>
+ *
  * @param <T> 要排除的组件类型
  */
-public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends EcsSystem {
-    private final Class<T> entityClass;
-    protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
-
+public abstract class EcsUpdateSystemExcludeOne<T extends EcsComponent> extends EcsLogicSystem {
     @SuppressWarnings("unchecked")
-    public EcsUpdateSystemExcludeOne() {
-        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        entityClass = (Class<T>) parameterizedTypes[0];
-    }
-
     @Override
-    protected void onInit() {
+    protected Collection<ComponentType<?>> getMatchComponent() {
+        Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
+        ComponentType<T> matchComponentType = ComponentType.subtractive(getWorld(), (Class<T>) parameterizedTypes[0]);
+
         List<ComponentType<?>> typeList = new ArrayList<>();
-        typeList.add(ComponentType.subtractive(getWorld(), entityClass));
-        if (!extraRequirementComponent.isEmpty()) {
-            typeList.addAll(extraRequirementComponent);
-        }
+        typeList.add(matchComponentType);
         typeList.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
-        configEntityFilter(typeList);
+        return typeList;
     }
 
     @Override

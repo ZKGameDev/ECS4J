@@ -94,7 +94,7 @@ public abstract class EcsSystem implements Disposable {
 
     protected void configEntityFilter(ComponentTypeQuery componentTypes) {
         if (entityGroup == null) {
-            entityGroup = ecsWorld.createEntityGroup(new ComponentTypeQuery[]{componentTypes});
+            entityGroup = ecsWorld.getOrCreateEntityGroup(new ComponentTypeQuery[]{componentTypes});
         } else {
             if (!entityGroup.compareQuery(componentTypes)) {
                 throw new UnsupportedOperationException("Repeatedly setting EntityGroup");
