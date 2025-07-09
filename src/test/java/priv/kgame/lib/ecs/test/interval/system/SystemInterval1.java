@@ -11,6 +11,7 @@ public class SystemInterval1 extends EcsUpdateSystemOne<ComponentInterval1> {
 
     @Override
     protected void update(Entity entity, ComponentInterval1 component) {
-        System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
+        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
+        component.i1 = "i1";
     }
-} 
+}

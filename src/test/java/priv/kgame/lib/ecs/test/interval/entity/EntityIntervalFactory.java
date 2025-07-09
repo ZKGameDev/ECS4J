@@ -3,10 +3,10 @@ package priv.kgame.lib.ecs.test.interval.entity;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.test.interval.component.ComponentInterval1;
 import priv.kgame.lib.ecs.test.interval.component.ComponentInterval2;
-import priv.kgame.lib.ecs.test.interval.component.ComponentInterval3;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityFactory;
 import priv.kgame.lib.ecs.entity.EntityFactoryAttribute;
+import priv.kgame.lib.ecs.test.interval.component.ComponentInterval3;
 
 @EntityFactoryAttribute
 public class EntityIntervalFactory implements EntityFactory {

@@ -16,7 +16,7 @@ public class SystemSpawnInterval1 extends EcsInitializeSystem<ComponentInterval1
 
     @Override
     public boolean onInitialize(Entity entity, ComponentInterval1 data) {
-        System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
+        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
         getWorld().addComponent(entity, InitializedComponent.generate());
         return true;
     }

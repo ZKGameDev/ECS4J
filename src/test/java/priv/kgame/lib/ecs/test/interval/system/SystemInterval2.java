@@ -8,11 +8,12 @@ import priv.kgame.lib.ecs.test.interval.component.ComponentInterval2;
 import priv.kgame.lib.ecs.test.interval.group.SysGroupInterval;
 
 @UpdateInGroup(SysGroupInterval.class)
-@UpdateIntervalTime(interval=0.33f)
+@UpdateIntervalTime(interval=0.033f)
 public class SystemInterval2 extends EcsUpdateSystemOne<ComponentInterval2> {
 
     @Override
     protected void update(Entity entity, ComponentInterval2 component) {
-        System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
+        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
+        component.i2 = "i2";
     }
 } 
