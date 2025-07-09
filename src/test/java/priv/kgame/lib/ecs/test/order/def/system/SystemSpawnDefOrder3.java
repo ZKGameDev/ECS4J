@@ -33,7 +33,7 @@ public class SystemSpawnDefOrder3 extends EcsInitializeSystem<ComponentA1> {
     }
 
     @Override
-    public SystemInitFinishSingle getInitFinishSingle() {
+    protected SystemInitFinishSingle getInitFinishSingle() {
         return new SystemInitFinishSingle() {};
     }
 }

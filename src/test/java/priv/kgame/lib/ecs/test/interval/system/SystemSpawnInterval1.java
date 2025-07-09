@@ -32,7 +32,7 @@ public class SystemSpawnInterval1 extends EcsInitializeSystem<ComponentInterval1
     }
 
     @Override
-    public SystemInitFinishSingle getInitFinishSingle() {
+    protected SystemInitFinishSingle getInitFinishSingle() {
         return new SystemInitFinishSingle() {};
     }
 } 

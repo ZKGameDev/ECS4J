@@ -107,6 +107,16 @@ public abstract class EcsSystem implements Disposable {
         return getOrAddEntityGroup(ecsWorld.createQuery(componentTypes));
     }
 
+    protected EntityGroup getOrAddEntityGroup(ComponentTypeQuery componentTypes) {
+        for (EntityGroup entityGroup : entityGroups) {
+            if (entityGroup.compareQuery(componentTypes)) {
+                return entityGroup;
+            }
+        }
+        EntityGroup entityGroup = ecsWorld.createEntityGroup(new ComponentTypeQuery[]{componentTypes});
+        entityGroups.add(entityGroup);
+        return entityGroup;
+    }
     protected EntityGroup getOrAddEntityGroup(ComponentTypeQuery... componentTypes) {
         for (EntityGroup entityGroup : entityGroups) {
             if (entityGroup.compareQuery(componentTypes)) {

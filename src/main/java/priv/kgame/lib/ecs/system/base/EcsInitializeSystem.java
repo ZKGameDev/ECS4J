@@ -102,7 +102,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSys
      * @return 要排除的Component类的集合
      */
     public abstract Collection<Class<? extends EcsComponent>> getExtraExcludeComponent();
-    public abstract SystemInitFinishSingle getInitFinishSingle();
+    protected abstract SystemInitFinishSingle getInitFinishSingle();
 
     @Override
     protected void onStart() {

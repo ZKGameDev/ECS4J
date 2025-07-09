@@ -19,6 +19,9 @@ import priv.kgame.lib.ecs.system.annotation.UpdateIntervalTime;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+/**
+ * 非线程安全，只能在单线程使用
+ */
 public class EcsWorld implements Disposable {
     private static final Logger logger = LogManager.getLogger(EcsWorld.class);
 
@@ -84,11 +87,6 @@ public class EcsWorld implements Disposable {
         });
     }
 
-
-    public Set<Class<? extends EntityFactory>> getEntityFactoryClass() {
-        return ecsClassScanner.getEntityFactoryClass();
-    }
-
     @Override
     public void dispose() {
         currentTime = 0;
@@ -111,8 +109,8 @@ public class EcsWorld implements Disposable {
         return entityFactory == null ? null : entityFactory.create(this);
     }
 
-    public Entity createEntity(int type) {
-        return createEntity(type, Collections.emptyList());
+    public Entity createEntity(int typeId) {
+        return createEntity(typeId, Collections.emptyList());
     }
 
     public Entity createEntity(int typeId, Collection<ComponentType<?>> types) {

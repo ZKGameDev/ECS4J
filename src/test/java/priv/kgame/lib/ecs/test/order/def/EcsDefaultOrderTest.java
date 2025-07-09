@@ -35,10 +35,10 @@ class EcsDefaultOrderTest {
         boolean inited = false;;
         boolean destroy = false;
 
-        while (System.currentTimeMillis() < endTime) {
-            System.out.println("=====Updating world in " + System.currentTimeMillis() + "=====");
+        while (startTime < endTime) {
+            System.out.println("=====Updating world in " + startTime + "=====");
             // 更新ECS世界
-            ecsWorld.tryUpdate(System.currentTimeMillis());
+            ecsWorld.tryUpdate(startTime);
             if (!destroy) {
                 if (!inited) {
                     inited = true;
@@ -53,14 +53,12 @@ class EcsDefaultOrderTest {
                 ComponentA1 a1 = entity.getComponent(ComponentA1.class);
                 a1.data = "";
             }
-            // 等待33ms
-            Thread.sleep(33);
-
             if (System.currentTimeMillis() >= endTime - 330 && !destroy) {
                 destroy = true;
                 ecsWorld.requestDestroyEntity(entity);
                 System.out.println("destroy entity");
             }
+            startTime += 33;
         }
 
         // 清理资源
