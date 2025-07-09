@@ -1,6 +1,5 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
@@ -41,7 +40,6 @@ public abstract class EcsUpdateSystemThree <T1 extends EcsComponent,
     private final Class<T3> componentClass3;
 
     protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
-    private EntityGroup entityGroup;
 
     @SuppressWarnings("unchecked")
     public EcsUpdateSystemThree() {
@@ -62,12 +60,12 @@ public abstract class EcsUpdateSystemThree <T1 extends EcsComponent,
         }
         componentTypes.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
         componentTypes.add(ComponentType.additive(getWorld(), InitializedComponent.class));
-        entityGroup = getOrAddEntityGroup(componentTypes);
+        configEntityFilter(componentTypes);
     }
 
     @Override
     protected void onUpdate() {
-        for (Entity entity : entityGroup.getEntityList()) {
+        for (Entity entity : super.getAllMatchEntity()) {
             ComponentType<T1> componentType1 = ComponentType.additive(getWorld(), componentClass1);
             ComponentType<T2> componentType2 = ComponentType.additive(getWorld(), componentClass2);
             ComponentType<T3> componentType3 = ComponentType.additive(getWorld(), componentClass3);

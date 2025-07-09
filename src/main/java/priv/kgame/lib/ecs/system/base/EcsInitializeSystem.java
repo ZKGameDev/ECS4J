@@ -33,7 +33,6 @@ import java.util.List;
 public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSystem {
     public static abstract class SystemInitFinishSingle implements EcsComponent {}
     final private Class<T> entityClass;
-    EntityGroup group;
     private final List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
     private final SystemInitFinishSingle systemInitFinishSingle;
 
@@ -53,7 +52,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSys
             typeList.addAll(extraRequirementComponent);
         }
         typeList.add(ComponentType.subtractive(getWorld(), systemInitFinishSingle.getClass()));
-        group = getOrAddEntityGroup(typeList);
+        configEntityFilter(typeList);
         setAlwaysUpdateSystem(true);
     }
 
@@ -75,7 +74,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsSys
     @SuppressWarnings("unchecked")
     @Override
     protected void onUpdate() {
-        List<Entity> entityList = group.getEntityList();
+        Collection<Entity> entityList = super.getAllMatchEntity();
         for (Entity entity : entityList) {
             ComponentType<T> componentType = ComponentType.additive(getWorld(), entityClass);
             entity.assertContainComponent(componentType);

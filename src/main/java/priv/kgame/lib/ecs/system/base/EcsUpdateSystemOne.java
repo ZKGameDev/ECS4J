@@ -11,6 +11,7 @@ import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -32,7 +33,6 @@ import java.util.List;
  */
 public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsSystem {
     private final Class<T> entityClass;
-    private EntityGroup entityGroup;
     protected List<ComponentType<?>> extraRequirementComponent = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
@@ -50,12 +50,12 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsSyst
         }
         typeList.add(ComponentType.subtractive(getWorld(), DestroyingComponent.class));
         typeList.add(ComponentType.additive(getWorld(), InitializedComponent.class));
-        entityGroup = getOrAddEntityGroup(typeList);
+        configEntityFilter(typeList);
     }
 
     @Override
     protected void onUpdate() {
-        List<Entity> entities = entityGroup.getEntityList();
+        Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
             ComponentType<T> componentType = ComponentType.additive(getWorld(), entityClass);
             entity.assertContainComponent(componentType);

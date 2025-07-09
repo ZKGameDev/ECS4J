@@ -9,6 +9,7 @@ import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -30,7 +31,6 @@ import java.util.List;
  */
 public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsSystem {
     final private Class<T> genericClass;
-    EntityGroup group;
 
     @SuppressWarnings("unchecked")
     public EcsDestroySystem(){
@@ -40,14 +40,14 @@ public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsSystem
 
     @Override
     protected void onInit() {
-        group = getOrAddEntityGroup(ComponentType.additive(getWorld(), genericClass),
+        configEntityFilter(ComponentType.additive(getWorld(), genericClass),
                 ComponentType.additive(getWorld(), DestroyingComponent.class));
         super.setAlwaysUpdateSystem(true);
     }
 
     @Override
     protected void onUpdate() {
-        List<Entity> entities = group.getEntityList();
+        Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
             ComponentType<T> componentType = ComponentType.additive(getWorld(), genericClass);
             entity.assertContainComponent(componentType);

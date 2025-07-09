@@ -4,9 +4,11 @@ import priv.kgame.lib.ecs.Disposable;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.ComponentType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
+import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityGroup;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class EcsSystem implements Disposable {
@@ -15,26 +17,14 @@ public abstract class EcsSystem implements Disposable {
 
     private boolean alwaysUpdateSystem = false;
     private boolean started = false;
-    private final List<EntityGroup> entityGroups = new ArrayList<>();
-    private int updateFrames = 0;
+    private boolean destroyed = false;
+    private EntityGroup entityGroup;
     private int systemCreateOrder;
     private long updateInterval = 0;
     private long nextUpdateTime = -1000;
 
-    public long getUpdateInterval() {
-        return updateInterval;
-    }
-
     public void setUpdateInterval(long updateInterval) {
         this.updateInterval = updateInterval;
-    }
-
-    public long getNextUpdateTime() {
-        return nextUpdateTime;
-    }
-
-    public void setNextUpdateTime(long nextUpdateTime) {
-        this.nextUpdateTime = nextUpdateTime;
     }
 
     public void tryUpdate() {
@@ -47,7 +37,6 @@ public abstract class EcsSystem implements Disposable {
                 onUpdate();
                 waitUpdateCommand.playBack();
                 waitUpdateCommand.clear();
-                updateFrames++;
             } else if (started) {
                 started = false;
                 onStop();
@@ -60,26 +49,19 @@ public abstract class EcsSystem implements Disposable {
         if (alwaysUpdateSystem) {
             return true;
         }
-        if(!entityGroups.isEmpty()) {
-            return checkEntityGroup();
-        }
-        return false;
-    }
 
-    private boolean checkEntityGroup() {
-        for (EntityGroup entityGroup : entityGroups) {
-            if (!entityGroup.isEmpty()) {
-                return true;
-            }
+        if (entityGroup == null) {
+            return false;
         }
-        return false;
+        return !entityGroup.isEmpty();
     }
 
     @Override
     public void dispose() {
         waitUpdateCommand.clear();
-        entityGroups.forEach(EntityGroup::dispose);
-        entityGroups.clear();
+        if (entityGroup != null) {
+            entityGroup.dispose();
+        }
     }
 
 
@@ -93,39 +75,38 @@ public abstract class EcsSystem implements Disposable {
     public void destroy() {
         if (started) {
             started = false;
-            ecsWorld.destroySystem(this);
             onStop();
+        }
+        if (!destroyed) {
+            ecsWorld.destroySystem(this);
             onDestroy();
             dispose();
+            destroyed = true;
         }
     }
 
-    protected EntityGroup getOrAddEntityGroup(List<ComponentType<?>> componentTypes) {
-        return getOrAddEntityGroup(ecsWorld.createQuery(componentTypes.toArray(new ComponentType[0])));
+    protected void configEntityFilter(List<ComponentType<?>> componentTypes) {
+        configEntityFilter(ecsWorld.createQuery(componentTypes.toArray(new ComponentType[0])));
     }
-    protected EntityGroup getOrAddEntityGroup(ComponentType<?>... componentTypes) {
-        return getOrAddEntityGroup(ecsWorld.createQuery(componentTypes));
+    protected void configEntityFilter(ComponentType<?>... componentTypes) {
+        configEntityFilter(ecsWorld.createQuery(componentTypes));
     }
 
-    protected EntityGroup getOrAddEntityGroup(ComponentTypeQuery componentTypes) {
-        for (EntityGroup entityGroup : entityGroups) {
-            if (entityGroup.compareQuery(componentTypes)) {
-                return entityGroup;
+    protected void configEntityFilter(ComponentTypeQuery componentTypes) {
+        if (entityGroup == null) {
+            entityGroup = ecsWorld.createEntityGroup(new ComponentTypeQuery[]{componentTypes});
+        } else {
+            if (!entityGroup.compareQuery(componentTypes)) {
+                throw new UnsupportedOperationException("Repeatedly setting EntityGroup");
             }
         }
-        EntityGroup entityGroup = ecsWorld.createEntityGroup(new ComponentTypeQuery[]{componentTypes});
-        entityGroups.add(entityGroup);
-        return entityGroup;
     }
-    protected EntityGroup getOrAddEntityGroup(ComponentTypeQuery... componentTypes) {
-        for (EntityGroup entityGroup : entityGroups) {
-            if (entityGroup.compareQuery(componentTypes)) {
-                return entityGroup;
-            }
+
+    public Collection<Entity> getAllMatchEntity() {
+        if (entityGroup == null) {
+            return Collections.emptyList();
         }
-        EntityGroup entityGroup = ecsWorld.createEntityGroup(componentTypes);
-        entityGroups.add(entityGroup);
-        return entityGroup;
+        return entityGroup.getEntityList();
     }
 
     public void setAlwaysUpdateSystem(boolean alwaysUpdateSystem) {
@@ -154,8 +135,27 @@ public abstract class EcsSystem implements Disposable {
     }
 
     protected abstract void onInit();
+
+    /**
+     * 在停止状态下：
+     * 如果alwaysUpdateSystem是true 或者 存在匹配的Entity时执行该方法
+     * 该方法执行后System会被设为启动状态。
+     * 该方法在System的生命周期内有可能被多次执行
+     */
     protected abstract void onStart();
     protected abstract void onUpdate();
+
+    /**
+     * 在启动状态下：
+     * 如果alwaysUpdateSystem是false 且 不存在匹配的Entity时 执行该方法。
+     * 该方法执行后System会被职位停止状态。
+     * 该方法在System的生命周期内有可能被多次执行
+     */
     protected abstract void onStop();
+
+    /**
+     * System销毁时执行该方法。
+     * 该方法在System的生命周期内只会执行一次。
+     */
     protected abstract void onDestroy();
 }
