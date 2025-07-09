@@ -53,7 +53,7 @@ public class EntityGroup implements Disposable {
         List<T> result = new ArrayList<>();
         ComponentMatchType<T> componentMatchType = ComponentMatchType.additive(world, tClass);
         for (EntityArchetype matchEntityArchetype : matchingTypes) {
-            if (!matchEntityArchetype.getComponentTypes().contains(componentMatchType)) {
+            if (!matchEntityArchetype.hasComponentType(componentMatchType)) {
                 logger.error("{} not exist in EntityGroup matchingTypes {}!", tClass.getSimpleName(), this);
                 continue;
             }

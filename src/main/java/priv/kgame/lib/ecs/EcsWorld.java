@@ -424,7 +424,7 @@ public class EcsWorld implements Disposable {
 
     private boolean checkMatchingArchetypeAll(EntityArchetype entityArchetype, TreeSet<ComponentMatchType<?>> all) {
         for (ComponentMatchType<?> componentMatchType : all) {
-            if (!entityArchetype.getComponentTypes().contains(componentMatchType)) {
+            if (!entityArchetype.hasComponentType(componentMatchType)) {
                 return false;
             }
         }

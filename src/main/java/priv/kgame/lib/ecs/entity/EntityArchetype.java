@@ -48,6 +48,10 @@ public class EntityArchetype implements Disposable {
         return types.size() == componentMatchTypes.size() && componentMatchTypes.containsAll(types);
     }
 
+    public boolean hasComponentType(ComponentMatchType<?> componentMatchType) {
+        return componentMatchTypes.contains(componentMatchType);
+    }
+
     public void addEntity(Entity entity) {
         entityList.add(entity);
     }
