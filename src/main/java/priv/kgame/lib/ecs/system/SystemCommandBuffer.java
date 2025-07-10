@@ -21,6 +21,7 @@ public class SystemCommandBuffer {
 
     public void destroyEntity(Entity entity) {
         systemCommands.offer(new SystemCommandDestroyEntity(ecsWorld, entity));
+
     }
 
     public void addComponent(Entity entity, EcsComponent component) {

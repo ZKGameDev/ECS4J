@@ -119,12 +119,9 @@ public class EcsWorld implements Disposable {
         return state == State.DESTROYED;
     }
 
-    private void clearSystemGroup() {
-        for (EcsSystemGroup systemGroup : systemGroups) {
-            systemGroup.destroy();
-        }
-        this.currentSystemGroupClass = null;
-        systemGroups.clear();
+    public void registerSystemGroup(Class<? extends EcsSystemGroup> clz) {
+        EcsSystemGroup systemGroup = createSystem(clz);
+        this.systemGroups.add(systemGroup);
     }
 
     // 通过类型ID创建实体
@@ -175,11 +172,6 @@ public class EcsWorld implements Disposable {
 
     public Collection<Entity> getAllEntity() {
         return entityIndex.values();
-    }
-
-    public void registerSystemGroup(Class<? extends EcsSystemGroup> clz) {
-        EcsSystemGroup systemGroup = createSystem(clz);
-        this.systemGroups.add(systemGroup);
     }
 
     /**
@@ -313,10 +305,6 @@ public class EcsWorld implements Disposable {
         T system;
         try {
             system = systemClass.getConstructor().newInstance();
-            UpdateIntervalTime timeIntervalAnno = systemClass.getAnnotation(UpdateIntervalTime.class);
-            if (null != timeIntervalAnno) {
-                system.setUpdateInterval((long) (timeIntervalAnno.interval() * 1000f));
-            }
             system.init(this);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
@@ -470,5 +458,13 @@ public class EcsWorld implements Disposable {
         newArchetype.addEntity(entity);
         oldArchetype.removeEntity(entity);
         entity.setArchetype(newArchetype);
+    }
+
+    private void clearSystemGroup() {
+        for (EcsSystemGroup systemGroup : systemGroups) {
+            systemGroup.destroy();
+        }
+        this.currentSystemGroupClass = null;
+        systemGroups.clear();
     }
 }

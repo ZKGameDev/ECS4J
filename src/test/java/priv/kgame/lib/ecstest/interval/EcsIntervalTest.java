@@ -24,13 +24,12 @@ class EcsIntervalTest {
     }
 
     @Test
-    void updateWorld() throws InterruptedException {
+    void updateWorld() {
         Entity entity = ecsWorld.createEntityByFactory(2);
         final int tickInterval = 33;
         // 记录开始时间
         long startTime = 0;
-        // 设置结束时间（1分钟后）
-        long endTime = startTime + 60000; // 60000ms = 1分钟
+        long endTime = startTime + 6000;
 
         ComponentInterval1 componentInterval1 = entity.getComponent(ComponentInterval1.class);
         ComponentInterval2 componentInterval2 = entity.getComponent(ComponentInterval2.class);

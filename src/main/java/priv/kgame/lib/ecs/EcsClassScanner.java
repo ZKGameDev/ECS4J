@@ -7,58 +7,35 @@ import priv.kgame.lib.ecs.exception.InvalidEcsTypeException;
 import priv.kgame.lib.ecs.exception.InvalidEcsTypeIndexException;
 import priv.kgame.lib.ecs.system.EcsSystem;
 import priv.kgame.lib.ecs.system.EcsSystemGroup;
-import priv.kgame.lib.ecs.system.annotation.AutoCreate;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.tools.ClassUtils;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class EcsClassScanner {
-    private final Set<Class<?>> autoCreateSystems = new HashSet<>();
     private final Map<Class<? extends EcsSystemGroup>, Set<Class<? extends EcsSystem>>> groupChildTypeMap = new HashMap<>();
     private final Set<Class<? extends EntityFactory>> entityFactoryClass = new HashSet<>();
     private final HashMap<Integer, Class<?>> indexComponentTypeMap = new HashMap<>();
     private final HashMap<Class<?>, Integer> componentTypeIndexMap = new HashMap<>();
-    private final ReentrantLock initLock = new ReentrantLock();
-
-    private boolean initFinished = false;
     private int componentTypeIndex = 0;
 
     private static final Map<String, EcsClassScanner> SCANNERS = new ConcurrentHashMap<>();
     public static EcsClassScanner getInstance(String packageName) {
-        EcsClassScanner scanner = SCANNERS.computeIfAbsent(packageName, name -> new EcsClassScanner());
-        scanner.tryInit(EcsClassScanner.class.getPackageName(), packageName);
-        return scanner;
+        return SCANNERS.computeIfAbsent(packageName, name -> {
+            EcsClassScanner newInstance = new EcsClassScanner();
+            newInstance.loadPackage(EcsClassScanner.class.getPackageName());
+            newInstance.loadPackage(packageName);
+            return newInstance;
+        });
     }
 
     public Set<Class<? extends EntityFactory>> getEntityFactoryClass() {
         return entityFactoryClass;
     }
 
-    private void tryInit(String ... scanPackages) {
-        if (initFinished) {
-            return;
-        }
-        initLock.lock();
-        try {
-            if (initFinished) {
-                return;
-            }
-            for (String scanPackage : scanPackages) {
-                loadPackage(scanPackage);
-            }
-            initFinished = true;
-        } finally {
-            initLock.unlock();
-        }
-    }
-
     private void loadPackage(String scanPackage) {
-        autoCreateSystems.addAll(getEcsSystemByAnnotation(scanPackage, AutoCreate.class));
-
         Set<Class<? extends EcsSystem>> updateInGroupClass = getEcsSystemByAnnotation(scanPackage, UpdateInGroup.class);
         for (Class<? extends EcsSystem> clazz : updateInGroupClass) {
             UpdateInGroup updateInGroupAnnotation = clazz.getAnnotation(UpdateInGroup.class);

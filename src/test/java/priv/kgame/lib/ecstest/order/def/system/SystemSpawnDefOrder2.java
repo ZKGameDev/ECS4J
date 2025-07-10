@@ -15,7 +15,7 @@ public class SystemSpawnDefOrder2 extends EcsInitializeSystem<ComponentA1> {
 
     @Override
     public boolean onInitialize(Entity entity, ComponentA1 data) {
-        System.out.println(this.getClass().getSimpleName() + " update at: " + System.currentTimeMillis());
+        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
         data.data += "o2";
         return true;
     }

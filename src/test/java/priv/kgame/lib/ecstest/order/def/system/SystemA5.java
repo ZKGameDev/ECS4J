@@ -12,7 +12,7 @@ public class SystemA5 extends EcsUpdateSystemOne<ComponentA2> {
 
     @Override
     protected void update(Entity entity, ComponentA2 component) {
-        System.out.println(this.getClass().getSimpleName() +" update at: " + System.currentTimeMillis());
+        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
         ComponentA1 componentA1 = entity.getComponent(ComponentA1.class);
         component.data = componentA1.data;
     }

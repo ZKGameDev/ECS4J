@@ -3,6 +3,7 @@ package priv.kgame.lib.ecs.system;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import priv.kgame.lib.ecs.EcsWorld;
+import priv.kgame.lib.ecs.system.annotation.AlwaysUpdate;
 import priv.kgame.lib.ecs.system.annotation.UpdateAfterSystem;
 import priv.kgame.lib.ecs.system.annotation.UpdateBeforeSystem;
 import priv.kgame.lib.ecs.system.struct.Heap;
@@ -11,20 +12,16 @@ import priv.kgame.lib.ecs.system.struct.SystemDependency;
 
 import java.util.*;
 
+@AlwaysUpdate
 public abstract class EcsSystemGroup extends EcsSystem{
     private static final Logger logger = LogManager.getLogger(EcsSystemGroup.class);
-    private boolean needSortSystem = false;
+    private boolean needSortSystem = true;
     protected final List<EcsSystem> systemToUpdate = new ArrayList<>();
     protected final List<EcsSystem> systemsToRemove = new ArrayList<>();
     private final Map<Class<?>, Integer> lookupMap = new HashMap<>();
 
     @Override
     public void onInit() {
-        autoAddSystemToUpdateList();
-        super.setAlwaysUpdateSystem(true);
-    }
-
-    private void autoAddSystemToUpdateList() {
         EcsWorld ecsWorld = super.getWorld();
         for (Class<? extends EcsSystem> childSystemClass : ecsWorld.getChildSystemInGroup(this)) {
             addSystemToUpdateList(childSystemClass);

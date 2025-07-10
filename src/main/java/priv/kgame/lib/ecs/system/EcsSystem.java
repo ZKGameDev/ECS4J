@@ -6,6 +6,8 @@ import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityGroup;
+import priv.kgame.lib.ecs.system.annotation.AlwaysUpdate;
+import priv.kgame.lib.ecs.system.annotation.UpdateIntervalTime;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -20,11 +22,7 @@ public abstract class EcsSystem implements Disposable {
     private boolean destroyed = false;
     private EntityGroup entityGroup;
     private long updateInterval = 0;
-    private long nextUpdateTime = -1000;
-
-    public void setUpdateInterval(long updateInterval) {
-        this.updateInterval = updateInterval;
-    }
+    private long nextUpdateTime = Long.MIN_VALUE;
 
     public void tryUpdate() {
         if (ecsWorld.getCurrentTime() >= nextUpdateTime) {
@@ -44,11 +42,10 @@ public abstract class EcsSystem implements Disposable {
         }
     }
 
-    boolean shouldRunSystem() {
+    private boolean shouldRunSystem() {
         if (alwaysUpdateSystem) {
             return true;
         }
-
         if (entityGroup == null) {
             return false;
         }
@@ -67,6 +64,14 @@ public abstract class EcsSystem implements Disposable {
     public void init(EcsWorld ecsWorld) {
         this.ecsWorld = ecsWorld;
         this.waitUpdateCommand = new SystemCommandBuffer(ecsWorld);
+        AlwaysUpdate alwaysUpdateAnno = this.getClass().getAnnotation(AlwaysUpdate.class);
+        if (alwaysUpdateAnno != null) {
+            alwaysUpdateSystem = true;
+        }
+        UpdateIntervalTime timeIntervalAnno = this.getClass().getAnnotation(UpdateIntervalTime.class);
+        if (null != timeIntervalAnno) {
+            this.updateInterval = (long) (timeIntervalAnno.interval() * 1000L);
+        }
         onInit();
     }
 
@@ -106,16 +111,8 @@ public abstract class EcsSystem implements Disposable {
         return entityGroup.getEntityList();
     }
 
-    public void setAlwaysUpdateSystem(boolean alwaysUpdateSystem) {
-        this.alwaysUpdateSystem = alwaysUpdateSystem;
-    }
-
     public EcsWorld getWorld() {
         return ecsWorld;
-    }
-
-    public boolean isAlwaysUpdateSystem() {
-        return alwaysUpdateSystem;
     }
 
     @Override

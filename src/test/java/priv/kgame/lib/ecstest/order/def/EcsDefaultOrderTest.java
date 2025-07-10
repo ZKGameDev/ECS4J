@@ -30,9 +30,9 @@ class EcsDefaultOrderTest {
         Entity entity = ecsWorld.createEntityByFactory(1);
 
         // 记录开始时间
-        long startTime = System.currentTimeMillis();
-        // 设置结束时间（1分钟后）
-        long endTime = startTime + 3300;
+        final int interval = 33;
+        long startTime = 0;
+        long endTime = startTime + interval * 100;
         boolean inited = false;;
         boolean destroy = false;
 
@@ -54,12 +54,12 @@ class EcsDefaultOrderTest {
                 ComponentA1 a1 = entity.getComponent(ComponentA1.class);
                 a1.data = "";
             }
-            if (System.currentTimeMillis() >= endTime - 330 && !destroy) {
+            if (startTime >= endTime - interval * 10 && !destroy) {
                 destroy = true;
                 ecsWorld.requestDestroyEntity(entity);
                 System.out.println("destroy entity");
             }
-            startTime += 33;
+            startTime += interval;
         }
 
         // 清理资源

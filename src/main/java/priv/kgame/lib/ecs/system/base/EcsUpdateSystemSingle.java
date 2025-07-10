@@ -1,6 +1,7 @@
 package priv.kgame.lib.ecs.system.base;
 
 import priv.kgame.lib.ecs.system.EcsSystem;
+import priv.kgame.lib.ecs.system.annotation.AlwaysUpdate;
 
 /**
  * 单例更新系统基类
@@ -10,16 +11,15 @@ import priv.kgame.lib.ecs.system.EcsSystem;
  * 1. 系统在初始化时会被设置为始终更新（alwaysUpdateSystem = true）
  * 2. 每次世界更新时只会执行一次update()方法
  */
+@AlwaysUpdate
 public abstract class EcsUpdateSystemSingle extends EcsSystem {
 
     @Override
     protected void onInit() {
-        super.setAlwaysUpdateSystem(true);
     }
 
     @Override
     protected void onStart() {
-
     }
 
     @Override
