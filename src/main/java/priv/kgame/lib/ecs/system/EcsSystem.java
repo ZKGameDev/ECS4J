@@ -19,7 +19,6 @@ public abstract class EcsSystem implements Disposable {
     private boolean started = false;
     private boolean destroyed = false;
     private EntityGroup entityGroup;
-    private int systemCreateOrder;
     private long updateInterval = 0;
     private long nextUpdateTime = -1000;
 
@@ -65,9 +64,8 @@ public abstract class EcsSystem implements Disposable {
     }
 
 
-    public void init(EcsWorld ecsWorld, int createdOrder) {
+    public void init(EcsWorld ecsWorld) {
         this.ecsWorld = ecsWorld;
-        this.systemCreateOrder = createdOrder;
         this.waitUpdateCommand = new SystemCommandBuffer(ecsWorld);
         onInit();
     }
@@ -78,7 +76,6 @@ public abstract class EcsSystem implements Disposable {
             onStop();
         }
         if (!destroyed) {
-            ecsWorld.destroySystem(this);
             onDestroy();
             dispose();
             destroyed = true;
@@ -119,14 +116,6 @@ public abstract class EcsSystem implements Disposable {
 
     public boolean isAlwaysUpdateSystem() {
         return alwaysUpdateSystem;
-    }
-
-    public int getSystemCreateOrder() {
-        return systemCreateOrder;
-    }
-
-    public void setSystemCreateOrder(int systemCreateOrder) {
-        this.systemCreateOrder = systemCreateOrder;
     }
 
     @Override

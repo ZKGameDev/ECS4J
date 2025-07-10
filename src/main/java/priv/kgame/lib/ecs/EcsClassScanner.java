@@ -12,10 +12,7 @@ import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.tools.ClassUtils;
 
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,8 +30,7 @@ public class EcsClassScanner {
     private static final Map<String, EcsClassScanner> SCANNERS = new ConcurrentHashMap<>();
     public static EcsClassScanner getInstance(String packageName) {
         EcsClassScanner scanner = SCANNERS.computeIfAbsent(packageName, name -> new EcsClassScanner());
-        scanner.tryInit(EcsClassScanner.class.getPackageName());
-        scanner.tryInit(packageName);
+        scanner.tryInit(EcsClassScanner.class.getPackageName(), packageName);
         return scanner;
     }
 
@@ -42,7 +38,7 @@ public class EcsClassScanner {
         return entityFactoryClass;
     }
 
-    private void tryInit(String scanPackage) {
+    private void tryInit(String ... scanPackages) {
         if (initFinished) {
             return;
         }
@@ -51,31 +47,36 @@ public class EcsClassScanner {
             if (initFinished) {
                 return;
             }
-            autoCreateSystems.addAll(getEcsSystemByAnnotation(scanPackage, AutoCreate.class));
-
-            Set<Class<? extends EcsSystem>> updateInGroupClass = getEcsSystemByAnnotation(scanPackage, UpdateInGroup.class);
-            for (Class<? extends EcsSystem> clazz : updateInGroupClass) {
-                UpdateInGroup updateInGroupAnnotation = clazz.getAnnotation(UpdateInGroup.class);
-                if (updateInGroupAnnotation == null) {
-                    continue;
-                }
-                Class<? extends EcsSystemGroup> groupClass = updateInGroupAnnotation.value();
-                if (ClassUtils.isAbstract(groupClass)
-                        || !EcsSystemGroup.class.isAssignableFrom(groupClass)) {
-                    continue;
-                }
-                groupChildTypeMap.computeIfAbsent(groupClass, item -> new HashSet<>()).add(clazz);
+            for (String scanPackage : scanPackages) {
+                loadPackage(scanPackage);
             }
-
-            entityFactoryClass.addAll(getEcsEntityFactoryByAnnotation(scanPackage));
-
-            registerComponent(EcsWorld.class.getPackage().toString());
-            registerComponent(scanPackage);
-
             initFinished = true;
         } finally {
             initLock.unlock();
         }
+    }
+
+    private void loadPackage(String scanPackage) {
+        autoCreateSystems.addAll(getEcsSystemByAnnotation(scanPackage, AutoCreate.class));
+
+        Set<Class<? extends EcsSystem>> updateInGroupClass = getEcsSystemByAnnotation(scanPackage, UpdateInGroup.class);
+        for (Class<? extends EcsSystem> clazz : updateInGroupClass) {
+            UpdateInGroup updateInGroupAnnotation = clazz.getAnnotation(UpdateInGroup.class);
+            if (updateInGroupAnnotation == null) {
+                continue;
+            }
+            Class<? extends EcsSystemGroup> groupClass = updateInGroupAnnotation.value();
+            if (ClassUtils.isAbstract(groupClass)
+                    || !EcsSystemGroup.class.isAssignableFrom(groupClass)) {
+                continue;
+            }
+            groupChildTypeMap.computeIfAbsent(groupClass, item -> new HashSet<>()).add(clazz);
+        }
+
+        entityFactoryClass.addAll(getEcsEntityFactoryByAnnotation(scanPackage));
+
+        registerComponent(EcsWorld.class.getPackage().toString());
+        registerComponent(scanPackage);
     }
 
     private void registerComponent(String scanPackage) {
@@ -112,7 +113,7 @@ public class EcsClassScanner {
     }
 
     public Set<Class<? extends EcsSystem>> getChildSystem(Class<? extends EcsSystemGroup> aClass) {
-        return groupChildTypeMap.get(aClass);
+        return groupChildTypeMap.getOrDefault(aClass, Collections.emptySet());
     }
 
     private void registerComponentType(Class<?> type) {

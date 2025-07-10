@@ -25,6 +25,7 @@ import java.util.*;
 public class EcsWorld implements Disposable {
     private static final Logger logger = LogManager.getLogger(EcsWorld.class);
 
+    private State state = State.INIT;
     private long currentTime = -1;
     private final EcsClassScanner ecsClassScanner;
 
@@ -35,9 +36,6 @@ public class EcsWorld implements Disposable {
     private final EntityFactoryIndex entityFactoryIndex = new EntityFactoryIndex();
     private final List<Entity> waitDestroyEntity = new ArrayList<>();
 
-    private int systemNextIndex = 1;
-    private final Map<Class<?>, EcsSystem> systemClassIndex = new HashMap<>();
-    private final Set<EcsSystem> systems = new TreeSet<>(Comparator.comparingInt(EcsSystem::getSystemCreateOrder));
     private final List<EcsSystemGroup> systemGroups = new ArrayList<>();
     private Class<? extends EcsSystemGroup> currentSystemGroupClass;
 
@@ -73,6 +71,15 @@ public class EcsWorld implements Disposable {
         }
     }
 
+    private enum State {
+        INIT,
+        WAIT_RUNNING,
+        RUNNING,
+        WAIT_DESTROY,
+        DESTROYING,
+        DESTROYED,
+        ;
+    }
 
     public EcsWorld(String packageName) {
         ecsClassScanner = EcsClassScanner.getInstance(packageName);
@@ -85,16 +92,39 @@ public class EcsWorld implements Disposable {
                 throw new RuntimeException(e);
             }
         });
+        state = State.WAIT_RUNNING;
     }
 
     @Override
     public void dispose() {
+        if (state == State.INIT || state == State.DESTROYED) {
+            return;
+        }
+        if (state == State.RUNNING) {
+            state = State.WAIT_DESTROY;
+            return;
+        }
+        logger.info("Disposing ecs world at time {}...", currentTime);
+        state = State.DESTROYING;
         currentTime = 0;
-        clearSystems();
+        clearSystemGroup();
         clearEntityGroups();
         clearEntity();
         clearEntityArchetypes();
         entityFactoryIndex.clear();
+        state = State.DESTROYED;
+    }
+
+    public boolean isDestroy() {
+        return state == State.DESTROYED;
+    }
+
+    private void clearSystemGroup() {
+        for (EcsSystemGroup systemGroup : systemGroups) {
+            systemGroup.destroy();
+        }
+        this.currentSystemGroupClass = null;
+        systemGroups.clear();
     }
 
     // 通过类型ID创建实体
@@ -182,15 +212,26 @@ public class EcsWorld implements Disposable {
                 "EcsWorld try update failed! reason: currentTime >= nowTime. currentTime: %d, now: %d", 
                 currentTime, now));
         }
+        if (state != State.WAIT_RUNNING) {
+            logger.warn("EcsWorld request update failed! reason: EcsWorld has disposed");
+            return;
+        }
+        state = State.RUNNING;
         setCurrentTime(now);
         for (EcsSystemGroup systemGroup : this.systemGroups) {
             this.currentSystemGroupClass = systemGroup.getClass();
             systemGroup.tryUpdate();
+
         }
         for (Entity waitDestroyEntity : this.waitDestroyEntity) {
             destroyEntity(waitDestroyEntity);
         }
         this.waitDestroyEntity.clear();
+        if (state == State.WAIT_DESTROY) {
+            dispose();
+        } else {
+            state = State.WAIT_RUNNING;
+        }
     }
 
     public <T extends EcsComponent> T getComponent(int index, Class<T> compClass) {
@@ -268,35 +309,20 @@ public class EcsWorld implements Disposable {
         return ecsClassScanner.getChildSystem(ecsSystemGroup.getClass());
     }
 
-    @SuppressWarnings("unchecked")
     public <T extends EcsSystem> T createSystem(Class<T> systemClass) {
-        EcsSystem system = systemClassIndex.get(systemClass);
-        if (null != system) {
-            return (T) system;
-        }
+        T system;
         try {
             system = systemClass.getConstructor().newInstance();
-            system.setSystemCreateOrder(systemNextIndex++);
             UpdateIntervalTime timeIntervalAnno = systemClass.getAnnotation(UpdateIntervalTime.class);
             if (null != timeIntervalAnno) {
                 system.setUpdateInterval((long) (timeIntervalAnno.interval() * 1000f));
             }
-            Class<? extends EcsSystem> klass = systemClass;
-            while (!klass.equals(EcsSystem.class)) {
-                if (!systemClassIndex.containsKey(systemClass)) {
-                    systemClassIndex.put(systemClass, system);
-                }
-                if (EcsSystem.class.isAssignableFrom(klass.getSuperclass())) {
-                    klass = (Class<? extends EcsSystem>) klass.getSuperclass();
-                }
-            }
-            system.init(this, systemNextIndex++);
-            systems.add(system);
+            system.init(this);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
-        return (T) system;
+        return system;
     }
 
     public long getCurrentTime() {
@@ -305,20 +331,6 @@ public class EcsWorld implements Disposable {
 
     public void setCurrentTime(long currentTime) {
         this.currentTime = currentTime;
-    }
-
-    public void destroySystem(EcsSystem system) {
-        if (systemClassIndex.containsKey(system.getClass())) {
-            if (!systems.remove(system)) {
-                return;
-            }
-            Class<?> klass = system.getClass();
-            while (!klass.equals(EcsSystem.class)) {
-                EcsSystem ecsSystem = systemClassIndex.remove(klass);
-                klass = klass.getSuperclass();
-                ecsSystem.destroy();
-            }
-        }
     }
 
     /**
@@ -360,12 +372,6 @@ public class EcsWorld implements Disposable {
         entityIndex.clear();
     }
 
-    private void clearSystems() {
-        systemNextIndex = 1;
-        systems.forEach(EcsSystem::dispose);
-        systems.clear();
-        systemClassIndex.clear();
-    }
 
     private EntityArchetype getOrCreateArchetype(Collection<ComponentMatchType<?>> types) {
         EntityArchetype existArchetype = getExistingArchetype(types);
