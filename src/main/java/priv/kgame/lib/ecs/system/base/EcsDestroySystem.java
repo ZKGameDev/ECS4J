@@ -47,7 +47,7 @@ public abstract class EcsDestroySystem<T extends EcsComponent> extends EcsLogicS
     protected void onUpdate() {
         Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
-            onEntityDestroy(entity, entity.getComponent(matchComponentMatchType));
+            onEntityDestroy(entity, entity.getComponent(matchComponentMatchType.getType()));
         }
     }
 

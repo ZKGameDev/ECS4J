@@ -58,7 +58,7 @@ public class EntityGroup implements Disposable {
                 continue;
             }
             for(Entity entity : matchEntityArchetype.getEntityList()) {
-                EcsComponent component = entity.getComponent(componentMatchType);
+                EcsComponent component = entity.getComponent(tClass);
                 if (null == component) {
                     logger.error("{} not exist in Entity {}!", tClass.getSimpleName(), entity);
                     continue;

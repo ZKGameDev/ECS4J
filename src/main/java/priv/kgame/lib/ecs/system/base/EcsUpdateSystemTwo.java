@@ -53,7 +53,8 @@ public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends Ecs
     @Override
     protected void onUpdate() {
         for (Entity entity : super.getAllMatchEntity()) {
-            update(entity, entity.getComponent(componentMatchType1), entity.getComponent(componentMatchType2));
+            update(entity, entity.getComponent(componentMatchType1.getType()),
+                    entity.getComponent(componentMatchType2.getType()));
         }
     }
 

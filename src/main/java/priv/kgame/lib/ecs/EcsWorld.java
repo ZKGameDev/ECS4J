@@ -120,7 +120,7 @@ public class EcsWorld implements Disposable {
     public Entity createEntity(int typeId, EntityArchetype entityArchetype) {
         Entity entity = new Entity(this, entitiesNextIndex++, typeId, entityArchetype);
         for (ComponentMatchType<?> componentMatchType : entityArchetype.getComponentTypes()) {
-            entity.addComponent(componentMatchType);
+            entity.addComponent(componentMatchType.getType());
         }
         entityArchetype.addEntity(entity);
         entityIndex.put(entity.getIndex(), entity);
@@ -210,13 +210,14 @@ public class EcsWorld implements Disposable {
             logger.warn("add component failed! reason: entity not exist. index:{}", entity.getIndex());
             return;
         }
-        ComponentMatchType<?> componentMatchType = ComponentMatchType.additive(this, component.getClass());
-        if (entity.hasComponent(componentMatchType)) {
+        Class<? extends EcsComponent> componentClass = component.getClass();
+        if (entity.hasComponent(componentClass)) {
             logger.warn("add component failed! reason: component already exists of entity:{} componentType:{}",
-                    entity.getIndex(), componentMatchType.getType().getSimpleName());
+                    entity.getIndex(), componentClass.getSimpleName());
             return;
         }
 
+        ComponentMatchType<?> componentMatchType = ComponentMatchType.additive(this, componentClass);
         EntityArchetype oldArchetype = entity.getArchetype();
         Set<ComponentMatchType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
         newTypes.add(componentMatchType);
@@ -230,7 +231,7 @@ public class EcsWorld implements Disposable {
         Set<ComponentMatchType<?>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
         newTypes.remove(componentMatchType);
         updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
-        entity.removeComponent(componentMatchType);
+        entity.removeComponent(componentMatchType.getType());
     }
 
     public EntityGroup getOrCreateEntityGroup(ComponentTypeQuery[] componentTypeQuery) {

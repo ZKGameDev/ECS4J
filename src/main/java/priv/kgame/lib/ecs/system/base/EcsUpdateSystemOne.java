@@ -51,7 +51,7 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsLogi
     protected void onUpdate() {
         Collection<Entity> entities = super.getAllMatchEntity();
         for (Entity entity : entities) {
-            update(entity, entity.getComponent(matchComponentMatchType));
+            update(entity, entity.getComponent(matchComponentMatchType.getType()));
         }
     }
 

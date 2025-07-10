@@ -2,10 +2,10 @@ package priv.kgame.lib.ecs.entity;
 
 import priv.kgame.lib.ecs.Disposable;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.RecycleComponent;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,10 +22,6 @@ public class Entity implements Disposable {
         this.index = index;
         this.type = type;
         this.archetype = archetype;
-    }
-
-    public <T extends EcsComponent> T getComponent(ComponentMatchType<T> componentMatchType) {
-        return getComponent(componentMatchType.getType());
     }
 
     @SuppressWarnings({"unchecked"})
@@ -85,21 +81,12 @@ public class Entity implements Disposable {
         this.archetype = archetype;
     }
 
-    public void assertContainComponent(ComponentMatchType<?> componentMatchType) {
-        if (getComponent(componentMatchType) == null) {
-            throw new RuntimeException(String.format("EcsEndSystem update failed! %s not exist in entity. please check code", componentMatchType.getType()));
-        }
-    }
-
     public int getIndex() {
         return index;
     }
 
     public boolean hasComponent(Class<? extends EcsComponent> klass) {
         return data.containsKey(klass);
-    }
-    public boolean hasComponent(ComponentMatchType<?> componentMatchType) {
-        return hasComponent(componentMatchType.getType());
     }
 
     /**
@@ -117,16 +104,30 @@ public class Entity implements Disposable {
      * 使用组件类型的默认构造函数创建并添加组件。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void addComponent(ComponentMatchType<?> componentMatchType) {
-        addComponent(componentMatchType.generateComponentByDefaultConstructor());
+    public void addComponent(Class<? extends EcsComponent> componentClass) {
+        addComponent(generateComponentByDefaultConstructor(componentClass));
+    }
+
+    /**
+     * 通过type的默认构造函数生成对应的Component实例
+     * @return type对应的Component实例
+     * @throws RuntimeException 当type没有默认构造函数时抛出
+     */
+    private <T extends EcsComponent>  T generateComponentByDefaultConstructor(Class<T> c) {
+        try {
+            return c.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new RuntimeException("createEntity failed! component "
+                    + c.getName() + " don't has default constructor", e);
+        }
     }
 
     /**
      * 从实体中移除指定类型的组件。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void removeComponent(ComponentMatchType<?> componentMatchType) {
-        data.remove(componentMatchType.getType());
+    public void removeComponent(Class<? extends EcsComponent> componentClass) {
+        data.remove(componentClass);
     }
 
     public boolean removeFromArchetype() {

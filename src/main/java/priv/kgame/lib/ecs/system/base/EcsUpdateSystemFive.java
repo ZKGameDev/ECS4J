@@ -67,8 +67,11 @@ public abstract class EcsUpdateSystemFive<T1 extends EcsComponent,
     @Override
     protected void onUpdate() {
         for (Entity entity : super.getAllMatchEntity()) {
-            update(entity, entity.getComponent(componentMatchType1), entity.getComponent(componentMatchType2)
-                    , entity.getComponent(componentMatchType3), entity.getComponent(componentMatchType4), entity.getComponent(componentMatchType5));
+            update(entity, entity.getComponent(componentMatchType1.getType()),
+                    entity.getComponent(componentMatchType2.getType()),
+                    entity.getComponent(componentMatchType3.getType()),
+                    entity.getComponent(componentMatchType4.getType()),
+                    entity.getComponent(componentMatchType5.getType()));
         }
     }
 
