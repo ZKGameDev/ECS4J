@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentMatchType;
+import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
@@ -32,18 +32,18 @@ import java.util.List;
  * @param <T> 实体更新处理所需的组件类型
  */
 public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsLogicSystem {
-    private ComponentMatchType<T> matchComponentMatchType;
+    private ComponentMatchParam<T> matchComponentMatchType;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentMatchType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchParam<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        matchComponentMatchType = ComponentMatchType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+        matchComponentMatchType = ComponentMatchParam.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
 
-        List<ComponentMatchType<?>> typeList = new ArrayList<>();
+        List<ComponentMatchParam<?>> typeList = new ArrayList<>();
         typeList.add(matchComponentMatchType);
-        typeList.add(ComponentMatchType.subtractive(getWorld(), DestroyingComponent.class));
-        typeList.add(ComponentMatchType.additive(getWorld(), InitializedComponent.class));
+        typeList.add(ComponentMatchParam.subtractive(getWorld(), DestroyingComponent.class));
+        typeList.add(ComponentMatchParam.additive(getWorld(), InitializedComponent.class));
         return typeList;
     }
 

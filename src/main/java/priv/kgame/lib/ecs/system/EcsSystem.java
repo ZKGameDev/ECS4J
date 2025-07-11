@@ -2,7 +2,7 @@ package priv.kgame.lib.ecs.system;
 
 import priv.kgame.lib.ecs.Disposable;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentMatchType;
+import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityGroup;
@@ -87,16 +87,9 @@ public abstract class EcsSystem implements Disposable {
         }
     }
 
-    protected void configEntityFilter(List<ComponentMatchType<?>> componentMatchTypes) {
-        configEntityFilter(ecsWorld.createQuery(componentMatchTypes.toArray(new ComponentMatchType[0])));
-    }
-    protected void configEntityFilter(ComponentMatchType<?>... componentMatchTypes) {
-        configEntityFilter(ecsWorld.createQuery(componentMatchTypes));
-    }
-
     protected void configEntityFilter(ComponentTypeQuery componentTypes) {
         if (entityGroup == null) {
-            entityGroup = ecsWorld.getOrCreateEntityGroup(new ComponentTypeQuery[]{componentTypes});
+            entityGroup = ecsWorld.getOrCreateEntityGroup(componentTypes);
         } else {
             if (!entityGroup.compareQuery(componentTypes)) {
                 throw new UnsupportedOperationException("Repeatedly setting EntityGroup");

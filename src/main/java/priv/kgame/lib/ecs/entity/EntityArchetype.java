@@ -1,15 +1,15 @@
 package priv.kgame.lib.ecs.entity;
 
 import priv.kgame.lib.ecs.Disposable;
-import priv.kgame.lib.ecs.component.ComponentMatchType;
+import priv.kgame.lib.ecs.component.EcsComponent;
 
 import java.util.*;
 
 public class EntityArchetype implements Disposable {
-    private final Set<ComponentMatchType<?>> componentMatchTypes = new HashSet<>();
+    private final Set<Class<? extends EcsComponent>> componentMatchTypes = new HashSet<>();
     private final List<Entity> entityList = new ArrayList<>();
 
-    public Set<ComponentMatchType<?>> getComponentTypes() {
+    public Set<Class<? extends EcsComponent>> getComponentTypes() {
         return componentMatchTypes;
     }
 
@@ -40,15 +40,15 @@ public class EntityArchetype implements Disposable {
         return entityList.size();
     }
 
-    public void addComponentType(ComponentMatchType<?> componentMatchType) {
+    public void addComponentType(Class<? extends EcsComponent> componentMatchType) {
         componentMatchTypes.add(componentMatchType);
     }
 
-    public boolean isSame(Collection<ComponentMatchType<?>> types) {
+    public boolean isSame(Collection<Class<? extends EcsComponent>> types) {
         return types.size() == componentMatchTypes.size() && componentMatchTypes.containsAll(types);
     }
 
-    public boolean hasComponentType(ComponentMatchType<?> componentMatchType) {
+    public boolean hasComponentType(Class<? extends EcsComponent> componentMatchType) {
         return componentMatchTypes.contains(componentMatchType);
     }
 

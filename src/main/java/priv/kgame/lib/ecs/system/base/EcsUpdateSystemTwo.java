@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentMatchType;
+import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
@@ -32,21 +32,21 @@ import java.util.List;
  * @param <T2> 第二个必需的组件类型
  */
 public abstract class EcsUpdateSystemTwo<T1 extends EcsComponent, T2 extends EcsComponent> extends EcsLogicSystem {
-    private ComponentMatchType<T1> componentMatchType1;
-    private ComponentMatchType<T2> componentMatchType2;
+    private ComponentMatchParam<T1> componentMatchType1;
+    private ComponentMatchParam<T2> componentMatchType2;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentMatchType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchParam<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        componentMatchType1 = ComponentMatchType.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
-        componentMatchType2 = ComponentMatchType.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
+        componentMatchType1 = ComponentMatchParam.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
+        componentMatchType2 = ComponentMatchParam.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
 
-        List<ComponentMatchType<?>> componentMatchTypes = new ArrayList<>();
+        List<ComponentMatchParam<?>> componentMatchTypes = new ArrayList<>();
         componentMatchTypes.add(componentMatchType1);
         componentMatchTypes.add(componentMatchType2);
-        componentMatchTypes.add(ComponentMatchType.subtractive(getWorld(), DestroyingComponent.class));
-        componentMatchTypes.add(ComponentMatchType.additive(getWorld(), InitializedComponent.class));
+        componentMatchTypes.add(ComponentMatchParam.subtractive(getWorld(), DestroyingComponent.class));
+        componentMatchTypes.add(ComponentMatchParam.additive(getWorld(), InitializedComponent.class));
         return componentMatchTypes;
     }
 

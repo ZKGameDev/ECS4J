@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentMatchType;
+import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.tools.EcsTools;
@@ -32,7 +32,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
     public static abstract class SystemInitFinishSingle implements EcsComponent {
     }
 
-    private ComponentMatchType<T> matchComponentMatchType;
+    private ComponentMatchParam<T> matchComponentMatchType;
     private final SystemInitFinishSingle systemInitFinishSingle;
 
 
@@ -52,13 +52,13 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentMatchType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchParam<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        matchComponentMatchType = ComponentMatchType.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
+        matchComponentMatchType = ComponentMatchParam.additive(getWorld(), (Class<T>) parameterizedTypes[0]);
 
-        List<ComponentMatchType<?>> typeList = new ArrayList<>();
+        List<ComponentMatchParam<?>> typeList = new ArrayList<>();
         typeList.add(matchComponentMatchType);
-        typeList.add(ComponentMatchType.subtractive(getWorld(), systemInitFinishSingle.getClass()));
+        typeList.add(ComponentMatchParam.subtractive(getWorld(), systemInitFinishSingle.getClass()));
         return typeList;
     }
 

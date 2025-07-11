@@ -5,23 +5,23 @@ import priv.kgame.lib.ecs.EcsWorld;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-public class ComponentMatchType<T extends EcsComponent> implements Comparable<ComponentMatchType<?>>{
+public class ComponentMatchParam<T extends EcsComponent> implements Comparable<ComponentMatchParam<?>>{
     private final ComponentAccessMode accessModeType;
     private int typeIndex = 0;
     private Class<T> type;
 
-    public ComponentMatchType() {
+    public ComponentMatchParam() {
         this(ComponentAccessMode.READ_WRITE);
     }
-    public ComponentMatchType(ComponentAccessMode accessMode) {
+    public ComponentMatchParam(ComponentAccessMode accessMode) {
         this.accessModeType = accessMode;
     }
 
     /**
      * 包含
      */
-    public static <T extends EcsComponent> ComponentMatchType<T> additive(EcsWorld ecsWorld, Class<T> type) {
-        ComponentMatchType<T> componentMatchType = new ComponentMatchType<>();
+    public static <T extends EcsComponent> ComponentMatchParam<T> additive(EcsWorld ecsWorld, Class<T> type) {
+        ComponentMatchParam<T> componentMatchType = new ComponentMatchParam<>();
         componentMatchType.typeIndex = ecsWorld.getComponentTypeIndex(type);
         componentMatchType.type = type;
         return componentMatchType;
@@ -30,15 +30,15 @@ public class ComponentMatchType<T extends EcsComponent> implements Comparable<Co
     /**
      * 不包含
      */
-    public static <T extends EcsComponent> ComponentMatchType<T> subtractive(EcsWorld ecsWorld, Class<T> type) {
-        ComponentMatchType<T> componentMatchType = new ComponentMatchType<>(ComponentAccessMode.SUBTRACTIVE);
+    public static <T extends EcsComponent> ComponentMatchParam<T> subtractive(EcsWorld ecsWorld, Class<T> type) {
+        ComponentMatchParam<T> componentMatchType = new ComponentMatchParam<>(ComponentAccessMode.SUBTRACTIVE);
         componentMatchType.typeIndex = ecsWorld.getComponentTypeIndex(type);
         componentMatchType.type = type;
         return componentMatchType;
     }
 
     @Override
-    public int compareTo(ComponentMatchType<?> o) {
+    public int compareTo(ComponentMatchParam<?> o) {
         return Integer.compare(typeIndex, o.typeIndex);
     }
 
@@ -46,7 +46,7 @@ public class ComponentMatchType<T extends EcsComponent> implements Comparable<Co
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ComponentMatchType<?> that = (ComponentMatchType<?>) o;
+        ComponentMatchParam<?> that = (ComponentMatchParam<?>) o;
         return typeIndex == that.typeIndex && accessModeType == that.accessModeType;
     }
 

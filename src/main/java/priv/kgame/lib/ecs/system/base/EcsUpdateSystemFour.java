@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.system.base;
 
-import priv.kgame.lib.ecs.component.ComponentMatchType;
+import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.base.DestroyingComponent;
 import priv.kgame.lib.ecs.component.base.InitializedComponent;
@@ -36,27 +36,27 @@ import java.util.List;
  */
 public abstract class EcsUpdateSystemFour<T1 extends EcsComponent,
         T2 extends EcsComponent, T3 extends EcsComponent, T4 extends EcsComponent> extends EcsLogicSystem {
-    private ComponentMatchType<T1> componentMatchType1;
-    private ComponentMatchType<T2> componentMatchType2;
-    private ComponentMatchType<T3> componentMatchType3;
-    private ComponentMatchType<T4> componentMatchType4;
+    private ComponentMatchParam<T1> componentMatchType1;
+    private ComponentMatchParam<T2> componentMatchType2;
+    private ComponentMatchParam<T3> componentMatchType3;
+    private ComponentMatchParam<T4> componentMatchType4;
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Collection<ComponentMatchType<?>> getMatchComponent() {
+    protected Collection<ComponentMatchParam<?>> getMatchComponent() {
         Type[] parameterizedTypes = EcsTools.generateParameterizedType(this.getClass());
-        componentMatchType1 = ComponentMatchType.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
-        componentMatchType2 = ComponentMatchType.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
-        componentMatchType3 = ComponentMatchType.additive(getWorld(), (Class<T3>) parameterizedTypes[2]);
-        componentMatchType4 = ComponentMatchType.additive(getWorld(), (Class<T4>) parameterizedTypes[3]);
+        componentMatchType1 = ComponentMatchParam.additive(getWorld(), (Class<T1>) parameterizedTypes[0]);
+        componentMatchType2 = ComponentMatchParam.additive(getWorld(), (Class<T2>) parameterizedTypes[1]);
+        componentMatchType3 = ComponentMatchParam.additive(getWorld(), (Class<T3>) parameterizedTypes[2]);
+        componentMatchType4 = ComponentMatchParam.additive(getWorld(), (Class<T4>) parameterizedTypes[3]);
 
-        List<ComponentMatchType<?>> componentMatchTypes = new ArrayList<>();
+        List<ComponentMatchParam<?>> componentMatchTypes = new ArrayList<>();
         componentMatchTypes.add(componentMatchType1);
         componentMatchTypes.add(componentMatchType2);
         componentMatchTypes.add(componentMatchType3);
         componentMatchTypes.add(componentMatchType4);
-        componentMatchTypes.add(ComponentMatchType.subtractive(getWorld(), DestroyingComponent.class));
-        componentMatchTypes.add(ComponentMatchType.additive(getWorld(), InitializedComponent.class));
+        componentMatchTypes.add(ComponentMatchParam.subtractive(getWorld(), DestroyingComponent.class));
+        componentMatchTypes.add(ComponentMatchParam.additive(getWorld(), InitializedComponent.class));
         return componentMatchTypes;
     }
 

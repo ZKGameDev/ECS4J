@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import priv.kgame.lib.ecs.Disposable;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentMatchType;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.component.EcsComponent;
 
@@ -17,10 +16,6 @@ public class EntityGroup implements Disposable {
     private static final Logger logger = LogManager.getLogger(EntityGroup.class);
     private final List<ComponentTypeQuery> requirementQuery = new ArrayList<>();
     private final List<EntityArchetype> matchingTypes = new ArrayList<>();
-    private final EcsWorld world;
-    public EntityGroup(EcsWorld world) {
-        this.world = world;
-    }
 
     public boolean isEmpty() {
        return matchingTypes.stream().noneMatch(
@@ -51,9 +46,8 @@ public class EntityGroup implements Disposable {
 
     public <T extends EcsComponent> List<T> getComponentDataList(Class<T> tClass) {
         List<T> result = new ArrayList<>();
-        ComponentMatchType<T> componentMatchType = ComponentMatchType.additive(world, tClass);
         for (EntityArchetype matchEntityArchetype : matchingTypes) {
-            if (!matchEntityArchetype.hasComponentType(componentMatchType)) {
+            if (!matchEntityArchetype.hasComponentType(tClass)) {
                 logger.error("{} not exist in EntityGroup matchingTypes {}!", tClass.getSimpleName(), this);
                 continue;
             }
@@ -104,7 +98,7 @@ public class EntityGroup implements Disposable {
         requirementQuery.clear();
     }
 
-    public void addMatchType(EntityArchetype entityArchetype) {
+    public void registerArchetype(EntityArchetype entityArchetype) {
         matchingTypes.add(entityArchetype);
     }
 
@@ -112,7 +106,16 @@ public class EntityGroup implements Disposable {
         return requirementQuery;
     }
 
-    public void addRequirementQuery(ComponentTypeQuery[] componentTypeQuery) {
-        requirementQuery.addAll(List.of(componentTypeQuery));
+    public void addRequirementQuery(ComponentTypeQuery componentTypeQuery) {
+        requirementQuery.add(componentTypeQuery);
+    }
+
+    public void addArchetypeIfMatching(EntityArchetype entityArchetype) {
+        for (ComponentTypeQuery query : requirementQuery) {
+            if (query.isMatchingArchetype(entityArchetype)) {
+                registerArchetype(entityArchetype);
+                return;
+            }
+        }
     }
 }
