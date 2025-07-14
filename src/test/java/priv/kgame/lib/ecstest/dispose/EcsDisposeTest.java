@@ -106,10 +106,10 @@ class EcsDisposeTest {
         boolean disposed = false;
         long disposeLogicTime = 0;
         componentDispose1.disposeTime = disposeTime;
-        while (startTime < endTime && !ecsWorld.isDestroy()) {
+        while (startTime < endTime && !ecsWorld.isClosed()) {
             // 更新ECS世界
             ecsWorld.update(startTime);
-            if (ecsWorld.isDestroy()) {
+            if (ecsWorld.isClosed()) {
                 disposeLogicTime = startTime;
             }
             startTime += tickInterval;
@@ -139,10 +139,10 @@ class EcsDisposeTest {
         boolean disposed = false;
         long disposeLogicTime = 0;
         componentDispose2.disposeTime = disposeTime;
-        while (startTime < endTime && !ecsWorld.isDestroy()) {
+        while (startTime < endTime && !ecsWorld.isClosed()) {
             // 更新ECS世界
             ecsWorld.update(startTime);
-            if (ecsWorld.isDestroy()) {
+            if (ecsWorld.isClosed()) {
                 disposeLogicTime = startTime;
             }
             startTime += tickInterval;
@@ -172,10 +172,10 @@ class EcsDisposeTest {
         boolean disposed = false;
         long disposeLogicTime = 0;
         componentDispose3.disposeTime = disposeTime;
-        while (startTime < endTime && !ecsWorld.isDestroy()) {
+        while (startTime < endTime && !ecsWorld.isClosed()) {
             // 更新ECS世界
             ecsWorld.update(startTime);
-            if (ecsWorld.isDestroy()) {
+            if (ecsWorld.isClosed()) {
                 disposeLogicTime = startTime;
             }
             startTime += tickInterval;

@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * 非线程安全，只能在单线程使用
  */
-public class EcsWorld implements Cleanable {
+public class EcsWorld{
     private static final Logger logger = LogManager.getLogger(EcsWorld.class);
     private static final int INIT_CURRENT_TIME = -1;
 
@@ -60,8 +60,11 @@ public class EcsWorld implements Cleanable {
         state = State.WAIT_RUNNING;
     }
 
-    @Override
-    public void clean() {
+    /**
+     * 关闭World。
+     * 如果在update期间调用，会等本次所有System update完成之后才执行关闭逻辑。
+     */
+    public void close() {
         if (state == State.INIT || state == State.DESTROYED) {
             return;
         }
@@ -78,7 +81,7 @@ public class EcsWorld implements Cleanable {
         state = State.DESTROYED;
     }
 
-    public boolean isDestroy() {
+    public boolean isClosed() {
         return state == State.DESTROYED;
     }
 
@@ -160,7 +163,7 @@ public class EcsWorld implements Cleanable {
         }
         this.waitDestroyEntity.clear();
         if (state == State.WAIT_DESTROY) {
-            clean();
+            close();
         } else {
             state = State.WAIT_RUNNING;
         }
