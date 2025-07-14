@@ -14,7 +14,7 @@ public class SystemDispose1 extends EcsUpdateSystemOne<ComponentDispose1> {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
         component.updateTime = getWorld().getCurrentTime();
         if (component.disposeTime > 0 && component.disposeTime <= getWorld().getCurrentTime()) {
-            getWorld().dispose();
+            getWorld().clean();
         }
     }
 }

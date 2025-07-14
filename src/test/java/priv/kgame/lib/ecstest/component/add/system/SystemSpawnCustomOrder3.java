@@ -18,7 +18,7 @@ public class SystemSpawnCustomOrder3 extends EcsInitializeSystem<ComponentA3> {
     @Override
     public boolean onInitialize(Entity entity, ComponentA3 data) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
-        getWorld().addComponent(entity, InitializedComponent.generate());
+        entity.addComponent(InitializedComponent.generate());
         data.data += "o3";
         return true;
     }

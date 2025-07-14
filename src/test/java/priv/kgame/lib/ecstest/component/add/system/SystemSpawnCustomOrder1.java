@@ -18,8 +18,8 @@ public class SystemSpawnCustomOrder1 extends EcsInitializeSystem<ComponentA1> {
 
     @Override
     public boolean onInitialize(Entity entity, ComponentA1 data) {
-        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
-      getWorld().addComponent(entity, InitializedComponent.generate());
+        System.out.println(this.getClass().getSimpleName() + " update at: " + getWorld().getCurrentTime());
+        entity.addComponent(InitializedComponent.generate());
         data.data += "o1";
         return true;
     }
@@ -36,6 +36,7 @@ public class SystemSpawnCustomOrder1 extends EcsInitializeSystem<ComponentA1> {
 
     @Override
     protected SystemInitFinishSingle getInitFinishSingle() {
-        return new SystemInitFinishSingle() {};
+        return new SystemInitFinishSingle() {
+        };
     }
 }

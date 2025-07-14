@@ -1,27 +1,33 @@
 package priv.kgame.lib.ecs.entity;
 
-import priv.kgame.lib.ecs.Disposable;
-import priv.kgame.lib.ecs.EcsWorld;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import priv.kgame.lib.ecs.Cleanable;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.component.RecycleComponent;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-public class Entity implements Disposable {
-    private final EcsWorld world;
+public class Entity implements Cleanable {
+    private static final Logger logger = LogManager.getLogger(Entity.class);
+
+    private final EcsEntityManager ecsEntityManager;
     private final int index;
     private final int type;
     private final Map<Class<? extends EcsComponent>, EcsComponent> data = new HashMap<>();
-    private EntityArchetype archetype;
 
-    public Entity(EcsWorld ecsWorld, int index, int type, EntityArchetype archetype) {
-        this.world = ecsWorld;
+    private EntityArchetype archetype = EntityArchetype.EMPTY_INSTANCE;
+
+    public Entity(EcsEntityManager ecsEntityManager, int index, int type) {
+        this.ecsEntityManager = ecsEntityManager;
         this.index = index;
         this.type = type;
-        this.archetype = archetype;
+    }
+
+    public void init() {
+        this.archetype = ecsEntityManager.getOrCreateArchetype(data.keySet());
+        archetype.addEntity(this);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -34,7 +40,7 @@ public class Entity implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void clean() {
         data.values().forEach(component -> {
             if (component instanceof RecycleComponent<?> recycleComponent) {
                 recycleComponent.clear();
@@ -77,10 +83,6 @@ public class Entity implements Disposable {
         return archetype;
     }
 
-    public void setArchetype(EntityArchetype archetype) {
-        this.archetype = archetype;
-    }
-
     public int getIndex() {
         return index;
     }
@@ -89,11 +91,34 @@ public class Entity implements Disposable {
         return data.containsKey(klass);
     }
 
+    public void addComponent(EcsComponent component) {
+        Class<? extends EcsComponent> componentClass = component.getClass();
+        if (hasComponent(componentClass)) {
+            logger.warn("add component failed! reason: component already exists of entity:{} componentType:{}",
+                    getIndex(), componentClass.getSimpleName());
+            return;
+        }
+
+        EntityArchetype oldArchetype = getArchetype();
+        Set<Class<? extends EcsComponent>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
+        newTypes.add(componentClass);
+        updateArchetype(ecsEntityManager.getOrCreateArchetype(newTypes), oldArchetype);
+        data.put(component.getClass(), component);
+    }
+
+    public void removeComponent(Class<? extends EcsComponent> componentCls) {
+        EntityArchetype oldArchetype = getArchetype();
+        Set<Class<? extends EcsComponent>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
+        newTypes.remove(componentCls);
+        updateArchetype(ecsEntityManager.getOrCreateArchetype(newTypes), oldArchetype);
+        data.remove(componentCls);
+    }
+
     /**
      * 添加组件到实体中，并验证组件类型是否匹配。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void addComponent(EcsComponent component) {
+    void addComponentInstance(EcsComponent component) {
         if (data.containsKey(component.getClass())) {
             return;
         }
@@ -104,8 +129,8 @@ public class Entity implements Disposable {
      * 使用组件类型的默认构造函数创建并添加组件。
      * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
      */
-    public void addComponent(Class<? extends EcsComponent> componentClass) {
-        addComponent(generateComponentByDefaultConstructor(componentClass));
+    void addComponentInstance(Class<? extends EcsComponent> componentClass) {
+        addComponentInstance(generateComponentByDefaultConstructor(componentClass));
     }
 
     /**
@@ -122,14 +147,6 @@ public class Entity implements Disposable {
         }
     }
 
-    /**
-     * 从实体中移除指定类型的组件。
-     * 注意：此方法仅供 ECS 框架内部使用，外部代码不应直接调用。
-     */
-    public void removeComponent(Class<? extends EcsComponent> componentClass) {
-        data.remove(componentClass);
-    }
-
     public boolean removeFromArchetype() {
         return getArchetype().removeEntity(this);
     }
@@ -138,7 +155,9 @@ public class Entity implements Disposable {
         return type;
     }
 
-    public EcsWorld getWorld() {
-        return world;
+    private void updateArchetype(EntityArchetype newArchetype, EntityArchetype oldArchetype) {
+        newArchetype.addEntity(this);
+        oldArchetype.removeEntity(this);
+        archetype = newArchetype;
     }
 }

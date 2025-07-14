@@ -1,8 +1,6 @@
 package priv.kgame.lib.ecs.entity;
 
-import priv.kgame.lib.ecs.EcsWorld;
-
 public interface EntityFactory {
-    Entity create(EcsWorld ecsWorld);
+    Entity create(EcsEntityManager ecsEntityManager);
     int typeId();
 }

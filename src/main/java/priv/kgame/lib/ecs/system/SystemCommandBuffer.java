@@ -1,12 +1,10 @@
 package priv.kgame.lib.ecs.system;
 
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.command.*;
 
-import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class SystemCommandBuffer {
@@ -16,8 +14,8 @@ public class SystemCommandBuffer {
         this.ecsWorld = ecsWorld;
     }
 
-    public void createEntity(int typeId, Collection<Class<? extends EcsComponent>> types) {
-        systemCommands.offer(new SystemCommandCreateEntity(ecsWorld, typeId, types));
+    public void createEntity(int typeId) {
+        systemCommands.offer(new SystemCommandCreateEntity(ecsWorld, typeId));
     }
 
     public void destroyEntity(Entity entity) {

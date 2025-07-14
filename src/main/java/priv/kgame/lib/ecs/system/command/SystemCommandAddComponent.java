@@ -22,6 +22,6 @@ public class SystemCommandAddComponent implements SystemCommand{
 
     @Override
     public void execute() {
-        ecsWorld.addComponent(entity, component);
+        entity.addComponent(component);
     }
 }

@@ -1,14 +1,14 @@
 package priv.kgame.lib.ecs.entity;
 
-import priv.kgame.lib.ecs.EcsWorld;
+import priv.kgame.lib.ecs.component.EcsComponent;
+
+import java.util.Collection;
 
 public abstract class BaseEntityFactory implements EntityFactory{
     @Override
-    public Entity create(EcsWorld ecsWorld) {
-        Entity entity = ecsWorld.createEntity(typeId());
-        onCreate(ecsWorld, entity);
-        return entity;
+    public Entity create(EcsEntityManager ecsEntityManager) {
+        return ecsEntityManager.createEntityInstance(typeId(), generateComponent());
     }
 
-    protected abstract void onCreate(EcsWorld ecsWorld, Entity entity);
+    protected abstract Collection<EcsComponent> generateComponent();
 }

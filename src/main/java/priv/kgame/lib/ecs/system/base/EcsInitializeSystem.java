@@ -45,7 +45,7 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
         Collection<Entity> entityList = super.getAllMatchEntity();
         for (Entity entity : entityList) {
             if (onInitialize(entity, entity.getComponent(matchComponentMatchType.getType()))) {
-                getWorld().addComponent(entity, systemInitFinishSingle);
+                entity.addComponent(systemInitFinishSingle);
             }
         }
     }

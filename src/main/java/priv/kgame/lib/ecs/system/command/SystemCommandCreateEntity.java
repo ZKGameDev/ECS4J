@@ -13,12 +13,10 @@ import java.util.Collection;
 public class SystemCommandCreateEntity implements SystemCommand {
     private static final Logger logger = LogManager.getLogger(SystemCommandCreateEntity.class);
     private final EcsWorld ecsWorld;
-    private final Collection<Class<? extends EcsComponent>> types;
     private final int typeId;
 
-    public SystemCommandCreateEntity(EcsWorld ecsWorld, int typeId, Collection<Class<? extends EcsComponent>> types) {
+    public SystemCommandCreateEntity(EcsWorld ecsWorld, int typeId) {
         this.ecsWorld = ecsWorld;
-        this.types = types;
         this.typeId = typeId;
     }
 
@@ -29,7 +27,7 @@ public class SystemCommandCreateEntity implements SystemCommand {
 
     @Override
     public void execute() {
-        Entity entity = ecsWorld.createEntity(typeId, types);
+        Entity entity = ecsWorld.createEntity(typeId);
         logger.debug("SystemCommandCreateEntity {}", entity);
     }
 }

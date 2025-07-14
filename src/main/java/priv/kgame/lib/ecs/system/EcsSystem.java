@@ -1,8 +1,7 @@
 package priv.kgame.lib.ecs.system;
 
-import priv.kgame.lib.ecs.Disposable;
+import priv.kgame.lib.ecs.Cleanable;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentMatchParam;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.entity.EntityGroup;
@@ -11,10 +10,10 @@ import priv.kgame.lib.ecs.system.annotation.UpdateIntervalTime;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-public abstract class EcsSystem implements Disposable {
+public abstract class EcsSystem implements Cleanable {
     private EcsWorld ecsWorld;
+    protected EcsSystemManager ecsSystemManager;
     private SystemCommandBuffer waitUpdateCommand;
 
     private boolean alwaysUpdateSystem = false;
@@ -53,16 +52,17 @@ public abstract class EcsSystem implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void clean() {
         waitUpdateCommand.clear();
         if (entityGroup != null) {
-            entityGroup.dispose();
+            entityGroup.clean();
         }
     }
 
 
-    public void init(EcsWorld ecsWorld) {
-        this.ecsWorld = ecsWorld;
+    public void init(EcsSystemManager systemManager) {
+        this.ecsWorld = systemManager.getWorld();
+        this.ecsSystemManager = systemManager;
         this.waitUpdateCommand = new SystemCommandBuffer(ecsWorld);
         AlwaysUpdate alwaysUpdateAnno = this.getClass().getAnnotation(AlwaysUpdate.class);
         if (alwaysUpdateAnno != null) {
@@ -82,7 +82,7 @@ public abstract class EcsSystem implements Disposable {
         }
         if (!destroyed) {
             onDestroy();
-            dispose();
+            clean();
             destroyed = true;
         }
     }

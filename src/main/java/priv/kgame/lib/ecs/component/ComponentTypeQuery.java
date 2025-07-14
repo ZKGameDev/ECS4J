@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.component;
 
-import priv.kgame.lib.ecs.Disposable;
+import priv.kgame.lib.ecs.Cleanable;
 import priv.kgame.lib.ecs.entity.EntityArchetype;
 
 import java.util.Collection;
@@ -8,14 +8,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class ComponentTypeQuery implements Disposable {
+public class ComponentTypeQuery implements Cleanable {
     private final Set<Class<? extends EcsComponent>> any = new HashSet<>();
+    //不能包含任何一个
     private final Set<Class<? extends EcsComponent>> none = new HashSet<>();
-    //所有都要滿足
+    //所有的都要包含
     private final Set<Class<? extends EcsComponent>> all = new HashSet<>();
 
     @Override
-    public void dispose() {
+    public void clean() {
         any.clear();
         none.clear();
         all.clear();
@@ -55,25 +56,25 @@ public class ComponentTypeQuery implements Disposable {
     }
 
     public boolean isMatchingArchetype(EntityArchetype entityArchetype) {
-        if (!checkMatchingArchetypeAll(entityArchetype)) {
+        if (!checkMatchingAll(entityArchetype)) {
             return false;
         }
-        if (!checkMatchingArchetypeNone(entityArchetype)) {
+        if (!checkMatchingNone(entityArchetype)) {
             return false;
         }
-        return checkMatchingArchetypeAny(entityArchetype);
+        return checkMatchingAny(entityArchetype);
     }
 
-    private boolean checkMatchingArchetypeAll(EntityArchetype entityArchetype) {
+    private boolean checkMatchingAll(EntityArchetype entityArchetype) {
         for (Class<? extends EcsComponent> componentMatchType : all) {
-            if (!entityArchetype.hasComponentType(componentMatchType)) {
+            if (!entityArchetype.hasComponent(componentMatchType)) {
                 return false;
             }
         }
         return true;
     }
 
-    private boolean checkMatchingArchetypeNone(EntityArchetype entityArchetype) {
+    private boolean checkMatchingNone(EntityArchetype entityArchetype) {
         for (Class<? extends EcsComponent> componentMatchType : entityArchetype.getComponentTypes()) {
             if (none.contains(componentMatchType)) {
                 return false;
@@ -82,7 +83,7 @@ public class ComponentTypeQuery implements Disposable {
         return true;
     }
 
-    private boolean checkMatchingArchetypeAny(EntityArchetype entityArchetype) {
+    private boolean checkMatchingAny(EntityArchetype entityArchetype) {
         if (any.isEmpty()) {
             return true;
         }

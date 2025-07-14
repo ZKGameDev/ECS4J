@@ -17,7 +17,7 @@ public class SystemSpawnDispose1 extends EcsInitializeSystem<ComponentDispose1> 
     @Override
     public boolean onInitialize(Entity entity, ComponentDispose1 data) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
-        getWorld().addComponent(entity, InitializedComponent.generate());
+        entity.addComponent(InitializedComponent.generate());
         return true;
     }
 

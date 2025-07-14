@@ -22,6 +22,6 @@ public class SystemCommandRemoveComponent implements SystemCommand{
 
     @Override
     public void execute() {
-        ecsWorld.removeComponent(entity, componentCls);
+        entity.removeComponent(componentCls);
     }
 }

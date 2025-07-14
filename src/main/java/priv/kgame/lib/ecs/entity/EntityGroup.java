@@ -2,8 +2,7 @@ package priv.kgame.lib.ecs.entity;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import priv.kgame.lib.ecs.Disposable;
-import priv.kgame.lib.ecs.EcsWorld;
+import priv.kgame.lib.ecs.Cleanable;
 import priv.kgame.lib.ecs.component.ComponentTypeQuery;
 import priv.kgame.lib.ecs.component.EcsComponent;
 
@@ -12,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class EntityGroup implements Disposable {
+public class EntityGroup implements Cleanable {
     private static final Logger logger = LogManager.getLogger(EntityGroup.class);
     private final List<ComponentTypeQuery> requirementQuery = new ArrayList<>();
     private final List<EntityArchetype> matchingTypes = new ArrayList<>();
@@ -47,7 +46,7 @@ public class EntityGroup implements Disposable {
     public <T extends EcsComponent> List<T> getComponentDataList(Class<T> tClass) {
         List<T> result = new ArrayList<>();
         for (EntityArchetype matchEntityArchetype : matchingTypes) {
-            if (!matchEntityArchetype.hasComponentType(tClass)) {
+            if (!matchEntityArchetype.hasComponent(tClass)) {
                 logger.error("{} not exist in EntityGroup matchingTypes {}!", tClass.getSimpleName(), this);
                 continue;
             }
@@ -91,10 +90,10 @@ public class EntityGroup implements Disposable {
     }
 
     @Override
-    public void dispose() {
-        matchingTypes.forEach(EntityArchetype::dispose);
+    public void clean() {
+        matchingTypes.forEach(EntityArchetype::clean);
         matchingTypes.clear();
-        requirementQuery.forEach(ComponentTypeQuery::dispose);
+        requirementQuery.forEach(ComponentTypeQuery::clean);
         requirementQuery.clear();
     }
 

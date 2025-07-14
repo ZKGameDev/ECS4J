@@ -18,14 +18,14 @@ class EcsDisposeTest {
         // 在每个测试方法执行前都会执行这个方法
         System.out.println("Setting up EcsDisposeTest...");
         String packageName = this.getClass().getPackage().getName();
-        ecsWorld = new EcsWorld(packageName);
+        ecsWorld = EcsWorld.generateInstance(packageName);
         ecsWorld.registerSystemGroup(SysGroupSpawnDisposeTest.class);
         ecsWorld.registerSystemGroup(SysGroupDisposeTest.class);
     }
 
     @Test
     void updateWorld() throws InterruptedException {
-        Entity entity = ecsWorld.createEntityByFactory(2);
+        Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
         long startTime = 0;
@@ -41,11 +41,11 @@ class EcsDisposeTest {
         while (startTime < endTime && !disposed) {
             // 更新ECS世界
             if (startTime > 3000 ) {
-                ecsWorld.dispose();
+                ecsWorld.clean();
                 disposed = true;
                 disposeTime = startTime;
             }
-            ecsWorld.tryUpdate(startTime);
+            ecsWorld.update(startTime);
             startTime += tickInterval;
         }
         assert componentDispose1.updateTime == disposeTime - tickInterval;
@@ -53,12 +53,12 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeTime - tickInterval;
 
         // 清理资源
-        ecsWorld.dispose();
+        ecsWorld.clean();
     }
 
     @Test
     void updateWorld1() throws InterruptedException {
-        Entity entity = ecsWorld.createEntityByFactory(2);
+        Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
         long startTime = 0;
@@ -73,9 +73,9 @@ class EcsDisposeTest {
         long disposeTime = 0;
         while (startTime < endTime && !disposed) {
             // 更新ECS世界
-            ecsWorld.tryUpdate(startTime);
+            ecsWorld.update(startTime);
             if (startTime > 3000 ) {
-                ecsWorld.dispose();
+                ecsWorld.clean();
                 disposed = true;
                 disposeTime = startTime;
             }
@@ -86,12 +86,12 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeTime;
 
         // 清理资源
-        ecsWorld.dispose();
+        ecsWorld.clean();
     }
 
     @Test
     void updateWorld2() throws InterruptedException {
-        Entity entity = ecsWorld.createEntityByFactory(2);
+        Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
         long startTime = 0;
@@ -108,7 +108,7 @@ class EcsDisposeTest {
         componentDispose1.disposeTime = disposeTime;
         while (startTime < endTime && !ecsWorld.isDestroy()) {
             // 更新ECS世界
-            ecsWorld.tryUpdate(startTime);
+            ecsWorld.update(startTime);
             if (ecsWorld.isDestroy()) {
                 disposeLogicTime = startTime;
             }
@@ -119,12 +119,12 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeLogicTime;
 
         // 清理资源
-        ecsWorld.dispose();
+        ecsWorld.clean();
     }
 
     @Test
     void updateWorld3() throws InterruptedException {
-        Entity entity = ecsWorld.createEntityByFactory(2);
+        Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
         long startTime = 0;
@@ -141,7 +141,7 @@ class EcsDisposeTest {
         componentDispose2.disposeTime = disposeTime;
         while (startTime < endTime && !ecsWorld.isDestroy()) {
             // 更新ECS世界
-            ecsWorld.tryUpdate(startTime);
+            ecsWorld.update(startTime);
             if (ecsWorld.isDestroy()) {
                 disposeLogicTime = startTime;
             }
@@ -152,12 +152,12 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeLogicTime;
 
         // 清理资源
-        ecsWorld.dispose();
+        ecsWorld.clean();
     }
 
     @Test
     void updateWorld4() throws InterruptedException {
-        Entity entity = ecsWorld.createEntityByFactory(2);
+        Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
         long startTime = 0;
@@ -174,7 +174,7 @@ class EcsDisposeTest {
         componentDispose3.disposeTime = disposeTime;
         while (startTime < endTime && !ecsWorld.isDestroy()) {
             // 更新ECS世界
-            ecsWorld.tryUpdate(startTime);
+            ecsWorld.update(startTime);
             if (ecsWorld.isDestroy()) {
                 disposeLogicTime = startTime;
             }
@@ -185,6 +185,6 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeLogicTime;
 
         // 清理资源
-        ecsWorld.dispose();
+        ecsWorld.clean();
     }
 } 

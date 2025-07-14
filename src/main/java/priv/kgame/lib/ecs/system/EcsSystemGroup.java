@@ -23,7 +23,7 @@ public abstract class EcsSystemGroup extends EcsSystem{
     @Override
     public void onInit() {
         EcsWorld ecsWorld = super.getWorld();
-        for (Class<? extends EcsSystem> childSystemClass : ecsWorld.getChildSystemInGroup(this)) {
+        for (Class<? extends EcsSystem> childSystemClass : super.ecsSystemManager.getChildSystemInGroup(this)) {
             addSystemToUpdateList(childSystemClass);
         }
         sortSystemUpdateList();
@@ -157,8 +157,7 @@ public abstract class EcsSystemGroup extends EcsSystem{
     }
 
     private void addSystemToUpdateList(Class<? extends EcsSystem> childSystemClass) {
-        EcsWorld ecsWorld = super.getWorld();
-        EcsSystem system = ecsWorld.createSystem(childSystemClass);
+        EcsSystem system = super.ecsSystemManager.createSystem(childSystemClass);
         if (null == system) {
             logger.error("addSystemToUpdateList failed! reason: generate EcsSystem failed! systemClass:{}", childSystemClass.getSimpleName());
             return;

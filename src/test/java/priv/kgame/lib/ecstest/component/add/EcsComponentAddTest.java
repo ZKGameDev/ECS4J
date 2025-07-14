@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecstest.component.add.component.ComponentA1;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA2;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA3;
 import priv.kgame.lib.ecstest.component.add.group.SysGroupA;
@@ -21,14 +20,14 @@ class EcsComponentAddTest {
     void setUp() {
         System.out.println("Setting up " + this.getClass().getSimpleName() + "...");
         String packageName = EcsComponentAddTest.class.getPackage().getName();
-        ecsWorld = new EcsWorld(packageName);
+        ecsWorld = EcsWorld.generateInstance(packageName);
         ecsWorld.registerSystemGroup(SysGroupSpawn.class);
         ecsWorld.registerSystemGroup(SysGroupA.class);
     }
 
     @Test
     void updateWorld() throws InterruptedException {
-        Entity entity = ecsWorld.createEntityByFactory(1);
+        Entity entity = ecsWorld.createEntity(1);
 
         // 记录开始时间
         final int interval = 33;
@@ -40,7 +39,7 @@ class EcsComponentAddTest {
         while (startTime < endTime) {
             System.out.println("=====Updating world in " + startTime + "=====");
             // 更新ECS世界
-            ecsWorld.tryUpdate(startTime);
+            ecsWorld.update(startTime);
             ComponentA2 a2 = entity.getComponent(ComponentA2.class);
             if (!destroy) {
                 System.out.println("update result: " + a2.data);
@@ -52,7 +51,7 @@ class EcsComponentAddTest {
                     assert a2.data.equals("a1");
                 } else {
                     if (!addComponents) {
-                        ecsWorld.addComponent(entity, new ComponentA3());
+                        entity.addComponent(new ComponentA3());
                         System.out.println("add ComponentA3");
                         assert a2.data.equals("a1");
                         addComponents = true;
@@ -73,6 +72,6 @@ class EcsComponentAddTest {
         }
 
         // 清理资源
-        ecsWorld.dispose();
+        ecsWorld.clean();
     }
 }

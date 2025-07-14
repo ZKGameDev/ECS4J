@@ -1,20 +1,30 @@
 package priv.kgame.lib.ecs.entity;
 
-import priv.kgame.lib.ecs.Disposable;
+import priv.kgame.lib.ecs.Cleanable;
 import priv.kgame.lib.ecs.component.EcsComponent;
 
 import java.util.*;
 
-public class EntityArchetype implements Disposable {
+public class EntityArchetype implements Cleanable {
+    public static final EntityArchetype EMPTY_INSTANCE = new EMPTY();
     private final Set<Class<? extends EcsComponent>> componentMatchTypes = new HashSet<>();
     private final List<Entity> entityList = new ArrayList<>();
 
-    public Set<Class<? extends EcsComponent>> getComponentTypes() {
-        return componentMatchTypes;
-    }
+    private static class EMPTY extends EntityArchetype {
+        @Override
+        public void addComponent(Class<? extends EcsComponent> componentMatchType) {
+            throw new UnsupportedOperationException();
+        }
 
-    public List<Entity> getEntityList() {
-        return entityList;
+        @Override
+        public void addEntity(Entity entity) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean removeEntity(Entity entity) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     @Override
@@ -31,25 +41,33 @@ public class EntityArchetype implements Disposable {
     }
 
     @Override
-    public void dispose() {
+    public void clean() {
         componentMatchTypes.clear();
         entityList.clear();
+    }
+
+    public Set<Class<? extends EcsComponent>> getComponentTypes() {
+        return componentMatchTypes;
+    }
+
+    public List<Entity> getEntityList() {
+        return entityList;
     }
 
     public int size() {
         return entityList.size();
     }
 
-    public void addComponentType(Class<? extends EcsComponent> componentMatchType) {
-        componentMatchTypes.add(componentMatchType);
+    public void addComponent(Class<? extends EcsComponent> componentClass) {
+        componentMatchTypes.add(componentClass);
     }
 
     public boolean isSame(Collection<Class<? extends EcsComponent>> types) {
         return types.size() == componentMatchTypes.size() && componentMatchTypes.containsAll(types);
     }
 
-    public boolean hasComponentType(Class<? extends EcsComponent> componentMatchType) {
-        return componentMatchTypes.contains(componentMatchType);
+    public boolean hasComponent(Class<? extends EcsComponent> componentClass) {
+        return componentMatchTypes.contains(componentClass);
     }
 
     public void addEntity(Entity entity) {
