@@ -254,12 +254,12 @@ public class EcsWorld implements Disposable {
         entity.addComponent(component);
     }
 
-    public void removeComponent(Entity entity, EcsComponent component) {
+    public void removeComponent(Entity entity, Class<? extends EcsComponent> componentCls) {
         EntityArchetype oldArchetype = entity.getArchetype();
         Set<Class<? extends EcsComponent>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
-        newTypes.remove(component.getClass());
+        newTypes.remove(componentCls);
         updateArchetype(getOrCreateArchetype(newTypes), oldArchetype, entity);
-        entity.removeComponent(component.getClass());
+        entity.removeComponent(componentCls);
     }
 
     public EntityGroup getOrCreateEntityGroup(ComponentTypeQuery componentTypeQuery) {

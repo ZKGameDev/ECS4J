@@ -28,8 +28,8 @@ public class SystemCommandBuffer {
         systemCommands.offer(new SystemCommandAddComponent(ecsWorld, entity, component));
     }
 
-    public void removeComponent(Entity entity, EcsComponent component) {
-        systemCommands.offer(new SystemCommandRemoveComponent(ecsWorld, entity, component));
+    public void removeComponent(Entity entity, Class<? extends EcsComponent> componentCls) {
+        systemCommands.offer(new SystemCommandRemoveComponent(ecsWorld, entity, componentCls));
     }
 
     public void playBack() {

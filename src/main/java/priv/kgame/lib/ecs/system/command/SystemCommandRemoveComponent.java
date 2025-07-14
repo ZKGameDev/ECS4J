@@ -7,12 +7,12 @@ import priv.kgame.lib.ecs.entity.Entity;
 public class SystemCommandRemoveComponent implements SystemCommand{
     private final EcsWorld ecsWorld;
     private final Entity entity;
-    private final EcsComponent component;
+    private final Class<? extends EcsComponent> componentCls;
 
-    public SystemCommandRemoveComponent(EcsWorld ecsWorld, Entity entity, EcsComponent component) {
+    public SystemCommandRemoveComponent(EcsWorld ecsWorld, Entity entity, Class<? extends EcsComponent> componentCls) {
         this.ecsWorld = ecsWorld;
         this.entity = entity;
-        this.component = component;
+        this.componentCls = componentCls;
     }
 
     @Override
@@ -22,6 +22,6 @@ public class SystemCommandRemoveComponent implements SystemCommand{
 
     @Override
     public void execute() {
-        ecsWorld.removeComponent(entity, component);
+        ecsWorld.removeComponent(entity, componentCls);
     }
 }
