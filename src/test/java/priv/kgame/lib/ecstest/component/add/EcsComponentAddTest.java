@@ -1,25 +1,26 @@
-package priv.kgame.lib.ecstest.order.custom;
+package priv.kgame.lib.ecstest.component.add;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecstest.order.custom.component.ComponentA1;
-import priv.kgame.lib.ecstest.order.custom.component.ComponentA2;
-import priv.kgame.lib.ecstest.order.custom.group.SysGroupA;
-import priv.kgame.lib.ecstest.order.custom.group.SysGroupSpawn;
+import priv.kgame.lib.ecstest.component.add.component.ComponentA1;
+import priv.kgame.lib.ecstest.component.add.component.ComponentA2;
+import priv.kgame.lib.ecstest.component.add.component.ComponentA3;
+import priv.kgame.lib.ecstest.component.add.group.SysGroupA;
+import priv.kgame.lib.ecstest.component.add.group.SysGroupSpawn;
 
 /**
  * System默认执行顺序测试用例
  */
-class EcsCustomOrderTest {
+class EcsComponentAddTest {
     private EcsWorld ecsWorld;
     public static String data = "";
 
     @BeforeEach
     void setUp() {
-        System.out.println("Setting up EcsDefaultOrderTest...");
-        String packageName = EcsCustomOrderTest.class.getPackage().getName();
+        System.out.println("Setting up " + this.getClass().getSimpleName() + "...");
+        String packageName = EcsComponentAddTest.class.getPackage().getName();
         ecsWorld = new EcsWorld(packageName);
         ecsWorld.registerSystemGroup(SysGroupSpawn.class);
         ecsWorld.registerSystemGroup(SysGroupA.class);
@@ -35,21 +36,33 @@ class EcsCustomOrderTest {
         long endTime = startTime + interval * 100;
         boolean inited = false;
         boolean destroy = false;
-
+        boolean addComponents = false;
         while (startTime < endTime) {
             System.out.println("=====Updating world in " + startTime + "=====");
             // 更新ECS世界
             ecsWorld.tryUpdate(startTime);
             ComponentA2 a2 = entity.getComponent(ComponentA2.class);
             if (!destroy) {
+                System.out.println("update result: " + a2.data);
                 if (!inited) {
                     inited = true;
+                    assert a2.data.equals("A1o1o2a1");
+                } else if (startTime <= endTime / 2){
                     System.out.println("update result: " + a2.data);
-                    assert a2.data.equals("A1o4o3o1o2a5a1a3a2a4");
+                    assert a2.data.equals("a1");
                 } else {
-                    System.out.println("update result: " + a2.data);
-                    assert a2.data.equals("a5a1a3a2a4");
+                    if (!addComponents) {
+                        ecsWorld.addComponent(entity, new ComponentA3());
+                        System.out.println("add ComponentA3");
+                        assert a2.data.equals("a1");
+                        addComponents = true;
+                    } else {
+                        assert a2.data.equals("a1a2a3");
+                    }
+
                 }
+            } else {
+                assert a2 == null;
             }
             if (startTime >= endTime - interval * 10 && !destroy) {
                 destroy = true;

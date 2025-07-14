@@ -16,5 +16,6 @@ public class SystemA0 extends EcsUpdateSystemOne<ComponentA2> {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
         ComponentA1 componentA1 = entity.getComponent(ComponentA1.class);
         component.data = componentA1.data;
+        componentA1.data = "";
     }
 }

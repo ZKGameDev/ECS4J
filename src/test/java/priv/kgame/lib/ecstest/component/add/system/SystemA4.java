@@ -1,14 +1,14 @@
-package priv.kgame.lib.ecstest.order.def.system;
+package priv.kgame.lib.ecstest.component.add.system;
 
 import priv.kgame.lib.ecs.entity.Entity;
 import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.system.base.EcsUpdateSystemOne;
-import priv.kgame.lib.ecstest.order.def.component.ComponentA1;
-import priv.kgame.lib.ecstest.order.def.component.ComponentA2;
-import priv.kgame.lib.ecstest.order.def.group.SysGroupA;
+import priv.kgame.lib.ecstest.component.add.component.ComponentA1;
+import priv.kgame.lib.ecstest.component.add.component.ComponentA2;
+import priv.kgame.lib.ecstest.component.add.group.SysGroupA;
 
 @UpdateInGroup(SysGroupA.class)
-public class SystemA5 extends EcsUpdateSystemOne<ComponentA2> {
+public class SystemA4 extends EcsUpdateSystemOne<ComponentA2> {
 
     @Override
     protected void update(Entity entity, ComponentA2 component) {

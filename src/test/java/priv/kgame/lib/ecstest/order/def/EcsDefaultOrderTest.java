@@ -40,19 +40,16 @@ class EcsDefaultOrderTest {
             System.out.println("=====Updating world in " + startTime + "=====");
             // 更新ECS世界
             ecsWorld.tryUpdate(startTime);
+            ComponentA2 a2 = entity.getComponent(ComponentA2.class);
             if (!destroy) {
                 if (!inited) {
                     inited = true;
-                    ComponentA2 a2 = entity.getComponent(ComponentA2.class);
                     System.out.println("update result: " + a2.data);
                     assert a2.data.equals("o1o2o3o4a1a2a3a4");
                 } else {
-                    ComponentA2 a2 = entity.getComponent(ComponentA2.class);
                     System.out.println("update result: " + a2.data);
                     assert a2.data.equals("a1a2a3a4");
                 }
-                ComponentA1 a1 = entity.getComponent(ComponentA1.class);
-                a1.data = "";
             }
             if (startTime >= endTime - interval * 10 && !destroy) {
                 destroy = true;
