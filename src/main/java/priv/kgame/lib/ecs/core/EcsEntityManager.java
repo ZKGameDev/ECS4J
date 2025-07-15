@@ -170,11 +170,7 @@ public class EcsEntityManager implements EcsCleanable {
             logger.warn("destroy entity failed! reason: entity not exist. index:{}", entity.getIndex());
             return;
         }
-        boolean success = entity.removeFromArchetype();
         if (entityIndex.remove(entity.getIndex()) != null) {
-            success = true;
-        }
-        if (success) {
             entity.clean();
         }
     }

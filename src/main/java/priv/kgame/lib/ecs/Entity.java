@@ -55,6 +55,7 @@ public class Entity implements EcsCleanable {
             }
         });
         data.clear();
+        getArchetype().removeEntity(this);
     }
 
     @Override
@@ -136,10 +137,6 @@ public class Entity implements EcsCleanable {
             throw new RuntimeException("createEntity failed! component "
                     + c.getName() + " don't has default constructor", e);
         }
-    }
-
-    public boolean removeFromArchetype() {
-        return getArchetype().removeEntity(this);
     }
 
     public int getType() {

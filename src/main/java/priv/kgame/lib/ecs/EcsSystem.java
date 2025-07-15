@@ -89,7 +89,7 @@ public abstract class EcsSystem implements EcsCleanable {
         }
     }
 
-    public Collection<Entity> getAllMatchEntity() {
+    protected Collection<Entity> getAllMatchEntity() {
         if (entityGroup == null) {
             return Collections.emptyList();
         }

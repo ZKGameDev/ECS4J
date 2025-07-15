@@ -30,7 +30,7 @@ public class EcsWorld{
 
     private EntityCommandBuffer waitUpdateCommand;
 
-    public EntityGroup getOrCreateEntityGroup(ComponentTypeQuery componentTypes) {
+    EntityGroup getOrCreateEntityGroup(ComponentTypeQuery componentTypes) {
         return this.entityManager.getOrCreateEntityGroup(componentTypes);
     }
 
