@@ -1,0 +1,58 @@
+package priv.kgame.lib.ecs.extensions.system;
+
+import priv.kgame.lib.ecs.core.ComponentMatchParam;
+import priv.kgame.lib.ecs.core.ComponentTypeQuery;
+import priv.kgame.lib.ecs.EcsComponent;
+import priv.kgame.lib.ecs.EcsSystem;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+abstract class EcsLogicSystem extends EcsSystem {
+    private final List<ComponentMatchParam<?>> extraMatchComponent = new ArrayList<>();
+
+    @Override
+    protected void onInit() {
+        processExtraComponent();
+        List<ComponentMatchParam<?>> matchComponentMatchTypes = new ArrayList<>();
+        matchComponentMatchTypes.addAll(getMatchComponent());
+        matchComponentMatchTypes.addAll(extraMatchComponent);
+        configEntityFilter(ComponentTypeQuery.generate(matchComponentMatchTypes));
+    }
+
+    public List<ComponentMatchParam<?>> getExtraMatchComponent() {
+        return extraMatchComponent;
+    }
+
+    private void processExtraComponent() {
+        Collection<Class<? extends EcsComponent>> requireComponent = getExtraRequirementComponent();
+        if (requireComponent != null && !requireComponent.isEmpty()) {
+            for (Class<? extends EcsComponent> clazz : requireComponent) {
+                extraMatchComponent.add(ComponentMatchParam.additive(getWorld(), clazz));
+            }
+        }
+        Collection<Class<? extends EcsComponent>> excludeComponent = getExtraExcludeComponent();
+        if (excludeComponent != null && !excludeComponent.isEmpty()) {
+            for (Class<? extends EcsComponent> clazz : excludeComponent) {
+                extraMatchComponent.add(ComponentMatchParam.subtractive(getWorld(), clazz));
+            }
+        }
+    }
+
+    protected abstract Collection<ComponentMatchParam<?>> getMatchComponent();
+
+    /**
+     * 额外需要关注的Component类
+     *
+     * @return 关注的Component类的集合
+     */
+    public abstract Collection<Class<? extends EcsComponent>> getExtraRequirementComponent();
+
+    /**
+     * 额外需要排除的Component类
+     *
+     * @return 要排除的Component类的集合
+     */
+    public abstract Collection<Class<? extends EcsComponent>> getExtraExcludeComponent();
+}

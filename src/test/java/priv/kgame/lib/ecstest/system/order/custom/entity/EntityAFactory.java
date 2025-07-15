@@ -1,7 +1,8 @@
 package priv.kgame.lib.ecstest.system.order.custom.entity;
 
-import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.entity.*;
+import priv.kgame.lib.ecs.extensions.entity.BaseEntityFactory;
+import priv.kgame.lib.ecs.extensions.entity.EntityFactoryAttribute;
+import priv.kgame.lib.ecs.EcsComponent;
 import priv.kgame.lib.ecstest.system.order.custom.component.ComponentA1;
 import priv.kgame.lib.ecstest.system.order.custom.component.ComponentA2;
 

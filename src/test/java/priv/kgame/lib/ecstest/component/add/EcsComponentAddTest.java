@@ -3,7 +3,7 @@ package priv.kgame.lib.ecstest.component.add;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA2;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA3;
 import priv.kgame.lib.ecstest.component.add.group.SysGroupA;

@@ -3,7 +3,7 @@ package priv.kgame.lib.ecstest.dispose;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.dispose.component.ComponentDispose1;
 import priv.kgame.lib.ecstest.dispose.component.ComponentDispose2;
 import priv.kgame.lib.ecstest.dispose.component.ComponentDispose3;

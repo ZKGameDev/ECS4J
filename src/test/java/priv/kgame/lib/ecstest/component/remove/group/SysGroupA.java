@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecstest.component.remove.group;
 
-import priv.kgame.lib.ecs.system.EcsSystemGroup;
+import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 public class SysGroupA extends EcsSystemGroup {
 

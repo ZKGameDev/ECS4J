@@ -1,8 +1,8 @@
 package priv.kgame.lib.ecstest.component.add.system;
 
-import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
-import priv.kgame.lib.ecs.system.base.EcsUpdateSystemOne;
+import priv.kgame.lib.ecs.Entity;
+import priv.kgame.lib.ecs.annotation.UpdateInGroup;
+import priv.kgame.lib.ecs.extensions.system.EcsUpdateSystemOne;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA1;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA3;
 import priv.kgame.lib.ecstest.component.add.group.SysGroupA;

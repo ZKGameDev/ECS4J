@@ -1,7 +1,7 @@
 package priv.kgame.lib.ecs.command;
 
-import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.EcsComponent;
+import priv.kgame.lib.ecs.Entity;
 
 public class SystemCommandRemoveComponent implements EcsCommand {
     private final Entity entity;

@@ -6,5 +6,4 @@ public enum SystemCommandType {
     AddComponent,
     SetComponent,
     RemoveComponent,
-    ;
 }

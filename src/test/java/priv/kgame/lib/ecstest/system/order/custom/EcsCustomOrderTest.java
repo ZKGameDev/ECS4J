@@ -3,13 +3,13 @@ package priv.kgame.lib.ecstest.system.order.custom;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.system.order.custom.component.ComponentA2;
 import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupA;
 import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupSpawn;
 
 /**
- * System默认执行顺序测试用例
+ * System自定义执行顺序测试用例
  */
 class EcsCustomOrderTest {
     private EcsWorld ecsWorld;

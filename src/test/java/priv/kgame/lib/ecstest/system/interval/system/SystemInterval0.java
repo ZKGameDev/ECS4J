@@ -1,8 +1,8 @@
 package priv.kgame.lib.ecstest.system.interval.system;
 
-import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
-import priv.kgame.lib.ecs.system.base.EcsUpdateSystemThree;
+import priv.kgame.lib.ecs.Entity;
+import priv.kgame.lib.ecs.annotation.UpdateInGroup;
+import priv.kgame.lib.ecs.extensions.system.EcsUpdateSystemThree;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval1;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval2;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval3;

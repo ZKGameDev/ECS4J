@@ -1,8 +1,8 @@
 package priv.kgame.lib.ecstest.component.add.entity;
 
-import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.entity.BaseEntityFactory;
-import priv.kgame.lib.ecs.entity.EntityFactoryAttribute;
+import priv.kgame.lib.ecs.EcsComponent;
+import priv.kgame.lib.ecs.extensions.entity.BaseEntityFactory;
+import priv.kgame.lib.ecs.extensions.entity.EntityFactoryAttribute;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA1;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA2;
 

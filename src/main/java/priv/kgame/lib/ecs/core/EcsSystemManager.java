@@ -1,0 +1,72 @@
+package priv.kgame.lib.ecs.core;
+
+import priv.kgame.lib.ecs.EcsCleanable;
+import priv.kgame.lib.ecs.EcsSystem;
+import priv.kgame.lib.ecs.EcsWorld;
+import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+public class EcsSystemManager implements EcsCleanable {
+    private final EcsWorld world;
+    private final List<EcsSystemGroup> systemGroups = new ArrayList<>();
+    private EcsSystemGroup currentSystemGroupClass;
+    private EcsClassScanner ecsClassScanner;
+
+    public EcsSystemManager(final EcsWorld world) {
+        this.world = world;
+    }
+
+    public void init(EcsClassScanner ecsClassScanner) {
+        this.ecsClassScanner = ecsClassScanner;
+    }
+
+    public void registerSystemGroup(Class<? extends EcsSystemGroup> clz) {
+        EcsSystemGroup systemGroup = createSystem(clz);
+        this.systemGroups.add(systemGroup);
+    }
+
+    public <T extends EcsSystem> T createSystem(Class<T> systemClass) {
+        T system;
+        try {
+            system = systemClass.getConstructor().newInstance();
+            system.init(this);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+        return system;
+    }
+
+    public EcsWorld getWorld() {
+        return world;
+    }
+
+    @Override
+    public void clean() {
+        for (EcsSystemGroup systemGroup : systemGroups) {
+            systemGroup.destroy();
+        }
+        this.currentSystemGroupClass = null;
+        systemGroups.clear();
+    }
+
+    public void update() {
+        for (EcsSystemGroup systemGroup : systemGroups) {
+            this.currentSystemGroupClass = systemGroup;
+            systemGroup.tryUpdate();
+
+        }
+    }
+
+    public EcsSystemGroup getCurrentSystemGroup() {
+        return currentSystemGroupClass;
+    }
+
+    public Set<Class<? extends EcsSystem>> getChildSystemInGroup(EcsSystemGroup ecsSystemGroup) {
+        return ecsClassScanner.getChildSystem(ecsSystemGroup.getClass());
+    }
+}

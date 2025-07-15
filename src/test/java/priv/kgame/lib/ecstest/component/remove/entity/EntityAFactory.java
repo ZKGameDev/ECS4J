@@ -1,11 +1,8 @@
 package priv.kgame.lib.ecstest.component.remove.entity;
 
-import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.EcsComponent;
-import priv.kgame.lib.ecs.entity.BaseEntityFactory;
-import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityFactory;
-import priv.kgame.lib.ecs.entity.EntityFactoryAttribute;
+import priv.kgame.lib.ecs.EcsComponent;
+import priv.kgame.lib.ecs.extensions.entity.BaseEntityFactory;
+import priv.kgame.lib.ecs.extensions.entity.EntityFactoryAttribute;
 import priv.kgame.lib.ecstest.component.remove.component.ComponentA1;
 import priv.kgame.lib.ecstest.component.remove.component.ComponentA2;
 import priv.kgame.lib.ecstest.component.remove.component.ComponentA3;

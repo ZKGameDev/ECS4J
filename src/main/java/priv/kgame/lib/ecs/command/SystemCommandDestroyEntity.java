@@ -1,7 +1,7 @@
 package priv.kgame.lib.ecs.command;
 
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.Entity;
 
 public class SystemCommandDestroyEntity implements EcsCommand {
     private final EcsWorld ecsWorld;

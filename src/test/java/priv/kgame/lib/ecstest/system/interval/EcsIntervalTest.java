@@ -3,7 +3,7 @@ package priv.kgame.lib.ecstest.system.interval;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.entity.Entity;
+import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval1;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval2;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval3;

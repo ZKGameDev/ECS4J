@@ -2,16 +2,12 @@ package priv.kgame.lib.ecs;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import priv.kgame.lib.ecs.component.ComponentTypeQuery;
-import priv.kgame.lib.ecs.component.base.DestroyingComponent;
-import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.entity.EntityFactory;
-import priv.kgame.lib.ecs.entity.EntityGroup;
-import priv.kgame.lib.ecs.entity.EcsEntityManager;
-import priv.kgame.lib.ecs.system.EcsSystemGroup;
-import priv.kgame.lib.ecs.system.EcsSystemManager;
-import priv.kgame.lib.ecs.system.EntityCommandBuffer;
+import priv.kgame.lib.ecs.command.EntityCommandBuffer;
+import priv.kgame.lib.ecs.core.*;
+import priv.kgame.lib.ecs.extensions.component.DestroyingComponent;
 import priv.kgame.lib.ecs.command.EcsCommand;
+import priv.kgame.lib.ecs.extensions.entity.EntityFactory;
+import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +46,6 @@ public class EcsWorld{
         WAIT_DESTROY,
         DESTROYING,
         DESTROYED,
-        ;
     }
 
     EcsWorld() {}

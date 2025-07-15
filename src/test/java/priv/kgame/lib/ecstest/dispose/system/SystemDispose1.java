@@ -1,8 +1,8 @@
 package priv.kgame.lib.ecstest.dispose.system;
 
-import priv.kgame.lib.ecs.entity.Entity;
-import priv.kgame.lib.ecs.system.annotation.UpdateInGroup;
-import priv.kgame.lib.ecs.system.base.EcsUpdateSystemOne;
+import priv.kgame.lib.ecs.Entity;
+import priv.kgame.lib.ecs.annotation.UpdateInGroup;
+import priv.kgame.lib.ecs.extensions.system.EcsUpdateSystemOne;
 import priv.kgame.lib.ecstest.dispose.component.ComponentDispose1;
 import priv.kgame.lib.ecstest.dispose.group.SysGroupDisposeTest;
 

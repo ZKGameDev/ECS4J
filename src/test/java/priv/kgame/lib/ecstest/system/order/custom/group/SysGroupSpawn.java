@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecstest.system.order.custom.group;
 
-import priv.kgame.lib.ecs.system.EcsSystemGroup;
+import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 public class SysGroupSpawn extends EcsSystemGroup {
 

@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecstest.dispose.group;
 
-import priv.kgame.lib.ecs.system.EcsSystemGroup;
+import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 public class SysGroupSpawnDisposeTest extends EcsSystemGroup {
 

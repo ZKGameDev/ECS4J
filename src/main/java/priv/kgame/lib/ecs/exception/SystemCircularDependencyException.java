@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.exception;
 
-import priv.kgame.lib.ecs.system.EcsSystem;
+import priv.kgame.lib.ecs.EcsSystem;
 
 import java.io.Serial;
 import java.util.Collection;
