@@ -23,13 +23,6 @@ public abstract class EcsUpdateSystemSingle extends EcsSystem {
     }
 
     @Override
-    protected void onUpdate() {
-        update();
-    }
-
-    protected abstract void update();
-
-    @Override
     protected void onStop() {
 
     }

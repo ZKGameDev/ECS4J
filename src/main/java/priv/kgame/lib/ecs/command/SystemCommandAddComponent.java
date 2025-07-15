@@ -1,16 +1,13 @@
-package priv.kgame.lib.ecs.system.command;
+package priv.kgame.lib.ecs.command;
 
-import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 
-public class SystemCommandAddComponent implements SystemCommand{
-    private final EcsWorld ecsWorld;
+public class SystemCommandAddComponent implements EcsCommand {
     private final Entity entity;
     private final EcsComponent component;
 
-    public SystemCommandAddComponent(EcsWorld ecsWorld, Entity entity, EcsComponent component) {
-        this.ecsWorld = ecsWorld;
+    public SystemCommandAddComponent(Entity entity, EcsComponent component) {
         this.entity = entity;
         this.component = component;
     }

@@ -1,4 +1,4 @@
-package priv.kgame.lib.ecs.system.command;
+package priv.kgame.lib.ecs.command;
 
 public enum SystemCommandType {
     CreateEntity,

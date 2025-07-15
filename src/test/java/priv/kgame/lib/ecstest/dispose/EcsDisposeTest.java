@@ -41,7 +41,7 @@ class EcsDisposeTest {
         while (startTime < endTime && !disposed) {
             // 更新ECS世界
             if (startTime > 3000 ) {
-                ecsWorld.clean();
+                ecsWorld.close();
                 disposed = true;
                 disposeTime = startTime;
             }
@@ -53,7 +53,7 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeTime - tickInterval;
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 
     @Test
@@ -75,7 +75,7 @@ class EcsDisposeTest {
             // 更新ECS世界
             ecsWorld.update(startTime);
             if (startTime > 3000 ) {
-                ecsWorld.clean();
+                ecsWorld.close();
                 disposed = true;
                 disposeTime = startTime;
             }
@@ -86,7 +86,7 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeTime;
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 
     @Test
@@ -119,7 +119,7 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeLogicTime;
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 
     @Test
@@ -152,7 +152,7 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeLogicTime;
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 
     @Test
@@ -185,6 +185,6 @@ class EcsDisposeTest {
         assert componentDispose3.updateTime == disposeLogicTime;
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 } 

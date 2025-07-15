@@ -3,6 +3,7 @@ package priv.kgame.lib.ecs;
 import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.EntityFactory;
 import priv.kgame.lib.ecs.entity.EntityFactoryAttribute;
+import priv.kgame.lib.ecs.exception.InvalidEcsEntityFactoryException;
 import priv.kgame.lib.ecs.exception.InvalidEcsTypeException;
 import priv.kgame.lib.ecs.exception.InvalidEcsTypeIndexException;
 import priv.kgame.lib.ecs.system.EcsSystem;
@@ -84,6 +85,8 @@ public class EcsClassScanner {
         for (Class<?> klass : classes) {
             if (!ClassUtils.isAbstract(klass) && EntityFactory.class.isAssignableFrom(klass)) {
                 ecsSystemClass.add((Class<? extends EntityFactory>) klass);
+            } else {
+                throw new InvalidEcsEntityFactoryException("class " + klass.getName() + " is not an EntityFactory but is annotated with @EntityFactoryAttribute");
             }
         }
         return ecsSystemClass;

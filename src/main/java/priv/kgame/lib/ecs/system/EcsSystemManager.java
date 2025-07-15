@@ -12,7 +12,7 @@ import java.util.Set;
 public class EcsSystemManager implements Cleanable {
     private final EcsWorld world;
     private final List<EcsSystemGroup> systemGroups = new ArrayList<>();
-    private Class<? extends EcsSystemGroup> currentSystemGroupClass;
+    private EcsSystemGroup currentSystemGroupClass;
     private EcsClassScanner ecsClassScanner;
 
     public EcsSystemManager(final EcsWorld world) {
@@ -55,13 +55,13 @@ public class EcsSystemManager implements Cleanable {
 
     public void update() {
         for (EcsSystemGroup systemGroup : systemGroups) {
-            this.currentSystemGroupClass = systemGroup.getClass();
+            this.currentSystemGroupClass = systemGroup;
             systemGroup.tryUpdate();
 
         }
     }
 
-    public Class<? extends EcsSystemGroup> getCurrentSystemGroup() {
+    public EcsSystemGroup getCurrentSystemGroup() {
         return currentSystemGroupClass;
     }
 

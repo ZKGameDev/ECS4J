@@ -10,6 +10,8 @@ import priv.kgame.lib.ecs.entity.EntityGroup;
 import priv.kgame.lib.ecs.entity.EcsEntityManager;
 import priv.kgame.lib.ecs.system.EcsSystemGroup;
 import priv.kgame.lib.ecs.system.EcsSystemManager;
+import priv.kgame.lib.ecs.system.EntityCommandBuffer;
+import priv.kgame.lib.ecs.command.EcsCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,8 +33,14 @@ public class EcsWorld{
 
     private final EcsSystemManager systemManager = new EcsSystemManager(this);
 
+    private EntityCommandBuffer waitUpdateCommand;
+
     public EntityGroup getOrCreateEntityGroup(ComponentTypeQuery componentTypes) {
         return this.entityManager.getOrCreateEntityGroup(componentTypes);
+    }
+
+    public void addDelayCommand(EcsCommand command) {
+        waitUpdateCommand.addCommand(command);
     }
 
     private enum State {
@@ -58,6 +66,7 @@ public class EcsWorld{
         entityManager.init(ecsClassScanner);
         systemManager.init(ecsClassScanner);
         state = State.WAIT_RUNNING;
+        waitUpdateCommand = new EntityCommandBuffer();
     }
 
     /**
@@ -78,6 +87,7 @@ public class EcsWorld{
         waitDestroyEntity.clear();
         systemManager.clean();
         entityManager.clean();
+        waitUpdateCommand.clear();
         state = State.DESTROYED;
     }
 
@@ -161,6 +171,7 @@ public class EcsWorld{
         for (Entity waitDestroyEntity : this.waitDestroyEntity) {
             entityManager.destroyEntity(waitDestroyEntity);
         }
+        waitUpdateCommand.playBack();
         this.waitDestroyEntity.clear();
         if (state == State.WAIT_DESTROY) {
             close();
@@ -182,7 +193,7 @@ public class EcsWorld{
      *
      * @return 正在质学的SystemGroup的class
      */
-    public Class<? extends EcsSystemGroup> getCurrentSystemGroupClass() {
+    public EcsSystemGroup getCurrentSystemGroupClass() {
         return systemManager.getCurrentSystemGroup();
     }
 }

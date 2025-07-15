@@ -1,16 +1,11 @@
-package priv.kgame.lib.ecs.system.command;
+package priv.kgame.lib.ecs.command;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.component.ComponentMatchParam;
-import priv.kgame.lib.ecs.component.EcsComponent;
 import priv.kgame.lib.ecs.entity.Entity;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-public class SystemCommandCreateEntity implements SystemCommand {
+public class SystemCommandCreateEntity implements EcsCommand {
     private static final Logger logger = LogManager.getLogger(SystemCommandCreateEntity.class);
     private final EcsWorld ecsWorld;
     private final int typeId;

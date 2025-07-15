@@ -63,6 +63,6 @@ class EcsCustomOrderTest {
         }
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 }

@@ -72,6 +72,6 @@ class EcsComponentRemoveTest {
         }
 
         // 清理资源
-        ecsWorld.clean();
+        ecsWorld.close();
     }
 }
