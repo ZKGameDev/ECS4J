@@ -7,7 +7,6 @@ import priv.kgame.lib.ecs.core.*;
 import priv.kgame.lib.ecs.extensions.component.DestroyingComponent;
 import priv.kgame.lib.ecs.command.EcsCommand;
 import priv.kgame.lib.ecs.extensions.entity.EntityFactory;
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,10 +87,6 @@ public class EcsWorld{
 
     public boolean isClosed() {
         return state == State.DESTROYED;
-    }
-
-    public void registerSystemGroup(Class<? extends EcsSystemGroup> clz) {
-        this.systemManager.registerSystemGroup(clz);
     }
 
     // 通过EntityFactory类型ID创建实体
@@ -188,7 +183,7 @@ public class EcsWorld{
      *
      * @return 正在质学的SystemGroup的class
      */
-    public EcsSystemGroup getCurrentSystemGroupClass() {
+    public EcsSystem getCurrentSystemGroupClass() {
         return systemManager.getCurrentSystemGroup();
     }
 }

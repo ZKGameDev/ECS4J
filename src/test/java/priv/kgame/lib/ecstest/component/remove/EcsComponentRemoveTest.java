@@ -6,8 +6,6 @@ import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.component.remove.component.ComponentA2;
 import priv.kgame.lib.ecstest.component.remove.component.ComponentA3;
-import priv.kgame.lib.ecstest.component.remove.group.SysGroupA;
-import priv.kgame.lib.ecstest.component.remove.group.SysGroupSpawn;
 
 /**
  * System默认执行顺序测试用例
@@ -21,8 +19,6 @@ class EcsComponentRemoveTest {
         System.out.println("Setting up " + this.getClass().getSimpleName() + "...");
         String packageName = EcsComponentRemoveTest.class.getPackage().getName();
         ecsWorld = EcsWorld.generateInstance(packageName);
-        ecsWorld.registerSystemGroup(SysGroupSpawn.class);
-        ecsWorld.registerSystemGroup(SysGroupA.class);
     }
 
     @Test

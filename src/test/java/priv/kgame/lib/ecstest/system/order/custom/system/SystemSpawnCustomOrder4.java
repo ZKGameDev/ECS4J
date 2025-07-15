@@ -6,12 +6,12 @@ import priv.kgame.lib.ecs.annotation.UpdateBeforeSystem;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
 import priv.kgame.lib.ecstest.system.order.custom.component.ComponentA1;
-import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupSpawn;
+import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupCustomOrderSpawn;
 
 import java.util.Collection;
 import java.util.List;
 
-@UpdateInGroup(SysGroupSpawn.class)
+@UpdateInGroup(SysGroupCustomOrderSpawn.class)
 @UpdateBeforeSystem(systemTypes = SystemSpawnCustomOrder3.class)
 public class SystemSpawnCustomOrder4 extends EcsInitializeSystem<ComponentA1> {
 

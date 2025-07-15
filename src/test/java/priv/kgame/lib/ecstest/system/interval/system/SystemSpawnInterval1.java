@@ -6,12 +6,12 @@ import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval1;
-import priv.kgame.lib.ecstest.system.interval.group.SysGroupSpawnInterval;
+import priv.kgame.lib.ecstest.system.interval.group.SysGroupIntervalSpawn;
 
 import java.util.Collection;
 import java.util.List;
 
-@UpdateInGroup(SysGroupSpawnInterval.class)
+@UpdateInGroup(SysGroupIntervalSpawn.class)
 public class SystemSpawnInterval1 extends EcsInitializeSystem<ComponentInterval1> {
 
     @Override

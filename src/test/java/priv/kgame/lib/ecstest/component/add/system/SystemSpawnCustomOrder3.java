@@ -6,12 +6,12 @@ import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA3;
-import priv.kgame.lib.ecstest.component.add.group.SysGroupSpawn;
+import priv.kgame.lib.ecstest.component.add.group.SysGroupAddCompSpawn;
 
 import java.util.Collection;
 import java.util.List;
 
-@UpdateInGroup(SysGroupSpawn.class)
+@UpdateInGroup(SysGroupAddCompSpawn.class)
 public class SystemSpawnCustomOrder3 extends EcsInitializeSystem<ComponentA3> {
 
     @Override

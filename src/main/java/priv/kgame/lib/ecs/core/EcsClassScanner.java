@@ -2,14 +2,15 @@ package priv.kgame.lib.ecs.core;
 
 import priv.kgame.lib.ecs.EcsComponent;
 import priv.kgame.lib.ecs.EcsSystem;
+import priv.kgame.lib.ecs.EcsSystemGroup;
 import priv.kgame.lib.ecs.EcsWorld;
+import priv.kgame.lib.ecs.exception.InvalidUpdateInGroupTypeException;
 import priv.kgame.lib.ecs.extensions.entity.EntityFactory;
 import priv.kgame.lib.ecs.extensions.entity.EntityFactoryAttribute;
 import priv.kgame.lib.ecs.exception.InvalidEcsEntityFactoryException;
 import priv.kgame.lib.ecs.exception.InvalidEcsTypeException;
 import priv.kgame.lib.ecs.exception.InvalidEcsTypeIndexException;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 import priv.kgame.lib.ecs.tools.ClassUtils;
 
 import java.lang.annotation.Annotation;
@@ -17,6 +18,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class EcsClassScanner {
+    private final Set<Class<? extends EcsSystem>> topSystemClasses = new HashSet<>();
     private final Map<Class<? extends EcsSystemGroup>, Set<Class<? extends EcsSystem>>> groupChildTypeMap = new HashMap<>();
     private final Set<Class<? extends EntityFactory>> entityFactoryClass = new HashSet<>();
     private final HashMap<Integer, Class<?>> indexComponentTypeMap = new HashMap<>();
@@ -38,16 +40,20 @@ public class EcsClassScanner {
     }
 
     private void loadPackage(String scanPackage) {
-        Set<Class<? extends EcsSystem>> updateInGroupClass = getEcsSystemByAnnotation(scanPackage, UpdateInGroup.class);
+        Set<Class<? extends EcsSystem>> updateInGroupClass = getEcsSystem(scanPackage);
         for (Class<? extends EcsSystem> clazz : updateInGroupClass) {
+            if (ClassUtils.isAbstract(clazz)) {
+                continue;
+            }
             UpdateInGroup updateInGroupAnnotation = clazz.getAnnotation(UpdateInGroup.class);
             if (updateInGroupAnnotation == null) {
+                topSystemClasses.add(clazz);
                 continue;
             }
             Class<? extends EcsSystemGroup> groupClass = updateInGroupAnnotation.value();
             if (ClassUtils.isAbstract(groupClass)
                     || !EcsSystemGroup.class.isAssignableFrom(groupClass)) {
-                continue;
+                throw new InvalidUpdateInGroupTypeException(clazz, groupClass);
             }
             groupChildTypeMap.computeIfAbsent(groupClass, item -> new HashSet<>()).add(clazz);
         }
@@ -65,6 +71,18 @@ public class EcsClassScanner {
             }
             registerComponentType(clazz);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Class<? extends EcsSystem>> getEcsSystem(String scanPackage) {
+        Set<Class<?>> classes = ClassUtils.getClassFromParent(scanPackage, EcsSystem.class);
+        Set<Class<? extends EcsSystem>> ecsSystemClass = new HashSet<>();
+        for (Class<?> klass : classes) {
+            if (!ClassUtils.isAbstract(klass)) {
+                ecsSystemClass.add((Class<? extends EcsSystem>) klass);
+            }
+        }
+        return ecsSystemClass;
     }
 
     @SuppressWarnings("unchecked")
@@ -119,4 +137,7 @@ public class EcsClassScanner {
         return type;
     }
 
+    public Collection<Class<? extends EcsSystem>> getTopSystemClasses() {
+        return topSystemClasses;
+    }
 }

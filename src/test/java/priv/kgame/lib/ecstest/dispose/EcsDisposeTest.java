@@ -19,8 +19,6 @@ class EcsDisposeTest {
         System.out.println("Setting up EcsDisposeTest...");
         String packageName = this.getClass().getPackage().getName();
         ecsWorld = EcsWorld.generateInstance(packageName);
-        ecsWorld.registerSystemGroup(SysGroupSpawnDisposeTest.class);
-        ecsWorld.registerSystemGroup(SysGroupDisposeTest.class);
     }
 
     @Test

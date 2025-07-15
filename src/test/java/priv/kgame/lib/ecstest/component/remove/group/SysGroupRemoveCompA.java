@@ -1,8 +1,8 @@
 package priv.kgame.lib.ecstest.component.remove.group;
 
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
+import priv.kgame.lib.ecs.EcsSystemGroup;
 
-public class SysGroupA extends EcsSystemGroup {
+public class SysGroupRemoveCompA extends EcsSystemGroup {
 
     @Override
     protected void onStart() {

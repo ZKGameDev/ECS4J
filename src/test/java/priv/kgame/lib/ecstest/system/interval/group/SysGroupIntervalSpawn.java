@@ -1,8 +1,10 @@
 package priv.kgame.lib.ecstest.system.interval.group;
 
 import priv.kgame.lib.ecs.EcsSystemGroup;
+import priv.kgame.lib.ecs.annotation.UpdateBeforeSystem;
 
-public class SysGroupInterval extends EcsSystemGroup {
+@UpdateBeforeSystem(systemTypes = { SysGroupInterval.class })
+public class SysGroupIntervalSpawn extends EcsSystemGroup {
 
     @Override
     protected void onStart() {

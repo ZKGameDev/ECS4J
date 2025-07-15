@@ -1,16 +1,18 @@
-package priv.kgame.lib.ecstest.dispose.group;
+package priv.kgame.lib.ecstest.component.add.group;
 
 import priv.kgame.lib.ecs.EcsSystemGroup;
 import priv.kgame.lib.ecs.annotation.UpdateAfterSystem;
 
-@UpdateAfterSystem(systemTypes = { SysGroupSpawnDisposeTest.class })
-public class SysGroupDisposeTest extends EcsSystemGroup {
+@UpdateAfterSystem(systemTypes = { SysGroupAddCompSpawn.class })
+public class SysGroupAddCompA extends EcsSystemGroup {
 
     @Override
     protected void onStart() {
+
     }
 
     @Override
     protected void onStop() {
+
     }
-} 
+}

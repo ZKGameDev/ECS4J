@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.system.order.def.component.ComponentA2;
-import priv.kgame.lib.ecstest.system.order.def.group.SysGroupA;
-import priv.kgame.lib.ecstest.system.order.def.group.SysGroupSpawn;
 
 /**
  * System默认执行顺序测试用例
@@ -20,8 +18,6 @@ class EcsDefaultOrderTest {
         System.out.println("Setting up EcsDefaultOrderTest...");
         String packageName = EcsDefaultOrderTest.class.getPackage().getName();
         ecsWorld = EcsWorld.generateInstance(packageName);
-        ecsWorld.registerSystemGroup(SysGroupSpawn.class);
-        ecsWorld.registerSystemGroup(SysGroupA.class);
     }
 
     @Test
@@ -32,7 +28,7 @@ class EcsDefaultOrderTest {
         final int interval = 33;
         long startTime = 0;
         long endTime = startTime + interval * 100;
-        boolean inited = false;;
+        boolean inited = false;
         boolean destroy = false;
 
         while (startTime < endTime) {

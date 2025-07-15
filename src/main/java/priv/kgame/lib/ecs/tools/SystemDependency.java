@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SystemDependency {
-    final EcsSystem system;
-    final List<Class<? extends EcsSystem>> updateBefore;
-    int afterSystemCount = 0;
+    private final EcsSystem system;
+    private final List<Class<? extends EcsSystem>> updateBefore;
+    private int afterSystemCount = 0;
 
     public SystemDependency(EcsSystem system) {
         this.system = system;

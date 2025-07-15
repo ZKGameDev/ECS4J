@@ -6,9 +6,9 @@ import priv.kgame.lib.ecs.annotation.UpdateBeforeSystem;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsUpdateSystemOne;
 import priv.kgame.lib.ecstest.system.order.custom.component.ComponentA1;
-import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupA;
+import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupCustomOrderA;
 
-@UpdateInGroup(SysGroupA.class)
+@UpdateInGroup(SysGroupCustomOrderA.class)
 @UpdateAfterSystem(systemTypes = { SystemA2.class })
 @UpdateBeforeSystem(systemTypes = { SystemA0.class })
 public class SystemA4 extends EcsUpdateSystemOne<ComponentA1> {

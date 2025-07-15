@@ -14,7 +14,7 @@ public class HeapTypeElement implements Comparable<HeapTypeElement> {
 
     @Override
     public int compareTo(HeapTypeElement o) {
-        int result = Integer.compare(systemDependency.afterSystemCount, o.systemDependency.afterSystemCount);
+        int result = Integer.compare(systemDependency.getAfterSystemCount(), o.systemDependency.getAfterSystemCount());
         if (0 == result) {
             result = typeName.compareTo(o.typeName);
         }

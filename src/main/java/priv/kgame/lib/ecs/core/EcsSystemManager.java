@@ -1,19 +1,21 @@
 package priv.kgame.lib.ecs.core;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import priv.kgame.lib.ecs.EcsCleanable;
 import priv.kgame.lib.ecs.EcsSystem;
+import priv.kgame.lib.ecs.EcsSystemGroup;
 import priv.kgame.lib.ecs.EcsWorld;
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class EcsSystemManager implements EcsCleanable {
+    private static final Logger logger = LogManager.getLogger(EcsSystemManager.class);
+
     private final EcsWorld world;
-    private final List<EcsSystemGroup> systemGroups = new ArrayList<>();
-    private EcsSystemGroup currentSystemGroupClass;
+    private final SortableSystemList topLevelSystems = new SortableSystemList();
+    private EcsSystem currentTopSystem;
     private EcsClassScanner ecsClassScanner;
 
     public EcsSystemManager(final EcsWorld world) {
@@ -22,11 +24,12 @@ public class EcsSystemManager implements EcsCleanable {
 
     public void init(EcsClassScanner ecsClassScanner) {
         this.ecsClassScanner = ecsClassScanner;
-    }
-
-    public void registerSystemGroup(Class<? extends EcsSystemGroup> clz) {
-        EcsSystemGroup systemGroup = createSystem(clz);
-        this.systemGroups.add(systemGroup);
+        for (Class<? extends EcsSystem> systemClz : ecsClassScanner.getTopSystemClasses()) {
+            EcsSystem system = createSystem(systemClz);
+            topLevelSystems.addSystem(system);
+        }
+        topLevelSystems.tryReorderSystem();
+        logger.info("{} order: {}", this.getClass().getSimpleName(), topLevelSystems);
     }
 
     public <T extends EcsSystem> T createSystem(Class<T> systemClass) {
@@ -47,26 +50,22 @@ public class EcsSystemManager implements EcsCleanable {
 
     @Override
     public void clean() {
-        for (EcsSystemGroup systemGroup : systemGroups) {
-            systemGroup.destroy();
-        }
-        this.currentSystemGroupClass = null;
-        systemGroups.clear();
+        topLevelSystems.clean();
+        this.currentTopSystem = null;
     }
 
     public void update() {
-        for (EcsSystemGroup systemGroup : systemGroups) {
-            this.currentSystemGroupClass = systemGroup;
+        for (EcsSystem systemGroup : topLevelSystems.getSortedSystem()) {
+            this.currentTopSystem = systemGroup;
             systemGroup.tryUpdate();
-
         }
     }
 
-    public EcsSystemGroup getCurrentSystemGroup() {
-        return currentSystemGroupClass;
+    public EcsSystem getCurrentSystemGroup() {
+        return currentTopSystem;
     }
 
-    public Set<Class<? extends EcsSystem>> getChildSystemInGroup(EcsSystemGroup ecsSystemGroup) {
+    public Set<Class<? extends EcsSystem>> getSystemInGroup(EcsSystemGroup ecsSystemGroup) {
         return ecsClassScanner.getChildSystem(ecsSystemGroup.getClass());
     }
 }

@@ -1,6 +1,6 @@
 package priv.kgame.lib.ecs.annotation;
 
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
+import priv.kgame.lib.ecs.EcsSystemGroup;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,8 +1,8 @@
 package priv.kgame.lib.ecstest.system.order.custom.group;
 
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
+import priv.kgame.lib.ecs.EcsSystemGroup;
 
-public class SysGroupA extends EcsSystemGroup {
+public class SysGroupCustomOrderA extends EcsSystemGroup {
 
     @Override
     protected void onStart() {

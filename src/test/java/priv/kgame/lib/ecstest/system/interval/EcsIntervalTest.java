@@ -7,8 +7,6 @@ import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval1;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval2;
 import priv.kgame.lib.ecstest.system.interval.component.ComponentInterval3;
-import priv.kgame.lib.ecstest.system.interval.group.SysGroupInterval;
-import priv.kgame.lib.ecstest.system.interval.group.SysGroupSpawnInterval;
 
 class EcsIntervalTest {
     private EcsWorld ecsWorld;
@@ -19,8 +17,6 @@ class EcsIntervalTest {
         // 在每个测试方法执行前都会执行这个方法
         String packageName = this.getClass().getPackage().getName();
         ecsWorld = EcsWorld.generateInstance(packageName);
-        ecsWorld.registerSystemGroup(SysGroupSpawnInterval.class);
-        ecsWorld.registerSystemGroup(SysGroupInterval.class);
     }
 
     @Test
@@ -39,12 +35,8 @@ class EcsIntervalTest {
             // 更新ECS世界
             ecsWorld.update(startTime);
             assert componentInterval1.i1.equals("i1");
-            if (startTime % tickInterval == 0) {
-                assert componentInterval2.i2.equals("i2");
-            }
-            if (startTime % (tickInterval * 2) == 0) {
-                assert componentInterval3.i3.equals("i1i2");
-            }
+            assert startTime % tickInterval != 0 || componentInterval2.i2.equals("i2");
+            assert startTime % (tickInterval * 2) != 0 || componentInterval3.i3.equals("i1i2");
             startTime += tickInterval;
         }
 

@@ -5,9 +5,9 @@ import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsUpdateSystemTwo;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA1;
 import priv.kgame.lib.ecstest.component.add.component.ComponentA3;
-import priv.kgame.lib.ecstest.component.add.group.SysGroupA;
+import priv.kgame.lib.ecstest.component.add.group.SysGroupAddCompA;
 
-@UpdateInGroup(SysGroupA.class)
+@UpdateInGroup(SysGroupAddCompA.class)
 public class SystemA3 extends EcsUpdateSystemTwo<ComponentA1, ComponentA3> {
 
     @Override

@@ -12,7 +12,7 @@
 
     <name>ECS4J</name>
     <description>ECS framework developed using Java language</description>
-    <url>https://github.com/your/repo</url>
+    <url>https://github.com/ZKGameDev/ECS4J</url>
 
     <!-- 许可证信息（必须提供） -->
     <licenses>

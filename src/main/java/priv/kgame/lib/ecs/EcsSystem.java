@@ -7,7 +7,6 @@ import priv.kgame.lib.ecs.command.EntityCommandBuffer;
 import priv.kgame.lib.ecs.core.ComponentTypeQuery;
 import priv.kgame.lib.ecs.core.EcsSystemManager;
 import priv.kgame.lib.ecs.core.EntityGroup;
-import priv.kgame.lib.ecs.extensions.system.EcsSystemGroup;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -53,12 +52,16 @@ public abstract class EcsSystem implements EcsCleanable {
 
     @Override
     public void clean() {
-        waitUpdateCommand.clear();
-        if (entityGroup != null) {
-            entityGroup.clean();
+        if (started) {
+            started = false;
+            onStop();
         }
+        if (!destroyed) {
+            onDestroy();
+            destroyed = true;
+        }
+        waitUpdateCommand.clear();
     }
-
 
     public void init(EcsSystemManager systemManager) {
         this.ecsWorld = systemManager.getWorld();
@@ -72,19 +75,8 @@ public abstract class EcsSystem implements EcsCleanable {
         if (null != timeIntervalAnno) {
             this.updateInterval = (long) (timeIntervalAnno.interval() * 1000L);
         }
+        destroyed = false;
         onInit();
-    }
-
-    public void destroy() {
-        if (started) {
-            started = false;
-            onStop();
-        }
-        if (!destroyed) {
-            onDestroy();
-            clean();
-            destroyed = true;
-        }
     }
 
     protected void configEntityFilter(ComponentTypeQuery componentTypes) {
@@ -110,18 +102,17 @@ public abstract class EcsSystem implements EcsCleanable {
 
     public void addDelayCommand(EcsCommand command, EntityCommandBuffer.Level level) {
         switch (level) {
-            case SYSTEM -> {
-                this.waitUpdateCommand.addCommand(command);
-            }
+            case SYSTEM -> this.waitUpdateCommand.addCommand(command);
             case SYSTEM_GROUP -> {
                 if (this instanceof EcsSystemGroup) {
+                    this.waitUpdateCommand.addCommand(command);
+                } else if (this == ecsWorld.getCurrentSystemGroupClass()){
                     this.waitUpdateCommand.addCommand(command);
                 } else {
                     ecsWorld.getCurrentSystemGroupClass().addDelayCommand(command, level);
                 }
             }
-            case WORLD ->
-                ecsWorld.addDelayCommand(command);
+            case WORLD -> ecsWorld.addDelayCommand(command);
         }
     }
 
