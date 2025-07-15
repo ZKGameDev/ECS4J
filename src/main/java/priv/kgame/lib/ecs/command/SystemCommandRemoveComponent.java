@@ -13,11 +13,6 @@ public class SystemCommandRemoveComponent implements EcsCommand {
     }
 
     @Override
-    public SystemCommandType getType() {
-        return SystemCommandType.RemoveComponent;
-    }
-
-    @Override
     public void execute() {
         entity.removeComponent(componentCls);
     }

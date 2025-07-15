@@ -3,6 +3,7 @@ package priv.kgame.lib.ecs;
 import priv.kgame.lib.ecs.annotation.AlwaysUpdate;
 import priv.kgame.lib.ecs.annotation.UpdateIntervalTime;
 import priv.kgame.lib.ecs.command.EcsCommand;
+import priv.kgame.lib.ecs.command.EcsCommandScope;
 import priv.kgame.lib.ecs.command.EntityCommandBuffer;
 import priv.kgame.lib.ecs.core.ComponentTypeQuery;
 import priv.kgame.lib.ecs.core.EcsSystemManager;
@@ -100,7 +101,7 @@ public abstract class EcsSystem implements EcsCleanable {
         return ecsWorld;
     }
 
-    public void addDelayCommand(EcsCommand command, EntityCommandBuffer.Level level) {
+    public void addDelayCommand(EcsCommand command, EcsCommandScope level) {
         switch (level) {
             case SYSTEM -> this.waitUpdateCommand.addCommand(command);
             case SYSTEM_GROUP -> {

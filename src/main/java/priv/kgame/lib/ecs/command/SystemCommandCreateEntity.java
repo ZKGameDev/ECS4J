@@ -16,11 +16,6 @@ public class SystemCommandCreateEntity implements EcsCommand {
     }
 
     @Override
-    public SystemCommandType getType() {
-        return SystemCommandType.CreateEntity;
-    }
-
-    @Override
     public void execute() {
         Entity entity = ecsWorld.createEntity(typeId);
         logger.debug("SystemCommandCreateEntity {}", entity);

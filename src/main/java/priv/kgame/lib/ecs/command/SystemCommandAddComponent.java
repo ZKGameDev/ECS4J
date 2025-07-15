@@ -13,11 +13,6 @@ public class SystemCommandAddComponent implements EcsCommand {
     }
 
     @Override
-    public SystemCommandType getType() {
-        return SystemCommandType.AddComponent;
-    }
-
-    @Override
     public void execute() {
         entity.addComponent(component);
     }

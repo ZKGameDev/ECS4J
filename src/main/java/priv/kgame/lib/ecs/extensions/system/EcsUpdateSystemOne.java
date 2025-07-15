@@ -1,10 +1,8 @@
 package priv.kgame.lib.ecs.extensions.system;
 
-import priv.kgame.lib.ecs.core.ComponentMatchParam;
 import priv.kgame.lib.ecs.EcsComponent;
-import priv.kgame.lib.ecs.extensions.component.DestroyingComponent;
-import priv.kgame.lib.ecs.extensions.component.InitializedComponent;
 import priv.kgame.lib.ecs.Entity;
+import priv.kgame.lib.ecs.core.ComponentMatchParam;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
@@ -42,8 +40,6 @@ public abstract class EcsUpdateSystemOne<T extends EcsComponent> extends EcsLogi
 
         List<ComponentMatchParam<?>> typeList = new ArrayList<>();
         typeList.add(matchComponentMatchType);
-        typeList.add(ComponentMatchParam.subtractive(getWorld(), DestroyingComponent.class));
-        typeList.add(ComponentMatchParam.additive(getWorld(), InitializedComponent.class));
         return typeList;
     }
 

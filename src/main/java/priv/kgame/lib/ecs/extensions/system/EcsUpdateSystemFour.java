@@ -1,10 +1,8 @@
 package priv.kgame.lib.ecs.extensions.system;
 
-import priv.kgame.lib.ecs.core.ComponentMatchParam;
 import priv.kgame.lib.ecs.EcsComponent;
-import priv.kgame.lib.ecs.extensions.component.DestroyingComponent;
-import priv.kgame.lib.ecs.extensions.component.InitializedComponent;
 import priv.kgame.lib.ecs.Entity;
+import priv.kgame.lib.ecs.core.ComponentMatchParam;
 import priv.kgame.lib.ecs.tools.EcsTools;
 
 import java.lang.reflect.Type;
@@ -55,8 +53,6 @@ public abstract class EcsUpdateSystemFour<T1 extends EcsComponent,
         componentMatchTypes.add(componentMatchType2);
         componentMatchTypes.add(componentMatchType3);
         componentMatchTypes.add(componentMatchType4);
-        componentMatchTypes.add(ComponentMatchParam.subtractive(getWorld(), DestroyingComponent.class));
-        componentMatchTypes.add(ComponentMatchParam.additive(getWorld(), InitializedComponent.class));
         return componentMatchTypes;
     }
 

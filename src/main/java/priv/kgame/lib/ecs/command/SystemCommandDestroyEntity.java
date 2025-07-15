@@ -12,11 +12,6 @@ public class SystemCommandDestroyEntity implements EcsCommand {
     }
 
     @Override
-    public SystemCommandType getType() {
-        return SystemCommandType.DestroyEntity;
-    }
-
-    @Override
     public void execute() {
         ecsWorld.requestDestroyEntity(entity);
     }
