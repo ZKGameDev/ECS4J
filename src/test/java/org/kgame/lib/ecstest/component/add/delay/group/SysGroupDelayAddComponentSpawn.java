@@ -1,0 +1,16 @@
+package org.kgame.lib.ecstest.component.add.delay.group;
+
+import org.kgame.lib.ecs.EcsSystemGroup;
+
+public class SysGroupDelayAddComponentSpawn extends EcsSystemGroup {
+
+    @Override
+    protected void onStart() {
+
+    }
+
+    @Override
+    protected void onStop() {
+
+    }
+}
