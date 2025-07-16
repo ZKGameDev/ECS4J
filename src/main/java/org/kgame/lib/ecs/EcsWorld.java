@@ -123,8 +123,8 @@ public class EcsWorld{
 
     /**
      * 执行ECS世界更新循环
-     * 
-     * <p>执行所有系统更新，处理实体销毁，播放延迟命令。时间戳必须严格递增。</p>
+     * <p>执行所有系统更新，处理实体销毁，执行EcsCommandScope.WORLD级的EcsCommand。</p>
+     * <p>时间戳必须严格递增。</p>
      *
      * @param now 当前时间戳（毫秒），必须大于上次传入的时间
      * @throws IllegalArgumentException 当时间戳无效时抛出异常
@@ -145,8 +145,8 @@ public class EcsWorld{
         for (Entity waitDestroyEntity : this.waitDestroyEntity) {
             entityManager.destroyEntity(waitDestroyEntity);
         }
-        waitUpdateCommand.playBack();
         this.waitDestroyEntity.clear();
+        waitUpdateCommand.playBack();
         if (state == State.WAIT_DESTROY) {
             close();
         } else {
