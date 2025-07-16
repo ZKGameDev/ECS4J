@@ -122,28 +122,12 @@ public class EcsWorld{
     }
 
     /**
-     * 执行ECS世界的更新循环,每次更新等于一次逻辑调用
-     * <p>
-     * 该方法是ECS系统的核心更新方法，负责执行以下操作：
-     * 1. 验证时间戳的有效性（必须递增）
-     * 2. 更新当前时间
-     * 3. 按顺序执行所有SystemGroup的更新
-     * 4. 处理待销毁的实体
-     * <p>
-     * 执行流程：
-     * - 首先检查时间戳是否有效（now > currentTime）
-     * - 更新内部时间戳
-     * - 遍历所有SystemGroup，设置当前SystemGroup并执行更新
-     * - 销毁所有标记为待销毁的实体
-     * - 清空待销毁实体列表
-     * <p>
-     * 注意事项：
-     * - 时间戳必须严格递增，否则将会抛出异常
-     * - SystemGroup的执行顺序由注册顺序决定
-     * - 实体销毁操作在所有SystemGroup更新完成后执行
+     * 执行ECS世界更新循环
+     * 
+     * <p>执行所有系统更新，处理实体销毁，播放延迟命令。时间戳必须严格递增。</p>
      *
-     * @param now 当前时间戳（毫秒），可以是逻辑时间或真实时间，必须大于上次传入的时间
-     * @throws IllegalArgumentException 当时间戳无效时（now <= currentTime）抛出异常
+     * @param now 当前时间戳（毫秒），必须大于上次传入的时间
+     * @throws IllegalArgumentException 当时间戳无效时抛出异常
      */
     public void update(long now) {
         if (currentTime >= now) {

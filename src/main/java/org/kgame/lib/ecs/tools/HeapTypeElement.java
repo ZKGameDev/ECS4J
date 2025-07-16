@@ -1,5 +1,10 @@
 package org.kgame.lib.ecs.tools;
 
+/**
+ * 堆元素类型
+ * 
+ * @param <T> 堆元素类型，必须实现Comparable接口
+ */
 public class HeapTypeElement implements Comparable<HeapTypeElement> {
     final int unsortedIndex;
     final Class<?> type;

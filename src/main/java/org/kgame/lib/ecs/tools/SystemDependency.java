@@ -5,6 +5,11 @@ import org.kgame.lib.ecs.EcsSystem;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 系统依赖信息
+ * 
+ * @param <T> 系统依赖类型，必须实现Comparable接口
+ */
 public class SystemDependency {
     private final EcsSystem system;
     private final List<Class<? extends EcsSystem>> updateBefore;

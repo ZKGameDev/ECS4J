@@ -1,10 +1,16 @@
 package org.kgame.lib.ecs.tools;
 
+/**
+ * 最小堆实现
+ * 
+ * @param <T> 堆元素类型，必须实现Comparable接口
+ */
 public class Heap<T extends Comparable<T>> {
     int capacity;
     int baseIndex = 1;
     Object[] element;
     int size = 0;
+    
     public Heap(int capacity) {
         this.capacity = capacity;
         element = new Object[baseIndex + capacity];
