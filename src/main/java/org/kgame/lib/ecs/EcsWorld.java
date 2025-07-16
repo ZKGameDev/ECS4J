@@ -30,6 +30,8 @@ public class EcsWorld{
 
     private EntityCommandBuffer waitUpdateCommand;
 
+    private Object context;
+
     EntityGroup getOrCreateEntityGroup(ComponentTypeQuery componentTypes) {
         return this.entityManager.getOrCreateEntityGroup(componentTypes);
     }
@@ -63,6 +65,14 @@ public class EcsWorld{
         waitUpdateCommand = new EntityCommandBuffer();
     }
 
+    public void setContext(Object context) {
+        this.context = context;
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public <T> T getContext() {
+        return (T) context;
+    }
     /**
      * 关闭World。
      * 如果在update期间调用，会等本次所有System update完成之后才执行关闭逻辑。
