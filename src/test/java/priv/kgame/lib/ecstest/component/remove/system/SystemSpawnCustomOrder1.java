@@ -4,17 +4,17 @@ import priv.kgame.lib.ecs.EcsComponent;
 import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
-import priv.kgame.lib.ecstest.component.remove.component.ComponentA1;
+import priv.kgame.lib.ecstest.component.remove.component.ComponentRemove1;
 import priv.kgame.lib.ecstest.component.remove.group.SysGroupRemoveCompSpawn;
 
 import java.util.Collection;
 import java.util.List;
 
 @UpdateInGroup(SysGroupRemoveCompSpawn.class)
-public class SystemSpawnCustomOrder1 extends EcsInitializeSystem<ComponentA1> {
+public class SystemSpawnCustomOrder1 extends EcsInitializeSystem<ComponentRemove1> {
 
     @Override
-    public boolean onInitialize(Entity entity, ComponentA1 data) {
+    public boolean onInitialize(Entity entity, ComponentRemove1 data) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
         data.data += "o1";
         return true;

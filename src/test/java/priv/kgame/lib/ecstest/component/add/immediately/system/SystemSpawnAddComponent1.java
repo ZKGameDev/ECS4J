@@ -1,23 +1,23 @@
-package priv.kgame.lib.ecstest.system.order.custom.system;
+package priv.kgame.lib.ecstest.component.add.immediately.system;
 
 import priv.kgame.lib.ecs.EcsComponent;
 import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecs.annotation.UpdateAfterSystem;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
-import priv.kgame.lib.ecstest.system.order.custom.component.ComponentA1;
-import priv.kgame.lib.ecstest.system.order.custom.group.SysGroupCustomOrderSpawn;
+import priv.kgame.lib.ecstest.component.add.immediately.component.ComponentAdd1;
+import priv.kgame.lib.ecstest.component.add.immediately.group.SysGroupAddComponentSpawn;
 
 import java.util.Collection;
 import java.util.List;
 
-@UpdateInGroup(SysGroupCustomOrderSpawn.class)
-@UpdateAfterSystem(systemTypes = SystemSpawnCustomOrder3.class)
-public class SystemSpawnCustomOrder1 extends EcsInitializeSystem<ComponentA1> {
+@UpdateInGroup(SysGroupAddComponentSpawn.class)
+@UpdateAfterSystem(systemTypes = SystemSpawnAddComponent3.class)
+public class SystemSpawnAddComponent1 extends EcsInitializeSystem<ComponentAdd1> {
 
     @Override
-    public boolean onInitialize(Entity entity, ComponentA1 data) {
-        System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
+    public boolean onInitialize(Entity entity, ComponentAdd1 data) {
+        System.out.println(this.getClass().getSimpleName() + " update at: " + getWorld().getCurrentTime());
         data.data += "o1";
         return true;
     }
@@ -34,6 +34,7 @@ public class SystemSpawnCustomOrder1 extends EcsInitializeSystem<ComponentA1> {
 
     @Override
     protected SystemInitFinishSingle getInitFinishSingle() {
-        return new SystemInitFinishSingle() {};
+        return new SystemInitFinishSingle() {
+        };
     }
 }

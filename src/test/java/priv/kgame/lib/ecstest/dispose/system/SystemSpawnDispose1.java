@@ -1,7 +1,6 @@
 package priv.kgame.lib.ecstest.dispose.system;
 
 import priv.kgame.lib.ecs.EcsComponent;
-import priv.kgame.lib.ecs.extensions.component.InitializedComponent;
 import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
@@ -17,7 +16,6 @@ public class SystemSpawnDispose1 extends EcsInitializeSystem<ComponentDispose1> 
     @Override
     public boolean onInitialize(Entity entity, ComponentDispose1 data) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
-        entity.addComponent(InitializedComponent.generate());
         return true;
     }
 

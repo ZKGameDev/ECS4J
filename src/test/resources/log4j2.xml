@@ -77,11 +77,9 @@
         <!--建立一个默认的root的logger-->
         <root level="${log.level}" includeLocation="true">
             <appender-ref ref="Console"/>
-            <appender-ref ref="allAsync"/>
-            <appender-ref ref="allErrAsync"/>
         </root>
         <logger name="ecsLogger">
-            <appender-ref ref="ecsLogAppenderAsync"/>
+            <appender-ref ref="Console"/>
         </logger>
         <logger name="com.fasterxml.jackson" level="WARN"/>
     </loggers>

@@ -1,24 +1,24 @@
-package priv.kgame.lib.ecstest.component.remove.system;
+package priv.kgame.lib.ecstest.component.add.delay.system;
 
 import priv.kgame.lib.ecs.EcsComponent;
 import priv.kgame.lib.ecs.Entity;
 import priv.kgame.lib.ecs.annotation.UpdateInGroup;
 import priv.kgame.lib.ecs.extensions.system.EcsInitializeSystem;
-import priv.kgame.lib.ecstest.component.remove.component.ComponentRemove1;
-import priv.kgame.lib.ecstest.component.remove.component.ComponentRemove3;
-import priv.kgame.lib.ecstest.component.remove.group.SysGroupRemoveCompSpawn;
+import priv.kgame.lib.ecstest.component.add.delay.component.ComponentDelayAdd1;
+import priv.kgame.lib.ecstest.component.add.delay.component.ComponentDelayAdd3;
+import priv.kgame.lib.ecstest.component.add.delay.group.SysGroupDelayAddComponentSpawn;
 
 import java.util.Collection;
 import java.util.List;
 
-@UpdateInGroup(SysGroupRemoveCompSpawn.class)
-public class SystemSpawnCustomOrder3 extends EcsInitializeSystem<ComponentRemove3> {
+@UpdateInGroup(SysGroupDelayAddComponentSpawn.class)
+public class SystemSpawnDelayAddComponent3 extends EcsInitializeSystem<ComponentDelayAdd3> {
 
     @Override
-    public boolean onInitialize(Entity entity, ComponentRemove3 data) {
+    public boolean onInitialize(Entity entity, ComponentDelayAdd3 data) {
         System.out.println(this.getClass().getSimpleName() +" update at: " + getWorld().getCurrentTime());
-        ComponentRemove1 componentRemove1 = entity.getComponent(ComponentRemove1.class);
-        componentRemove1.data += "o3";
+        ComponentDelayAdd1 a1 = entity.getComponent(ComponentDelayAdd1.class);
+        a1.data += "o3";
         return true;
     }
 

@@ -1,23 +1,22 @@
-package priv.kgame.lib.ecstest.component.remove;
+package priv.kgame.lib.ecstest.system.mixed;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import priv.kgame.lib.ecs.EcsWorld;
 import priv.kgame.lib.ecs.Entity;
-import priv.kgame.lib.ecstest.component.remove.component.ComponentRemove2;
-import priv.kgame.lib.ecstest.component.remove.component.ComponentRemove3;
+import priv.kgame.lib.ecstest.system.mixed.component.ComponentA2;
 
 /**
  * System默认执行顺序测试用例
  */
-class EcsComponentRemoveTest {
+class EcsMixSystemTest {
     private EcsWorld ecsWorld;
     public static String data = "";
 
     @BeforeEach
     void setUp() {
-        System.out.println("Setting up " + this.getClass().getSimpleName() + "...");
-        String packageName = EcsComponentRemoveTest.class.getPackage().getName();
+        System.out.println("Setting up EcsDefaultOrderTest...");
+        String packageName = EcsMixSystemTest.class.getPackage().getName();
         ecsWorld = EcsWorld.generateInstance(packageName);
     }
 
@@ -31,38 +30,26 @@ class EcsComponentRemoveTest {
         long endTime = startTime + interval * 100;
         boolean inited = false;
         boolean destroy = false;
-        boolean addComponents = false;
+
         while (startTime < endTime) {
             System.out.println("=====Updating world in " + startTime + "=====");
             // 更新ECS世界
             ecsWorld.update(startTime);
-            ComponentRemove2 a2 = entity.getComponent(ComponentRemove2.class);
+            ComponentA2 a2 = entity.getComponent(ComponentA2.class);
             if (!destroy) {
-                System.out.println("update result: " + a2.data);
                 if (!inited) {
                     inited = true;
-                    assert a2.data.equals("A1o1o2o3a1a2a3");
-                } else if (startTime <= endTime / 2){
                     System.out.println("update result: " + a2.data);
-                    assert a2.data.equals("a1a2a3");
+                    assert a2.data.equals("o1o2o3o4");
                 } else {
-                    if (!addComponents) {
-                        entity.removeComponent(ComponentRemove3.class);
-                        System.out.println("add ComponentA3");
-                        assert a2.data.equals("a1a2a3");
-                        addComponents = true;
-                    } else {
-                        assert a2.data.equals("a1");
-                    }
-
+                    System.out.println("update result: " + a2.data);
+                    assert a2.data.equals("a1a2a3a4");
                 }
-            } else {
-                assert a2 == null;
             }
             if (startTime >= endTime - interval * 10 && !destroy) {
                 destroy = true;
                 ecsWorld.requestDestroyEntity(entity);
-                System.out.println("request destroy entity");
+                System.out.println("destroy entity");
             }
             startTime += interval;
         }
