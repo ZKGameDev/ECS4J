@@ -22,7 +22,7 @@ class EcsComponentRemoveTest {
     }
 
     @Test
-    void updateWorld() throws InterruptedException {
+    void updateWorld()  {
         Entity entity = ecsWorld.createEntity(1);
 
         // 记录开始时间

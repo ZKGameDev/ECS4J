@@ -20,7 +20,7 @@ class EcsDisposeTest {
     }
 
     @Test
-    void updateWorld() throws InterruptedException {
+    void updateWorld()  {
         Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
@@ -53,7 +53,7 @@ class EcsDisposeTest {
     }
 
     @Test
-    void updateWorld1() throws InterruptedException {
+    void updateWorld1()  {
         Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
@@ -86,7 +86,7 @@ class EcsDisposeTest {
     }
 
     @Test
-    void updateWorld2() throws InterruptedException {
+    void updateWorld2()  {
         Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
@@ -119,7 +119,7 @@ class EcsDisposeTest {
     }
 
     @Test
-    void updateWorld3() throws InterruptedException {
+    void updateWorld3()  {
         Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间
@@ -152,7 +152,7 @@ class EcsDisposeTest {
     }
 
     @Test
-    void updateWorld4() throws InterruptedException {
+    void updateWorld4()  {
         Entity entity = ecsWorld.createEntity(2);
         final int tickInterval = 33;
         // 记录开始时间

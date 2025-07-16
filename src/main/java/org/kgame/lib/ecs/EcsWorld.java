@@ -51,6 +51,11 @@ public class EcsWorld{
 
     EcsWorld() {}
 
+    /**
+     * 生成EcsWorld实例
+     * @param packageName 需要扫描的包名
+     * @return EcsWorld实例
+     */
     public static EcsWorld generateInstance(String packageName) {
         EcsWorld ecsWorld = new EcsWorld();
         ecsWorld.init(packageName);
@@ -65,10 +70,20 @@ public class EcsWorld{
         waitUpdateCommand = new EntityCommandBuffer();
     }
 
+    /**
+     * 设置自定义上下文
+     * @param context 上下文对象
+     */
     public void setContext(Object context) {
         this.context = context;
     }
 
+    /**
+     * 获取自定义上下文，调用之前需要先调用setContext设置上下文
+     * @param <T> 上下文类型
+     * @return 上下文对象
+     * @throws ClassCastException 当上下文对象无法转换为指定类型时抛出异常
+     */
     @SuppressWarnings({"unchecked"})
     public <T> T getContext() {
         return (T) context;

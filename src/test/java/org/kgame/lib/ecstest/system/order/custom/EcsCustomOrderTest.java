@@ -21,7 +21,7 @@ class EcsCustomOrderTest {
     }
 
     @Test
-    void updateWorld() throws InterruptedException {
+    void updateWorld()  {
         Entity entity = ecsWorld.createEntity(1);
         int entityIndex = entity.getIndex();
 

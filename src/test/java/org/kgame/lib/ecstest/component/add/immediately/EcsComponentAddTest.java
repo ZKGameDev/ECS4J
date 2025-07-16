@@ -23,7 +23,7 @@ class EcsComponentAddTest {
     }
 
     @Test
-    void addComponentBeforeUpdate() throws InterruptedException {
+    void addComponentBeforeUpdate()  {
         Entity entity = ecsWorld.createEntity(1);
 
         // 记录开始时间
@@ -64,7 +64,7 @@ class EcsComponentAddTest {
     }
 
     @Test
-    void addComponentInSystem() throws InterruptedException {
+    void addComponentInSystem()  {
         Entity entity = ecsWorld.createEntity(1);
 
         // 记录开始时间
