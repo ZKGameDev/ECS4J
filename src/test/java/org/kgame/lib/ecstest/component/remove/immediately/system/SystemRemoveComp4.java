@@ -1,11 +1,11 @@
-package org.kgame.lib.ecstest.component.remove.system;
+package org.kgame.lib.ecstest.component.remove.immediately.system;
 
 import org.kgame.lib.ecs.Entity;
 import org.kgame.lib.ecs.annotation.UpdateInGroup;
 import org.kgame.lib.ecs.extensions.system.EcsUpdateSystemOne;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove1;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove2;
-import org.kgame.lib.ecstest.component.remove.group.SysGroupRemoveCompA;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove1;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove2;
+import org.kgame.lib.ecstest.component.remove.immediately.group.SysGroupRemoveCompA;
 
 @UpdateInGroup(SysGroupRemoveCompA.class)
 public class SystemRemoveComp4 extends EcsUpdateSystemOne<ComponentRemove2> {

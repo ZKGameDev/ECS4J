@@ -1,11 +1,11 @@
-package org.kgame.lib.ecstest.component.remove.entity;
+package org.kgame.lib.ecstest.component.remove.immediately.entity;
 
 import org.kgame.lib.ecs.EcsComponent;
 import org.kgame.lib.ecs.extensions.entity.BaseEntityFactory;
 import org.kgame.lib.ecs.extensions.entity.EntityFactoryAttribute;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove1;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove2;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove3;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove1;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove2;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove3;
 
 import java.util.Collection;
 import java.util.List;

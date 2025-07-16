@@ -1,4 +1,4 @@
-package org.kgame.lib.ecstest.component.remove.component;
+package org.kgame.lib.ecstest.component.remove.immediately.component;
 
 import org.kgame.lib.ecs.EcsComponent;
 

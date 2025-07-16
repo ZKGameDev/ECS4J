@@ -1,11 +1,11 @@
-package org.kgame.lib.ecstest.component.remove;
+package org.kgame.lib.ecstest.component.remove.immediately;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kgame.lib.ecs.EcsWorld;
 import org.kgame.lib.ecs.Entity;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove2;
-import org.kgame.lib.ecstest.component.remove.component.ComponentRemove3;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove2;
+import org.kgame.lib.ecstest.component.remove.immediately.component.ComponentRemove3;
 
 /**
  * System默认执行顺序测试用例

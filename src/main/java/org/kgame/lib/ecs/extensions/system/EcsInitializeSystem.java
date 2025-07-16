@@ -28,6 +28,9 @@ public abstract class EcsInitializeSystem<T extends EcsComponent> extends EcsLog
     @Override
     protected void onInit() {
         systemInitFinishSingle = getInitFinishSingle();
+        if (systemInitFinishSingle == null) {
+            throw new RuntimeException("getInitFinishSingle result is null");
+        }
         super.onInit();
     }
 

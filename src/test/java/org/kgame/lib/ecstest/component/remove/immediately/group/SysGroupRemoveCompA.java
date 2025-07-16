@@ -1,4 +1,4 @@
-package org.kgame.lib.ecstest.component.remove.group;
+package org.kgame.lib.ecstest.component.remove.immediately.group;
 
 import org.kgame.lib.ecs.EcsSystemGroup;
 
