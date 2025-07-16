@@ -126,24 +126,24 @@ public abstract class EcsSystem implements EcsCleanable {
 
     /**
      * 在停止状态下：
-     * 如果alwaysUpdateSystem是true 或者 存在匹配的Entity时执行该方法
-     * 该方法执行后System会被置为启动状态。
-     * 该方法在System的生命周期内有可能被多次执行
+     * <p>如果alwaysUpdateSystem是true 或者 存在匹配的Entity时执行该方法<p/>
+     * <p>该方法执行后System会被置为启动状态<p/>
+     * <p>该方法在System的生命周期内有可能被多次执行<p/>
      */
     protected abstract void onStart();
     protected abstract void onUpdate();
 
     /**
      * 在启动状态下：
-     * 如果alwaysUpdateSystem是false 且 不存在匹配的Entity时 执行该方法。
-     * 该方法执行后System会被置为停止状态。
-     * 该方法在System的生命周期内有可能被多次执行
+     * <p>如果alwaysUpdateSystem是false 且 不存在匹配的Entity时 执行该方法<p/>
+     * <p>该方法执行后System会被置为停止状态<p/>
+     * <p>该方法在System的生命周期内有可能被多次执行<p/>
      */
     protected abstract void onStop();
 
     /**
      * System销毁时执行该方法。
-     * 该方法在System的生命周期内只会执行一次。
+     * <p>该方法在System的生命周期内只会执行一次<p/>
      */
     protected abstract void onDestroy();
 }

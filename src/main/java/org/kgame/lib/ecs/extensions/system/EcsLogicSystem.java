@@ -44,15 +44,11 @@ abstract class EcsLogicSystem extends EcsSystem {
 
     /**
      * 额外需要关注的Component类
-     *
-     * @return 关注的Component类的集合
      */
     public abstract Collection<Class<? extends EcsComponent>> getExtraRequirementComponent();
 
     /**
      * 额外需要排除的Component类
-     *
-     * @return 要排除的Component类的集合
      */
     public abstract Collection<Class<? extends EcsComponent>> getExtraExcludeComponent();
 }
