@@ -4,37 +4,42 @@
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java 语言实现。该框架提供完整的 ECS 架构支持，支持组件运行时添加/删除、系统执行序控制、实体/组件的即装即用（on-the-fly）与延迟加载（deferred）等关键特性。
+<div align="center">
 
-本框架针对游戏服务器场景设计。一个进程可创建多个EcsWorld，每个 EcsWorld 实例可对应一个游戏房间（Room）或场景（Scene）。各 EcsWorld 被设计为线程专有（thread-confined），仅限在创建它的线程内访问，不支持跨线程调用。
+[English](README.md) | [中文](README_CN.md)
 
-## 🌟 主要特性
+</div>
 
-### 核心功能
-- **实体管理**: 高效的实体创建、销毁和生命周期管理
-- **组件系统**: 支持动态添加/移除组件，组件类型安全
-- **系统执行**: 灵活的系统更新机制，支持多种执行模式
-- **实体原型**: 基于组件组合的实体原型系统
+ECS4J is an open-source ECS framework designed and developed specifically for game servers, implemented in Java. This framework provides complete ECS architecture support, including runtime component addition/removal, system execution order control, on-the-fly and deferred loading of entities/components, and other key features.
 
-### 高级特性
-- **系统分组**: 支持系统分组管理，便于组织复杂逻辑
-- **执行顺序控制**: 通过注解精确控制系统的执行顺序
-- **延迟命令**: 支持延迟执行的实体操作命令
-- **实体工厂**: 工厂模式创建实体，简化实体实例化
-- **自动扫描**: 基于包扫描自动发现和注册系统、组件、工厂
+This framework is designed for game server scenarios. A single process can create multiple EcsWorld instances, each corresponding to a game room (Room) or scene (Scene). Each EcsWorld is designed to be thread-confined, accessible only within the thread that created it, and does not support cross-thread calls.
 
+## 🌟 Key Features
 
-## 📋 系统要求
+### Core Functionality
+- **Entity Management**: Efficient entity creation, destruction, and lifecycle management
+- **Component System**: Support for dynamic component addition/removal with type safety
+- **System Execution**: Flexible system update mechanism with multiple execution modes
+- **Entity Prototypes**: Component-based entity prototype system
 
-- **Java**: 21 或更高版本
-- **Maven**: 3.6 或更高版本
-- **依赖**: 
+### Advanced Features
+- **System Groups**: Support for system group management, facilitating complex logic organization
+- **Execution Order Control**: Precise control of system execution order through annotations
+- **Deferred Commands**: Support for deferred execution of entity operation commands
+- **Entity Factories**: Factory pattern for entity creation, simplifying entity instantiation
+- **Auto-scanning**: Automatic discovery and registration of systems, components, and factories based on package scanning
+
+## 📋 System Requirements
+
+- **Java**: Version 21 or higher
+- **Maven**: Version 3.6 or higher
+- **Dependencies**: 
   - Log4j2 (2.24.3+)
-  - JUnit 5 (测试)
+  - JUnit 5 (for testing)
 
-## 🚀 快速开始
+## 🚀 Quick Start
 
-### 1. 添加依赖
+### 1. Add Dependency
 
 ```xml
 <dependency>
@@ -44,7 +49,7 @@ ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java
 </dependency>
 ```
 
-### 2. 创建组件
+### 2. Create Components
 
 ```java
 public class PositionComponent implements EcsComponent {
@@ -57,22 +62,23 @@ public class HealthComponent implements EcsComponent {
 }
 ```
 
-### 3. 创建系统
+### 3. Create Systems
 
 ```java
 @UpdateInGroup(GameSystemGroup.class) 
-//未使用UpdateInGroup注解的属于顶层System，和SystemGroup同一级别，都由EcsWorld直接调度
+// Systems without @UpdateInGroup annotation belong to top-level systems, 
+// at the same level as SystemGroups, all scheduled directly by EcsWorld
 public class MovementSystem extends EcsUpdateSystemOne<PositionComponent> {
     
     @Override
     protected void update(Entity entity, PositionComponent position) {
-        // 更新位置逻辑
+        // Update position logic
         position.x += 1.0f;
     }
 }
 ```
 
-### 4. 创建实体工厂
+### 4. Create Entity Factory
 
 ```java
 @EntityFactoryAttribute
@@ -85,16 +91,16 @@ public class PlayerFactory extends BaseEntityFactory {
     
     @Override
     public int typeId() {
-        return 1; // 工厂类型ID 同一EcsWorld内不可重复。
+        return 1; // Factory type ID, must be unique within the same EcsWorld
     }
 }
 ```
 
-### 5. 创建系统组
+### 5. Create System Group
 
 ```java
 public class GameSystemGroup extends EcsSystemGroup {
-    // 系统组实现
+    // System group implementation
     @Override
     protected void onStart() {
 
@@ -107,26 +113,26 @@ public class GameSystemGroup extends EcsSystemGroup {
 }
 ```
 
-### 6. 使用ECS世界
+### 6. Use ECS World
 
 ```java
 public class Game {
     private EcsWorld world;
     
     public void init() {
-        // 创建ECS世界，指定要扫描的包名
+        // Create ECS world, specify package names to scan
         world = EcsWorld.generateInstance("com.example.game");
-        // 可以设置自定义上下文
+        // Can set custom context
         world.setContext(this);
     }
     
     public void update(long currentTime) {
-        // 更新ECS世界
+        // Update ECS world
         world.update(currentTime);
     }
     
     public void createPlayer() {
-        // 通过工厂创建玩家实体
+        // Create player entity through factory
         Entity player = world.createEntity(PlayerFactory.class);
     }
     
@@ -135,105 +141,106 @@ public class Game {
     }
 }
 ```
-### 7. Entity相关操作
+
+### 7. Entity Operations
 
 ```java
-// 获取组件
+// Get component
 PositionComponent position = entity.getComponent(PositionComponent.class);
 
-// 检查组件
+// Check component
 if (entity.hasComponent(HealthComponent.class)) {
-    // 处理逻辑
+    // Handle logic
 }
 
-// 添加组件
+// Add component
 entity.addComponent(new HealthComponent());
 
-// 移除组件
+// Remove component
 entity.removeComponent(PositionComponent.class);
 
-// 销毁实体
+// Destroy entity
 world.requestDestroyEntity(entity);
 ```
 
-## 📖 注解
+## 📖 Annotations
 
-ECS4J提供了丰富的注解来控制系统的行为：
+ECS4J provides rich annotations to control system behavior:
 
-### 系统控制注解
+### System Control Annotations
 
 #### @UpdateInGroup
-- **作用**: 标记EcsSystem在指定EcsSystemGroup中执行更新
-- **可作用对象**: EcsSystem类
-- **参数**: `Class<? extends EcsSystemGroup> value()` - 系统组类型
-- **说明**: 被此注解标记的EcsSystem将在指定EcsSystemGroup中执行更新。未被此注解标记的EcsSystem，属于和EcsSystemGroup同级的顶层系统，由EcsWorld调度。**注意：此注解不能用于EcsSystemGroup类，目前不支持SystemGroup的嵌套。**
+- **Purpose**: Marks an EcsSystem to execute updates within a specified EcsSystemGroup
+- **Target**: EcsSystem classes
+- **Parameters**: `Class<? extends EcsSystemGroup> value()` - System group type
+- **Description**: EcsSystem marked with this annotation will execute updates within the specified EcsSystemGroup. EcsSystem not marked with this annotation belong to top-level systems at the same level as EcsSystemGroup, scheduled by EcsWorld. **Note: This annotation cannot be used on EcsSystemGroup classes, and nested SystemGroups are not currently supported.**
 
 #### @UpdateIntervalTime
-- **作用**: 标记系统更新间隔时间
-- **可作用对象**: EcsSystem类
-- **参数**: `float interval()` - 更新间隔时间（秒）
-- **说明**: 被此注解标记的系统将在指定时间间隔后执行更新。未被此注解标记的系统，每次更新周期都会执行。
+- **Purpose**: Marks system update interval time
+- **Target**: EcsSystem classes
+- **Parameters**: `float interval()` - Update interval time (seconds)
+- **Description**: Systems marked with this annotation will execute updates after the specified time interval. Systems not marked with this annotation will execute every update cycle.
 
 #### @AlwaysUpdate
-- **作用**: 标记EcsSystem始终执行更新，无论是否有匹配的实体
-- **可作用对象**: EcsSystem类
-- **参数**: 无
-- **说明**: 被此注解标记的EcsSystem将在每个更新周期中执行，即使没有实体包含该EcsSystem所需的组件。没有被此注解标记的EcsSystem，在每个更新周期中，只有在有实体包含该EcsSystem所需的组件时，才会执行更新。
+- **Purpose**: Marks EcsSystem to always execute updates, regardless of whether there are matching entities
+- **Target**: EcsSystem classes
+- **Parameters**: None
+- **Description**: EcsSystem marked with this annotation will execute in every update cycle, even if no entities contain the components required by this EcsSystem. EcsSystem not marked with this annotation will only execute updates in each update cycle when there are entities containing the required components.
 
 #### @UpdateAfterSystem
-- **作用**: 标记EcsSystem在指定同组内的EcsSystem之后执行更新
-- **可作用对象**: EcsSystem类
-- **参数**: `Class<? extends EcsSystem>[] systemTypes()` - 目标系统类型数组
-- **说明**: 被此注解标记的EcsSystem将在指定EcsSystem执行完成之后执行更新。相同条件的EcsSystem，会按照字典序执行。可用于SystemGroup。
+- **Purpose**: Marks EcsSystem to execute updates after specified EcsSystem within the same group
+- **Target**: EcsSystem classes
+- **Parameters**: `Class<? extends EcsSystem>[] systemTypes()` - Target system type array
+- **Description**: EcsSystem marked with this annotation will execute updates after the specified EcsSystem completes. EcsSystem with the same conditions will execute in dictionary order. Can be used in SystemGroup.
 
 #### @UpdateBeforeSystem
-- **作用**: 标记EcsSystem在指定同组内的EcsSystem之前执行更新
-- **可作用对象**: EcsSystem类
-- **参数**: `Class<? extends EcsSystem>[] systemTypes()` - 目标系统类型数组
-- **说明**: 被此注解标记的EcsSystem将在指定EcsSystem执行之前执行更新。相同条件的EcsSystem，会按照字典序执行。可用于SystemGroup。
+- **Purpose**: Marks EcsSystem to execute updates before specified EcsSystem within the same group
+- **Target**: EcsSystem classes
+- **Parameters**: `Class<? extends EcsSystem>[] systemTypes()` - Target system type array
+- **Description**: EcsSystem marked with this annotation will execute updates before the specified EcsSystem. EcsSystem with the same conditions will execute in dictionary order. Can be used in SystemGroup.
 
-### 实体工厂注解
+### Entity Factory Annotations
 
 #### @EntityFactoryAttribute
-- **作用**: 标记实体工厂类，用于自动扫描和注册
-- **可作用对象**: EntityFactory实现类
-- **参数**: 无
-- **说明**: 被此注解标记的EntityFactory实现类会被自动扫描和注册到EcsWorld中，可以通过工厂类型ID或工厂类创建实体。
+- **Purpose**: Marks entity factory classes for automatic scanning and registration
+- **Target**: EntityFactory implementation classes
+- **Parameters**: None
+- **Description**: EntityFactory implementation classes marked with this annotation will be automatically scanned and registered to EcsWorld, and entities can be created through factory type ID or factory class.
 
-## 🔧 预制系统类型
+## 🔧 Predefined System Types
 
-ECS4J提供了多种预定义的系统基类：
+ECS4J provides various predefined system base classes:
 
-- `EcsUpdateSystemOne<T>`: 处理单个组件的系统
-- `EcsUpdateSystemTwo<T1, T2>`: 处理两个组件的系统
-- `EcsUpdateSystemThree<T1, T2, T3>`: 处理三个组件的系统
-- `EcsUpdateSystemFour<T1, T2, T3, T4>`: 处理四个组件的系统
-- `EcsUpdateSystemFive<T1, T2, T3, T4, T5>`: 处理五个组件的系统
-- `EcsUpdateSystemSingle<T>`: 处理单个组件的系统（排除其他组件）
-- `EcsUpdateSystemExcludeOne<T, E>`: 处理组件T但排除组件E的系统
-- `EcsInitializeSystem<T>`: 实体初始化系统
-- `EcsDestroySystem<T>`: 实体销毁系统
-- `EcsLogicSystem`: 逻辑系统基类
+- `EcsUpdateSystemOne<T>`: System handling a single component
+- `EcsUpdateSystemTwo<T1, T2>`: System handling two components
+- `EcsUpdateSystemThree<T1, T2, T3>`: System handling three components
+- `EcsUpdateSystemFour<T1, T2, T3, T4>`: System handling four components
+- `EcsUpdateSystemFive<T1, T2, T3, T4, T5>`: System handling five components
+- `EcsUpdateSystemSingle<T>`: System handling a single component (excluding other components)
+- `EcsUpdateSystemExcludeOne<T, E>`: System handling component T but excluding component E
+- `EcsInitializeSystem<T>`: Entity initialization system
+- `EcsDestroySystem<T>`: Entity destruction system
+- `EcsLogicSystem`: Logic system base class
 
-## 📦 系统组（EcsSystemGroup）
+## 📦 System Groups (EcsSystemGroup)
 
-系统组（EcsSystemGroup）是ECS4J中用于组织和管理系统执行的重要机制。系统组本身也是一个系统，可以包含多个子系统，并按照特定的顺序执行它们。
+System Groups (EcsSystemGroup) are an important mechanism in ECS4J for organizing and managing system execution. A system group is itself a system that can contain multiple subsystems and execute them in a specific order.
 
-### 系统组特性
+### System Group Features
 
-- **自动管理**: 系统组会自动扫描并管理所有使用`@UpdateInGroup`注解标记的系统
-- **执行顺序**: 系统组内的系统会按照`@UpdateAfterSystem`和`@UpdateBeforeSystem`注解定义的顺序执行
-- **生命周期**: 系统组具有完整的生命周期管理，包括初始化、更新和销毁
-- **动态管理**: 支持在运行时添加和移除System
+- **Automatic Management**: System groups automatically scan and manage all systems marked with the `@UpdateInGroup` annotation
+- **Execution Order**: Systems within a system group execute according to the order defined by `@UpdateAfterSystem` and `@UpdateBeforeSystem` annotations
+- **Lifecycle**: System groups have complete lifecycle management, including initialization, updates, and destruction
+- **Dynamic Management**: Support for adding and removing Systems at runtime
 
-### 系统组层次结构
+### System Group Hierarchy
 
 ```
 EcsWorld
-├── 顶层系统 (未使用@UpdateInGroup注解)
+├── Top-level Systems (without @UpdateInGroup annotation)
 │   ├── SystemA
 │   └── SystemB
-└── 系统组
+└── System Groups
     ├── GameSystemGroup
     │   ├── InputSystem
     │   ├── LogicSystem
@@ -243,112 +250,108 @@ EcsWorld
         └── MovementSystem
 ```
 
-## ⚡ 延迟命令系统
+## ⚡ Deferred Command System
 
-ECS4J提供了完整的延迟命令系统，允许在系统执行过程中安全地执行实体和组件操作。延迟命令会在指定的作用域内执行，确保操作的原子性和一致性。
+ECS4J provides a complete deferred command system that allows safe execution of entity and component operations during system execution. Deferred commands execute within specified scopes, ensuring atomicity and consistency of operations.
 
 ```java
 public class MySystem extends EcsUpdateSystemOne<MyComponent> {
     
     @Override
     protected void update(Entity entity, MyComponent component) {
-        // 添加延迟命令
+        // Add deferred command
         addDelayCommand(new SystemCommandAddComponent(entity, new NewComponent()), 
                       EcsCommandScope.SYSTEM);
     }
 }
 ```
 
-### 可用的延迟命令
+### Available Deferred Commands
 
-ECS4J提供了以下四种延迟命令：
+ECS4J provides the following four deferred commands:
 
-- **SystemCommandCreateEntity**: 延迟创建实体
-- **SystemCommandDestroyEntity**: 延迟销毁实体
-- **SystemCommandAddComponent**: 延迟添加组件
-- **SystemCommandRemoveComponent**: 延迟移除组件
+- **SystemCommandCreateEntity**: Deferred entity creation
+- **SystemCommandDestroyEntity**: Deferred entity destruction
+- **SystemCommandAddComponent**: Deferred component addition
+- **SystemCommandRemoveComponent**: Deferred component removal
 
-### 命令作用域
+### Command Scopes
 
-延迟命令支持三种作用域，控制命令的执行时机：
+Deferred commands support three scopes that control command execution timing:
 
-- **`SYSTEM`**: 系统作用域，命令在当前System执行完成后执行
-- **`SYSTEM_GROUP`**: 系统组作用域，命令在当前系统组执行完成后执行
-- **`WORLD`**: 世界作用域，命令在本次世界update完成后执行
+- **`SYSTEM`**: System scope, commands execute after the current System completes
+- **`SYSTEM_GROUP`**: System group scope, commands execute after the current system group completes
+- **`WORLD`**: World scope, commands execute after the current world update completes
 
+## 🎮 Entity Operation Timing
 
-## 🎮 实体操作生效时机
+ECS4J divides entity operations into **immediate effect** and **deferred effect** modes:
 
+### Immediate Effect Operations
+- **Entity Addition**: Through `ecsworld.createEntity()` calls
+- **Component Addition/Removal**: Through direct calls to `entity.addComponent()` and `entity.removeComponent()`
+- **Effect Timing**: Operations take effect immediately, accessible by other Systems after the current System completes
 
-ECS4J中的实体操作分为**立即生效**和**延迟生效**两种模式：
+### Deferred Effect Operations
 
-### 立即生效操作
-- **实体添加**: 通过`ecsworld.createEntity()`调用
-- **组件添加/移除**: 通过`entity.addComponent()`和`entity.removeComponent()`直接调用
-- **生效时机**: 操作立即生效，当前System执行结束后即可被其他System访问
+#### Entity Destruction
+- **Operation Method**: Request destruction through `world.requestDestroyEntity()`
+- **Effect Timing**: Executes after the current world update completes, ensuring all Systems can process the entity
 
-### 延迟生效操作
+#### Deferred Command Operations
+- **All Operations**: Execute through the deferred command system (SystemCommandCreateEntity, SystemCommandDestroyEntity, SystemCommandAddComponent, SystemCommandRemoveComponent)
+- **Effect Timing**: Refer to the [Deferred Command System](#-deferred-command-system) section
 
-#### 实体销毁
-- **操作方式**: 通过`world.requestDestroyEntity()`请求销毁
-- **生效时机**: 在本次世界update完成后执行，确保所有System都能处理该实体
+## 🧪 Test Examples
 
-#### 延迟命令操作
-- **所有操作**: 通过延迟命令系统执行（SystemCommandCreateEntity、SystemCommandDestroyEntity、SystemCommandAddComponent、SystemCommandRemoveComponent）
-- **生效时机**: 参考章节[延迟命令系统](#-延迟命令系统)
+The project includes comprehensive test cases demonstrating various functionality usage:
 
-## 🧪 测试示例
+- **Component Operation Tests**: Demonstrates component addition and removal operations (immediate and deferred)
+- **Entity Operation Tests**: Demonstrates entity creation and destruction operations (immediate and deferred)
+- **System Tests**: Demonstrates system execution order control, update interval functionality, and complex system combination usage
+- **Resource Cleanup Tests**: Demonstrates ECS world destruction and resource cleanup functionality
 
-项目包含丰富的测试用例，展示了各种功能的使用方法：
-
-- **组件操作测试**: 演示组件的添加、移除操作（立即和延迟）
-- **实体操作测试**: 演示实体的创建、销毁操作（立即和延迟）
-- **系统测试**: 演示系统执行顺序控制、更新间隔功能和复杂系统组合的使用
-- **资源清理测试**: 演示ECS世界销毁和资源清理功能
-
-
-## 📁 项目结构
+## 📁 Project Structure
 
 ```
 src/
 ├── main/java/org/kgame/lib/ecs/
-│   ├── annotation/          # 注解定义
-│   ├── command/            # 命令系统
-│   ├── core/               # 核心实现
-│   ├── exception/          # 异常定义
-│   ├── extensions/         # 扩展功能
-│   └── tools/              # 工具类
+│   ├── annotation/          # Annotation definitions
+│   ├── command/            # Command system
+│   ├── core/               # Core implementation
+│   ├── exception/          # Exception definitions
+│   ├── extensions/         # Extension functionality
+│   └── tools/              # Utility classes
 └── test/java/org/kgame/lib/ecstest/
-    ├── component/          # 组件测试
-    │   ├── add/            # 组件添加测试
-    │   └── remove/         # 组件移除测试
-    ├── entity/             # 实体测试
-    │   ├── add/            # 实体添加测试
-    │   └── remove/         # 实体移除测试
-    ├── system/             # 系统测试
-    │   ├── interval/       # 系统间隔测试
-    │   ├── mixed/          # 混合系统测试
-    │   └── order/          # 系统顺序测试
-    │       ├── custom/     # 自定义顺序测试
-    │       └── def/        # 默认顺序测试
-    └── dispose/            # 资源清理测试
+    ├── component/          # Component tests
+    │   ├── add/            # Component addition tests
+    │   └── remove/         # Component removal tests
+    ├── entity/             # Entity tests
+    │   ├── add/            # Entity addition tests
+    │   └── remove/         # Entity removal tests
+    ├── system/             # System tests
+    │   ├── interval/       # System interval tests
+    │   ├── mixed/          # Mixed system tests
+    │   └── order/          # System order tests
+    │       ├── custom/     # Custom order tests
+    │       └── def/        # Default order tests
+    └── dispose/            # Resource cleanup tests
 ```
 
+## 📄 License
 
-## 📄 许可证
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
 
-本项目采用 Apache License 2.0 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+## 🔗 Related Links
 
-## 🔗 相关链接
+- [Project Homepage](https://github.com/ZKGameDev/ECS4J)
+- [Issue Reporting](https://github.com/ZKGameDev/ECS4J/issues)
 
-- [项目主页](https://github.com/ZKGameDev/ECS4J)
-- [问题反馈](https://github.com/ZKGameDev/ECS4J/issues)
+## 📞 Contact
 
-## 📞 联系方式
+For questions or suggestions, please contact us through:
 
-如有问题或建议，请通过以下方式联系：
+- Submit Issue: [GitHub Issues](https://github.com/ZKGameDev/ECS4J/issues)
+- Email: chinazhangk@gmail.com
 
-- 提交 Issue: [GitHub Issues](https://github.com/ZKGameDev/ECS4J/issues)
-- 邮箱: chinazhangk@gmail.com
-
----
+--- 
