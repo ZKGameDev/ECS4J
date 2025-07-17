@@ -193,7 +193,7 @@ public class EcsWorld{
     /**
      * 获取当前正在执行的SystemGroup
      *
-     * @return 正在质学的SystemGroup的class
+     * @return 正在执行的SystemGroup的class
      */
     public EcsSystem getCurrentSystemGroupClass() {
         return systemManager.getCurrentSystemGroup();
