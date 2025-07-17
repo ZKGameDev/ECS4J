@@ -4,7 +4,9 @@
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-ECS4J 是一个用Java语言开发的实体组件系统（Entity Component System）框架，专为游戏开发和模拟系统设计。该框架提供了高性能、易扩展的ECS架构实现，支持组件动态添加/移除、系统执行顺序控制、实体工厂模式等特性。
+ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java 语言实现。该框架提供完整的 ECS 架构支持，并具备组件热加载、系统执行序控制、实体/组件的即装即用（on-the-fly）与延迟加载（deferred）等关键特性。
+
+本框架针对游戏服务器场景设计。每个 EcsWorld 实例可对应一个游戏房间（Room）或场景（Scene）。各 EcsWorld 被设计为线程专有（thread-confined），仅限在创建它的线程内访问，不支持跨线程调用。
 
 ## 🌟 主要特性
 
@@ -12,7 +14,7 @@ ECS4J 是一个用Java语言开发的实体组件系统（Entity Component Syste
 - **实体管理**: 高效的实体创建、销毁和生命周期管理
 - **组件系统**: 支持动态添加/移除组件，组件类型安全
 - **系统执行**: 灵活的系统更新机制，支持多种执行模式
-- **实体原型**: 基于组件组合的实体原型系统，提高性能
+- **实体原型**: 基于组件组合的实体原型系统
 
 ### 高级特性
 - **系统分组**: 支持系统分组管理，便于组织复杂逻辑
@@ -21,10 +23,6 @@ ECS4J 是一个用Java语言开发的实体组件系统（Entity Component Syste
 - **实体工厂**: 工厂模式创建实体，简化实体实例化
 - **自动扫描**: 基于包扫描自动发现和注册系统、组件、工厂
 
-### 性能优化
-- **内存池**: 高效的实体和组件内存管理
-- **批量操作**: 支持批量实体操作，减少性能开销
-- **类型缓存**: 组件类型索引缓存，提高查询效率
 
 ## 📋 系统要求
 
@@ -42,7 +40,7 @@ ECS4J 是一个用Java语言开发的实体组件系统（Entity Component Syste
 <dependency>
     <groupId>org.kgame</groupId>
     <artifactId>kgame-lib-ecs</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
@@ -66,34 +64,9 @@ public class HealthComponent implements EcsComponent {
 public class MovementSystem extends EcsUpdateSystemOne<PositionComponent> {
     
     @Override
-    protected void onInit() {
-        // 配置实体过滤器
-        configEntityFilter(ComponentTypeQuery.of(PositionComponent.class));
-    }
-    
-    @Override
-    protected void onStart() {
-        System.out.println("MovementSystem started");
-    }
-    
-    @Override
-    protected void onUpdate() {
-        Collection<Entity> entities = getAllMatchEntity();
-        for (Entity entity : entities) {
-            PositionComponent position = entity.getComponent(PositionComponent.class);
-            // 更新位置逻辑
-            position.x += 1.0f;
-        }
-    }
-    
-    @Override
-    protected void onStop() {
-        System.out.println("MovementSystem stopped");
-    }
-    
-    @Override
-    protected void onDestroy() {
-        System.out.println("MovementSystem destroyed");
+    protected void update(Entity entity, PositionComponent position) {
+        // 更新位置逻辑
+        position.x += 1.0f;
     }
 }
 ```
@@ -106,11 +79,16 @@ public class PlayerFactory implements EntityFactory {
     
     @Override
     public Entity create(EcsEntityManager entityManager) {
-        Entity entity = entityManager.createEntity(1); // 1是工厂类型ID
+        Entity entity = entityManager.createEntity(typeId());
         entity.addComponent(new PositionComponent());
         entity.addComponent(new HealthComponent());
         entity.init();
         return entity;
+    }
+    
+    @Override
+    public int typeId() {
+        return 1; // 工厂类型ID 同一EcsWorld内不可重复。
     }
 }
 ```
@@ -132,6 +110,8 @@ public class Game {
     public void init() {
         // 创建ECS世界，指定要扫描的包名
         world = EcsWorld.generateInstance("com.example.game");
+        // 可以设置自定义上下文
+        world.setContext(this);
     }
     
     public void update(long currentTime) {
@@ -150,42 +130,51 @@ public class Game {
 }
 ```
 
-## 📖 详细文档
-
-### 注解系统
+## 📖 注解系统
 
 ECS4J提供了丰富的注解来控制系统的行为：
 
-#### 系统执行顺序控制
+### 系统控制注解
 
-```java
-@UpdateInGroup(GameSystemGroup.class)
-@UpdateAfterSystem(systemTypes = {InputSystem.class})
-@UpdateBeforeSystem(systemTypes = {RenderSystem.class})
-public class LogicSystem extends EcsUpdateSystemOne<LogicComponent> {
-    // 系统实现
-}
-```
+#### @UpdateInGroup
+- **作用**: 标记EcsSystem在指定EcsSystemGroup中执行更新
+- **可作用对象**: EcsSystem类
+- **参数**: `Class<? extends EcsSystemGroup> value()` - 系统组类型
+- **说明**: 被此注解标记的EcsSystem将在指定EcsSystemGroup中执行更新。未被此注解标记的EcsSystem，属于和EcsSystemGroup同级的顶层系统，由EcsWorld调度。**注意：此注解不能用于EcsSystemGroup类，目前不支持SystemGroup的嵌套。**
 
-#### 系统更新间隔
+#### @UpdateIntervalTime
+- **作用**: 标记系统更新间隔时间
+- **可作用对象**: EcsSystem类
+- **参数**: `float interval()` - 更新间隔时间（秒）
+- **说明**: 被此注解标记的系统将在指定时间间隔后执行更新。未被此注解标记的系统，每次更新周期都会执行。
 
-```java
-@UpdateIntervalTime(interval = 0.016f) // 60 FPS
-public class FixedUpdateSystem extends EcsUpdateSystemOne<FixedComponent> {
-    // 系统实现
-}
-```
+#### @AlwaysUpdate
+- **作用**: 标记EcsSystem始终执行更新，无论是否有匹配的实体
+- **可作用对象**: EcsSystem类
+- **参数**: 无
+- **说明**: 被此注解标记的EcsSystem将在每个更新周期中执行，即使没有实体包含该EcsSystem所需的组件。没有被此注解标记的EcsSystem，在每个更新周期中，只有在有实体包含该EcsSystem所需的组件时，才会执行更新。
 
-#### 始终更新系统
+#### @UpdateAfterSystem
+- **作用**: 标记EcsSystem在指定EcsSystem之后执行更新
+- **可作用对象**: EcsSystem类
+- **参数**: `Class<? extends EcsSystem>[] systemTypes()` - 目标系统类型数组
+- **说明**: 被此注解标记的EcsSystem将在指定EcsSystem执行完成之后执行更新。相同条件的EcsSystem，会按照字典序执行。可用于SystemGroup。
 
-```java
-@AlwaysUpdate
-public class GlobalSystem extends EcsUpdateSystemOne<GlobalComponent> {
-    // 系统实现
-}
-```
+#### @UpdateBeforeSystem
+- **作用**: 标记EcsSystem在指定EcsSystem之前执行更新
+- **可作用对象**: EcsSystem类
+- **参数**: `Class<? extends EcsSystem>[] systemTypes()` - 目标系统类型数组
+- **说明**: 被此注解标记的EcsSystem将在指定EcsSystem执行之前执行更新。相同条件的EcsSystem，会按照字典序执行。可用于SystemGroup。
 
-### 系统类型
+### 实体工厂注解
+
+#### @EntityFactoryAttribute
+- **作用**: 标记实体工厂类，用于自动扫描和注册
+- **可作用对象**: EntityFactory实现类
+- **参数**: 无
+- **说明**: 被此注解标记的EntityFactory实现类会被自动扫描和注册到EcsWorld中，可以通过工厂类型ID或工厂类创建实体。
+
+## 🔧 系统类型
 
 ECS4J提供了多种预定义的系统基类：
 
@@ -200,24 +189,55 @@ ECS4J提供了多种预定义的系统基类：
 - `EcsDestroySystem<T>`: 实体销毁系统
 - `EcsLogicSystem`: 逻辑系统基类
 
-### 延迟命令系统
+## 📦 系统组
+
+系统组（EcsSystemGroup）是ECS4J中用于组织和管理系统执行的重要机制。系统组本身也是一个系统，可以包含多个子系统，并按照特定的顺序执行它们。
+
+### 系统组特性
+
+- **自动管理**: 系统组会自动扫描并管理所有使用`@UpdateInGroup`注解标记的系统
+- **执行顺序**: 系统组内的系统会按照`@UpdateAfterSystem`和`@UpdateBeforeSystem`注解定义的顺序执行
+- **生命周期**: 系统组具有完整的生命周期管理，包括初始化、更新和销毁
+- **动态管理**: 支持在运行时添加和移除系统
+
+### 系统组层次结构
+
+```
+EcsWorld
+├── 顶层系统 (未使用@UpdateInGroup注解)
+│   ├── SystemA
+│   └── SystemB
+└── 系统组
+    ├── GameSystemGroup
+    │   ├── InputSystem
+    │   ├── LogicSystem
+    │   └── RenderSystem
+    └── PhysicsSystemGroup
+        ├── CollisionSystem
+        └── MovementSystem
+```
+
+## ⚡ 延迟命令系统
 
 ```java
 public class MySystem extends EcsUpdateSystemOne<MyComponent> {
     
     @Override
-    protected void onUpdate() {
-        Collection<Entity> entities = getAllMatchEntity();
-        for (Entity entity : entities) {
-            // 添加延迟命令
-            addDelayCommand(new SystemCommandAddComponent(entity, new NewComponent()), 
-                          EcsCommandScope.SYSTEM);
-        }
+    protected void update(Entity entity, MyComponent component) {
+        // 添加延迟命令
+        addDelayCommand(new SystemCommandAddComponent(entity, new NewComponent()), 
+                      EcsCommandScope.SYSTEM);
     }
 }
 ```
 
-### 实体操作
+### 命令作用域
+
+- `SYSTEM`: 系统作用域，命令在当前系统执行完成后执行
+- `SYSTEM_GROUP`: 系统组作用域，命令在当前系统组执行完成后执行
+- `WORLD`: 世界作用域，命令在本次世界更新完成后执行
+
+## 🎮 实体操作
 
 ```java
 // 获取组件
@@ -242,15 +262,11 @@ world.requestDestroyEntity(entity);
 
 项目包含丰富的测试用例，展示了各种功能的使用方法：
 
-- **组件操作测试**: 演示组件的添加、移除操作
-- **系统顺序测试**: 展示系统执行顺序控制
-- **系统间隔测试**: 演示系统更新间隔功能
-- **混合系统测试**: 展示复杂系统组合的使用
+- **组件操作测试**: 演示组件的添加、移除操作（立即和延迟）
+- **实体操作测试**: 演示实体的创建、销毁操作（立即和延迟）
+- **系统测试**: 演示系统执行顺序控制、更新间隔功能和复杂系统组合的使用
+- **资源清理测试**: 演示ECS世界销毁和资源清理功能
 
-运行测试：
-```bash
-mvn test
-```
 
 ## 📁 项目结构
 
@@ -265,17 +281,20 @@ src/
 │   └── tools/              # 工具类
 └── test/java/org/kgame/lib/ecstest/
     ├── component/          # 组件测试
-    ├── dispose/           # 销毁测试
-    └── system/            # 系统测试
+    │   ├── add/            # 组件添加测试
+    │   └── remove/         # 组件移除测试
+    ├── entity/             # 实体测试
+    │   ├── add/            # 实体添加测试
+    │   └── remove/         # 实体移除测试
+    ├── system/             # 系统测试
+    │   ├── interval/       # 系统间隔测试
+    │   ├── mixed/          # 混合系统测试
+    │   └── order/          # 系统顺序测试
+    │       ├── custom/     # 自定义顺序测试
+    │       └── def/        # 默认顺序测试
+    └── dispose/            # 资源清理测试
 ```
 
-## 🤝 贡献指南
-
-1. Fork 项目
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 打开 Pull Request
 
 ## 📄 许可证
 
@@ -285,15 +304,12 @@ src/
 
 - [项目主页](https://github.com/ZKGameDev/ECS4J)
 - [问题反馈](https://github.com/ZKGameDev/ECS4J/issues)
-- [Wiki文档](https://github.com/ZKGameDev/ECS4J/wiki)
 
 ## 📞 联系方式
 
 如有问题或建议，请通过以下方式联系：
 
 - 提交 Issue: [GitHub Issues](https://github.com/ZKGameDev/ECS4J/issues)
-- 邮箱: [项目维护者邮箱]
+- 邮箱: chinazhangk@gmail.com
 
 ---
-
-**注意**: 本框架为非线程安全设计，只能在单线程环境中使用。如需多线程支持，请确保在适当的同步机制下使用。 

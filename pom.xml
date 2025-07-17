@@ -7,7 +7,7 @@
     <!-- 基础信息 -->
     <groupId>org.kgame</groupId>
     <artifactId>kgame-lib-ecs</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>ECS4J</name>
@@ -25,7 +25,7 @@
     <!-- SCM信息（便于开发跟踪） -->
     <scm>
         <!-- 只读访问URL -->
-        <connection>scm:git:git://github.com/hnrzzk/ECS4J.git</connection>
+        <connection>scm:git:https://github.com/hnrzzk/ECS4J.git</connection>
         <!-- 开发者提交访问URL（需SSH权限） -->
         <developerConnection>scm:git:git@github.com:hnrzzk/ECS4J.git</developerConnection>
         <!-- 浏览器访问地址 -->
