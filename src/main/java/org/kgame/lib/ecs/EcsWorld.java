@@ -117,7 +117,10 @@ public class EcsWorld{
     // 通过EntityFactory类型ID创建实体
     public Entity createEntity(int factoryTypeId) {
         EntityFactory entityFactory = entityManager.getEntityFactory(factoryTypeId);
-        return entityFactory == null ? null : entityFactory.create(this.entityManager);
+        if (entityFactory == null) {
+            throw new IllegalArgumentException("No entity factory found for type id " + factoryTypeId);
+        }
+        return entityFactory.create(this.entityManager);
     }
 
     // 通过工厂类创建实体

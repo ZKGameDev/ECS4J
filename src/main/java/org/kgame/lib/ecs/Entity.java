@@ -148,4 +148,8 @@ public class Entity implements EcsCleanable {
         oldArchetype.removeEntity(this);
         archetype = newArchetype;
     }
+
+    public EcsWorld getEcsWorld() {
+        return ecsEntityManager.getWorld();
+    }
 }
