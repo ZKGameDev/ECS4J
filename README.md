@@ -4,9 +4,9 @@
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 
-ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java 语言实现。该框架提供完整的 ECS 架构支持，并具备组件热加载、系统执行序控制、实体/组件的即装即用（on-the-fly）与延迟加载（deferred）等关键特性。
+ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java 语言实现。该框架提供完整的 ECS 架构支持，支持组件运行时添加/删除、系统执行序控制、实体/组件的即装即用（on-the-fly）与延迟加载（deferred）等关键特性。
 
-本框架针对游戏服务器场景设计。每个 EcsWorld 实例可对应一个游戏房间（Room）或场景（Scene）。各 EcsWorld 被设计为线程专有（thread-confined），仅限在创建它的线程内访问，不支持跨线程调用。
+本框架针对游戏服务器场景设计。一个进程可创建多个EcsWorld，每个 EcsWorld 实例可对应一个游戏房间（Room）或场景（Scene）。各 EcsWorld 被设计为线程专有（thread-confined），仅限在创建它的线程内访问，不支持跨线程调用。
 
 ## 🌟 主要特性
 
@@ -60,7 +60,8 @@ public class HealthComponent implements EcsComponent {
 ### 3. 创建系统
 
 ```java
-@UpdateInGroup(GameSystemGroup.class)
+@UpdateInGroup(GameSystemGroup.class) 
+//未使用UpdateInGroup注解的属于顶层System，和SystemGroup同一级别，都由EcsWorld直接调度
 public class MovementSystem extends EcsUpdateSystemOne<PositionComponent> {
     
     @Override
@@ -75,15 +76,11 @@ public class MovementSystem extends EcsUpdateSystemOne<PositionComponent> {
 
 ```java
 @EntityFactoryAttribute
-public class PlayerFactory implements EntityFactory {
-    
+public class PlayerFactory extends BaseEntityFactory {
+
     @Override
-    public Entity create(EcsEntityManager entityManager) {
-        Entity entity = entityManager.createEntity(typeId());
-        entity.addComponent(new PositionComponent());
-        entity.addComponent(new HealthComponent());
-        entity.init();
-        return entity;
+    protected Collection<EcsComponent> generateComponent() {
+      return List.of(new PositionComponent(), new HealthComponent());
     }
     
     @Override
@@ -98,6 +95,15 @@ public class PlayerFactory implements EntityFactory {
 ```java
 public class GameSystemGroup extends EcsSystemGroup {
     // 系统组实现
+    @Override
+    protected void onStart() {
+
+    }
+
+    @Override
+    protected void onStop() {
+  
+    }
 }
 ```
 
@@ -129,8 +135,28 @@ public class Game {
     }
 }
 ```
+### 7. Entity相关操作
 
-## 📖 注解系统
+```java
+// 获取组件
+PositionComponent position = entity.getComponent(PositionComponent.class);
+
+// 检查组件
+if (entity.hasComponent(HealthComponent.class)) {
+    // 处理逻辑
+}
+
+// 添加组件
+entity.addComponent(new HealthComponent());
+
+// 移除组件
+entity.removeComponent(PositionComponent.class);
+
+// 销毁实体
+world.requestDestroyEntity(entity);
+```
+
+## 📖 注解
 
 ECS4J提供了丰富的注解来控制系统的行为：
 
@@ -155,13 +181,13 @@ ECS4J提供了丰富的注解来控制系统的行为：
 - **说明**: 被此注解标记的EcsSystem将在每个更新周期中执行，即使没有实体包含该EcsSystem所需的组件。没有被此注解标记的EcsSystem，在每个更新周期中，只有在有实体包含该EcsSystem所需的组件时，才会执行更新。
 
 #### @UpdateAfterSystem
-- **作用**: 标记EcsSystem在指定EcsSystem之后执行更新
+- **作用**: 标记EcsSystem在指定同组内的EcsSystem之后执行更新
 - **可作用对象**: EcsSystem类
 - **参数**: `Class<? extends EcsSystem>[] systemTypes()` - 目标系统类型数组
 - **说明**: 被此注解标记的EcsSystem将在指定EcsSystem执行完成之后执行更新。相同条件的EcsSystem，会按照字典序执行。可用于SystemGroup。
 
 #### @UpdateBeforeSystem
-- **作用**: 标记EcsSystem在指定EcsSystem之前执行更新
+- **作用**: 标记EcsSystem在指定同组内的EcsSystem之前执行更新
 - **可作用对象**: EcsSystem类
 - **参数**: `Class<? extends EcsSystem>[] systemTypes()` - 目标系统类型数组
 - **说明**: 被此注解标记的EcsSystem将在指定EcsSystem执行之前执行更新。相同条件的EcsSystem，会按照字典序执行。可用于SystemGroup。
@@ -174,7 +200,7 @@ ECS4J提供了丰富的注解来控制系统的行为：
 - **参数**: 无
 - **说明**: 被此注解标记的EntityFactory实现类会被自动扫描和注册到EcsWorld中，可以通过工厂类型ID或工厂类创建实体。
 
-## 🔧 系统类型
+## 🔧 预制系统类型
 
 ECS4J提供了多种预定义的系统基类：
 
@@ -189,7 +215,7 @@ ECS4J提供了多种预定义的系统基类：
 - `EcsDestroySystem<T>`: 实体销毁系统
 - `EcsLogicSystem`: 逻辑系统基类
 
-## 📦 系统组
+## 📦 系统组（EcsSystemGroup）
 
 系统组（EcsSystemGroup）是ECS4J中用于组织和管理系统执行的重要机制。系统组本身也是一个系统，可以包含多个子系统，并按照特定的顺序执行它们。
 
@@ -198,7 +224,7 @@ ECS4J提供了多种预定义的系统基类：
 - **自动管理**: 系统组会自动扫描并管理所有使用`@UpdateInGroup`注解标记的系统
 - **执行顺序**: 系统组内的系统会按照`@UpdateAfterSystem`和`@UpdateBeforeSystem`注解定义的顺序执行
 - **生命周期**: 系统组具有完整的生命周期管理，包括初始化、更新和销毁
-- **动态管理**: 支持在运行时添加和移除系统
+- **动态管理**: 支持在运行时添加和移除System
 
 ### 系统组层次结构
 
@@ -219,6 +245,8 @@ EcsWorld
 
 ## ⚡ 延迟命令系统
 
+ECS4J提供了完整的延迟命令系统，允许在系统执行过程中安全地执行实体和组件操作。延迟命令会在指定的作用域内执行，确保操作的原子性和一致性。
+
 ```java
 public class MySystem extends EcsUpdateSystemOne<MyComponent> {
     
@@ -231,32 +259,43 @@ public class MySystem extends EcsUpdateSystemOne<MyComponent> {
 }
 ```
 
+### 可用的延迟命令
+
+ECS4J提供了以下四种延迟命令：
+
+- **SystemCommandCreateEntity**: 延迟创建实体
+- **SystemCommandDestroyEntity**: 延迟销毁实体
+- **SystemCommandAddComponent**: 延迟添加组件
+- **SystemCommandRemoveComponent**: 延迟移除组件
+
 ### 命令作用域
 
-- `SYSTEM`: 系统作用域，命令在当前系统执行完成后执行
-- `SYSTEM_GROUP`: 系统组作用域，命令在当前系统组执行完成后执行
-- `WORLD`: 世界作用域，命令在本次世界更新完成后执行
+延迟命令支持三种作用域，控制命令的执行时机：
 
-## 🎮 实体操作
+- **`SYSTEM`**: 系统作用域，命令在当前System执行完成后执行
+- **`SYSTEM_GROUP`**: 系统组作用域，命令在当前系统组执行完成后执行
+- **`WORLD`**: 世界作用域，命令在本次世界update完成后执行
 
-```java
-// 获取组件
-PositionComponent position = entity.getComponent(PositionComponent.class);
 
-// 检查组件
-if (entity.hasComponent(HealthComponent.class)) {
-    // 处理逻辑
-}
+## 🎮 实体操作生效时机
 
-// 添加组件
-entity.addComponent(new HealthComponent());
 
-// 移除组件
-entity.removeComponent(PositionComponent.class);
+ECS4J中的实体操作分为**立即生效**和**延迟生效**两种模式：
 
-// 销毁实体
-world.requestDestroyEntity(entity);
-```
+### 立即生效操作
+- **实体添加**: 通过`ecsworld.createEntity()`调用
+- **组件添加/移除**: 通过`entity.addComponent()`和`entity.removeComponent()`直接调用
+- **生效时机**: 操作立即生效，当前System执行结束后即可被其他System访问
+
+### 延迟生效操作
+
+#### 实体销毁
+- **操作方式**: 通过`world.requestDestroyEntity()`请求销毁
+- **生效时机**: 在本次世界update完成后执行，确保所有System都能处理该实体
+
+#### 延迟命令操作
+- **所有操作**: 通过延迟命令系统执行（SystemCommandCreateEntity、SystemCommandDestroyEntity、SystemCommandAddComponent、SystemCommandRemoveComponent）
+- **生效时机**: 参考章节[延迟命令系统](#-延迟命令系统)
 
 ## 🧪 测试示例
 
