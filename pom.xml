@@ -106,4 +106,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+      <repository>
+        <id>github</id>
+        <url>https://maven.pkg.github.com/ZKGameDev/GServerECS</url>
+      </repository>
+    </distributionManagement>
+
 </project>
