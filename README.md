@@ -1,4 +1,4 @@
-# ECS4J - Entity Component System Framework for Java
+# GServerECS - Entity Component System Framework for Java Game Server
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
@@ -10,7 +10,7 @@
 
 </div>
 
-ECS4J is an open-source ECS framework designed and developed specifically for game servers, implemented in Java. This framework provides complete ECS architecture support, including runtime component addition/removal, system execution order control, on-the-fly and deferred loading of entities/components, and other key features.
+GServerECS is an open-source ECS framework designed and developed specifically for game servers, implemented in Java. This framework provides complete ECS architecture support, including runtime component addition/removal, system execution order control, on-the-fly and deferred loading of entities/components, and other key features.
 
 This framework is designed for game server scenarios. A single process can create multiple EcsWorld instances, each corresponding to a game room (Room) or scene (Scene). Each EcsWorld is designed to be thread-confined, accessible only within the thread that created it, and does not support cross-thread calls.
 
@@ -165,7 +165,7 @@ world.requestDestroyEntity(entity);
 
 ## 📖 Annotations
 
-ECS4J provides rich annotations to control system behavior:
+GServerECS provides rich annotations to control system behavior:
 
 ### System Control Annotations
 
@@ -209,7 +209,7 @@ ECS4J provides rich annotations to control system behavior:
 
 ## 🔧 Predefined System Types
 
-ECS4J provides various predefined system base classes:
+GServerECS provides various predefined system base classes:
 
 - `EcsUpdateSystemOne<T>`: System handling a single component
 - `EcsUpdateSystemTwo<T1, T2>`: System handling two components
@@ -224,7 +224,7 @@ ECS4J provides various predefined system base classes:
 
 ## 📦 System Groups (EcsSystemGroup)
 
-System Groups (EcsSystemGroup) are an important mechanism in ECS4J for organizing and managing system execution. A system group is itself a system that can contain multiple subsystems and execute them in a specific order.
+System Groups (EcsSystemGroup) are an important mechanism in GServerECS for organizing and managing system execution. A system group is itself a system that can contain multiple subsystems and execute them in a specific order.
 
 ### System Group Features
 
@@ -252,7 +252,7 @@ EcsWorld
 
 ## ⚡ Deferred Command System
 
-ECS4J provides a complete deferred command system that allows safe execution of entity and component operations during system execution. Deferred commands execute within specified scopes, ensuring atomicity and consistency of operations.
+GServerECS provides a complete deferred command system that allows safe execution of entity and component operations during system execution. Deferred commands execute within specified scopes, ensuring atomicity and consistency of operations.
 
 ```java
 public class MySystem extends EcsUpdateSystemOne<MyComponent> {
@@ -268,7 +268,7 @@ public class MySystem extends EcsUpdateSystemOne<MyComponent> {
 
 ### Available Deferred Commands
 
-ECS4J provides the following four deferred commands:
+GServerECS provides the following four deferred commands:
 
 - **SystemCommandCreateEntity**: Deferred entity creation
 - **SystemCommandDestroyEntity**: Deferred entity destruction
@@ -285,7 +285,7 @@ Deferred commands support three scopes that control command execution timing:
 
 ## 🎮 Entity Operation Timing
 
-ECS4J divides entity operations into **immediate effect** and **deferred effect** modes:
+GServerECS divides entity operations into **immediate effect** and **deferred effect** modes:
 
 ### Immediate Effect Operations
 - **Entity Addition**: Through `ecsworld.createEntity()` calls
@@ -344,14 +344,14 @@ This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENS
 
 ## 🔗 Related Links
 
-- [Project Homepage](https://github.com/ZKGameDev/ECS4J)
-- [Issue Reporting](https://github.com/ZKGameDev/ECS4J/issues)
+- [Project Homepage](https://github.com/ZKGameDev/GServerECS)
+- [Issue Reporting](https://github.com/ZKGameDev/GServerECS/issues)
 
 ## 📞 Contact
 
 For questions or suggestions, please contact us through:
 
-- Submit Issue: [GitHub Issues](https://github.com/ZKGameDev/ECS4J/issues)
+- Submit Issue: [GitHub Issues](https://github.com/ZKGameDev/GServerECS/issues)
 - Email: chinazhangk@gmail.com
 
 --- 
