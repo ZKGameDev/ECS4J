@@ -10,9 +10,9 @@
     <version>1.0.1</version>
     <packaging>jar</packaging>
 
-    <name>ECS4J</name>
+    <name>GServerECS</name>
     <description>ECS framework developed using Java language</description>
-    <url>https://github.com/ZKGameDev/ECS4J</url>
+    <url>https://github.com/ZKGameDev/GServerECS</url>
 
     <!-- 许可证信息（必须提供） -->
     <licenses>
@@ -25,11 +25,11 @@
     <!-- SCM信息（便于开发跟踪） -->
     <scm>
         <!-- 只读访问URL -->
-        <connection>scm:git:https://github.com/hnrzzk/ECS4J.git</connection>
+        <connection>scm:git:https://github.com/hnrzzk/GServerECS.git</connection>
         <!-- 开发者提交访问URL（需SSH权限） -->
-        <developerConnection>scm:git:git@github.com:hnrzzk/ECS4J.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:hnrzzk/GServerECS.git</developerConnection>
         <!-- 浏览器访问地址 -->
-        <url>https://github.com/hnrzzk/ECS4J</url>
+        <url>https://github.com/hnrzzk/GServerECS</url>
     </scm>
 
     <!-- Java 21 专属配置 -->
