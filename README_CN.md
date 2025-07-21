@@ -1,4 +1,4 @@
-# ECS4J - Entity Component System Framework for Java
+# GServerECS - Entity Component System Framework for Java Game Server
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.java.net/projects/jdk/21/)
 [![Maven](https://img.shields.io/badge/Maven-3.6+-blue.svg)](https://maven.apache.org/)
@@ -10,7 +10,7 @@
 
 </div>
 
-ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java 语言实现。该框架提供完整的 ECS 架构支持，支持组件运行时添加/删除、系统执行序控制、实体/组件的即装即用（on-the-fly）与延迟加载（deferred）等关键特性。
+GServerECS 是一个专为Java游戏服务器设计开发的开源ECS框架，采用 Java 语言实现。该框架提供完整的 ECS 架构支持，支持组件运行时添加/删除、系统执行序控制、实体/组件的即装即用（on-the-fly）与延迟加载（deferred）等关键特性。
 
 本框架针对游戏服务器场景设计。一个进程可创建多个EcsWorld，每个 EcsWorld 实例可对应一个游戏房间（Room）或场景（Scene）。各 EcsWorld 被设计为线程专有（thread-confined），仅限在创建它的线程内访问，不支持跨线程调用。
 
@@ -164,7 +164,7 @@ world.requestDestroyEntity(entity);
 
 ## 📖 注解
 
-ECS4J提供了丰富的注解来控制系统的行为：
+GServerECS提供了丰富的注解来控制系统的行为：
 
 ### 系统控制注解
 
@@ -208,7 +208,7 @@ ECS4J提供了丰富的注解来控制系统的行为：
 
 ## 🔧 预制系统类型
 
-ECS4J提供了多种预定义的系统基类：
+GServerECS提供了多种预定义的系统基类：
 
 - `EcsUpdateSystemOne<T>`: 处理单个组件的系统
 - `EcsUpdateSystemTwo<T1, T2>`: 处理两个组件的系统
@@ -223,7 +223,7 @@ ECS4J提供了多种预定义的系统基类：
 
 ## 📦 系统组（EcsSystemGroup）
 
-系统组（EcsSystemGroup）是ECS4J中用于组织和管理系统执行的重要机制。系统组本身也是一个系统，可以包含多个子系统，并按照特定的顺序执行它们。
+系统组（EcsSystemGroup）是GServerECS中用于组织和管理系统执行的重要机制。系统组本身也是一个系统，可以包含多个子系统，并按照特定的顺序执行它们。
 
 ### 系统组特性
 
@@ -251,7 +251,7 @@ EcsWorld
 
 ## ⚡ 延迟命令系统
 
-ECS4J提供了完整的延迟命令系统，允许在系统执行过程中安全地执行实体和组件操作。延迟命令会在指定的作用域内执行，确保操作的原子性和一致性。
+GServerECS提供了完整的延迟命令系统，允许在系统执行过程中安全地执行实体和组件操作。延迟命令会在指定的作用域内执行，确保操作的原子性和一致性。
 
 ```java
 public class MySystem extends EcsUpdateSystemOne<MyComponent> {
@@ -267,7 +267,7 @@ public class MySystem extends EcsUpdateSystemOne<MyComponent> {
 
 ### 可用的延迟命令
 
-ECS4J提供了以下四种延迟命令：
+GServerECS提供了以下四种延迟命令：
 
 - **SystemCommandCreateEntity**: 延迟创建实体
 - **SystemCommandDestroyEntity**: 延迟销毁实体
@@ -286,7 +286,7 @@ ECS4J提供了以下四种延迟命令：
 ## 🎮 实体操作生效时机
 
 
-ECS4J中的实体操作分为**立即生效**和**延迟生效**两种模式：
+GServerECS中的实体操作分为**立即生效**和**延迟生效**两种模式：
 
 ### 立即生效操作
 - **实体添加**: 通过`ecsworld.createEntity()`调用
@@ -347,14 +347,14 @@ src/
 
 ## 🔗 相关链接
 
-- [项目主页](https://github.com/ZKGameDev/ECS4J)
-- [问题反馈](https://github.com/ZKGameDev/ECS4J/issues)
+- [项目主页](https://github.com/ZKGameDev/GServerECS)
+- [问题反馈](https://github.com/ZKGameDev/GServerECS/issues)
 
 ## 📞 联系方式
 
 如有问题或建议，请通过以下方式联系：
 
-- 提交 Issue: [GitHub Issues](https://github.com/ZKGameDev/ECS4J/issues)
+- 提交 Issue: [GitHub Issues](https://github.com/ZKGameDev/GServerECS/issues)
 - 邮箱: chinazhangk@gmail.com
 
 ---
