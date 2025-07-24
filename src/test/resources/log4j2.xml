@@ -10,8 +10,7 @@
         <property name="log.level">INFO</property>
         <property name="log.path">logs</property>
         <property name="all.path">${log.path}/all</property>
-        <property name="battle.path">${log.path}/battle</property>
-        <property name="ecs.path">${battle.path}</property>
+        <property name="ecs.path">${log.path}/ecs</property>
         <property name="serverlog.pattern.format">%d{yyyy-MM-dd HH:mm:ss.SSS} [ECS] [%level] %pid [%file:%L] [%t] %M | %msg%xEx%n</property>
     </properties>
     <!--先定义所有的appender-->
