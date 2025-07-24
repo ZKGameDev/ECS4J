@@ -25,11 +25,11 @@
     <!-- SCM信息（便于开发跟踪） -->
     <scm>
         <!-- 只读访问URL -->
-        <connection>scm:git:https://github.com/hnrzzk/GServerECS.git</connection>
+        <connection>scm:git:https://github.com/ZKGameDev/GServerECS.git</connection>
         <!-- 开发者提交访问URL（需SSH权限） -->
-        <developerConnection>scm:git:git@github.com:hnrzzk/GServerECS.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:ZKGameDev/GServerECS.git</developerConnection>
         <!-- 浏览器访问地址 -->
-        <url>https://github.com/hnrzzk/GServerECS</url>
+        <url>https://github.com/ZKGameDev/GServerECS</url>
     </scm>
 
     <!-- Java 21 专属配置 -->
