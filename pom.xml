@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <!-- 基础信息 -->
-    <groupId>org.kgame</groupId>
+    <groupId>top.kgame</groupId>
     <artifactId>kgame-lib-ecs</artifactId>
     <version>1.0.1</version>
     <packaging>jar</packaging>

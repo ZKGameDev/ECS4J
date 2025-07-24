@@ -43,7 +43,7 @@ This framework is designed for game server scenarios. A single process can creat
 
 ```xml
 <dependency>
-    <groupId>org.kgame</groupId>
+    <groupId>top.kgame</groupId>
     <artifactId>kgame-lib-ecs</artifactId>
     <version>1.0.1</version>
 </dependency>

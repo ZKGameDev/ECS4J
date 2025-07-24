@@ -44,7 +44,7 @@ ECS4J 是一个专为游戏服务器设计开发的开源ECS框架，采用 Java
 
 ```xml
 <dependency>
-    <groupId>org.kgame</groupId>
+    <groupId>top.kgame</groupId>
     <artifactId>kgame-lib-ecs</artifactId>
     <version>1.0.1</version>
 </dependency>
