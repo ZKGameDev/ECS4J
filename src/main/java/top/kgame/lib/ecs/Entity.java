@@ -100,12 +100,12 @@ public class Entity implements EcsCleanable {
         return data.containsKey(klass);
     }
 
-    public void addComponent(EcsComponent component) {
+    public boolean addComponent(EcsComponent component) {
         Class<? extends EcsComponent> componentClass = component.getClass();
         if (hasComponent(componentClass)) {
             logger.warn("add component failed! reason: component already exists of entity:{} componentType:{}",
                     getIndex(), componentClass.getSimpleName());
-            return;
+            return false;
         }
 
         EntityArchetype oldArchetype = getArchetype();
@@ -113,14 +113,15 @@ public class Entity implements EcsCleanable {
         newTypes.add(componentClass);
         updateArchetype(ecsEntityManager.getOrCreateArchetype(newTypes), oldArchetype);
         data.put(component.getClass(), component);
+        return true;
     }
 
-    public void removeComponent(Class<? extends EcsComponent> componentCls) {
+    public EcsComponent removeComponent(Class<? extends EcsComponent> componentCls) {
         EntityArchetype oldArchetype = getArchetype();
         Set<Class<? extends EcsComponent>> newTypes = new HashSet<>(oldArchetype.getComponentTypes());
         newTypes.remove(componentCls);
         updateArchetype(ecsEntityManager.getOrCreateArchetype(newTypes), oldArchetype);
-        data.remove(componentCls);
+        return data.remove(componentCls);
     }
 
     private void addComponentInstance(EcsComponent component) {
